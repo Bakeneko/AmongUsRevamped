@@ -1,4 +1,6 @@
 ﻿using System;
+using AmongUsRevamped.Colors;
+using AmongUsRevamped.Mod;
 using AmongUsRevamped.UI;
 using BepInEx;
 using BepInEx.IL2CPP;
@@ -47,6 +49,8 @@ namespace AmongUsRevamped
                 };
 
                 HudPosition.Load();
+                PalettePatch.Load();
+                RevampedMod.Load();
             }
             catch (Exception ex)
             {
