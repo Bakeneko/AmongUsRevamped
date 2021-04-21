@@ -1,4 +1,5 @@
 ﻿using System;
+using AmongUsRevamped.UI;
 using BepInEx;
 using BepInEx.IL2CPP;
 using BepInEx.Logging;
@@ -38,16 +39,25 @@ namespace AmongUsRevamped
 
                 ReactorVersionShower.TextUpdated += (text) =>
                 {
+                    text.fontSize = 1.4f;
                     string txt = text.text;
                     int index = txt.IndexOf('\n');
                     txt = txt.Insert(index == -1 ? txt.Length - 1 : index, $"\n{Name} {Version}");
                     text.text = txt;
                 };
+
+                HudPosition.Load();
             }
             catch (Exception ex)
             {
                 Logger.LogError($"An exception has occurred loading plugin: {ex}");
             }
+        }
+
+        public override bool Unload()
+        {
+            Harmony.UnpatchSelf();
+            return base.Unload();
         }
     }
 }
