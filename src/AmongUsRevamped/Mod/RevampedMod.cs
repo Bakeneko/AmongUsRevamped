@@ -7,6 +7,7 @@ namespace AmongUsRevamped.Mod
     {
         public static void Load()
         {
+            Options.Load();
             ClassInjector.RegisterTypeInIl2Cpp<PlayerColorBehaviour>();
         }
     }
