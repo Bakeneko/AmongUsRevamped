@@ -1,4 +1,5 @@
 ﻿using System;
+using AmongUsRevamped.Events;
 using AmongUsRevamped.Extensions;
 using UnityEngine;
 
@@ -98,8 +99,8 @@ namespace AmongUsRevamped.UI
 
         internal static void Load()
         {
-            Events.HudCreated += HudUpdated;
-            Events.HudUpdated += HudUpdated;
+            HudEvents.HudCreated += HudUpdated;
+            HudEvents.HudUpdated += HudUpdated;
         }
 
         private static void HudUpdated(object sender, EventArgs e)
@@ -130,7 +131,7 @@ namespace AmongUsRevamped.UI
             Right = new Vector2(-BottomLeft.x, 0);
 
             // Raise event
-            if (oldPixelWidth != 0 && oldPixelHeight != 0) Events.RaiseResolutionChanged(oldPixelWidth, oldPixelHeight, oldWidth, oldHeight);
+            if (oldPixelWidth != 0 && oldPixelHeight != 0) HudEvents.RaiseResolutionChanged(oldPixelWidth, oldPixelHeight, oldWidth, oldHeight);
         }
 
         /// <param name="alignment">Alignment position</param>

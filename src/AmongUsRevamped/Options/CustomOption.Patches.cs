@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using AmongUsRevamped.Events;
 using AmongUsRevamped.UI;
 using HarmonyLib;
 using Reactor.Extensions;
@@ -444,7 +445,7 @@ namespace AmongUsRevamped.Options
 
         static CustomOption()
         {
-            Events.OnHudUpdate += UpdateScroller;
+            HudEvents.OnHudUpdate += UpdateScroller;
         }
 
         private static void UpdateScroller(object sender, EventArgs e)

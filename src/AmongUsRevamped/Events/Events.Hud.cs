@@ -2,10 +2,10 @@
 using AmongUsRevamped.Extensions;
 using HarmonyLib;
 
-namespace AmongUsRevamped
+namespace AmongUsRevamped.Events
 {
     [HarmonyPatch]
-    public static partial class Events
+    public static partial class HudEvents
     {
         public static event EventHandler<EventArgs> HudCreated;
         public static event EventHandler<EventArgs> OnHudUpdate;
