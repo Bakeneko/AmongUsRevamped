@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -240,8 +240,8 @@ namespace AmongUsRevamped.Options
 
             __instance.Children = options.ToArray();
         }
-
-            [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.Update))]
+        
+        [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.Update))]
         [HarmonyPostfix]
         private static void GameOptionsMenuUpdate(GameOptionsMenu __instance)
         {
@@ -268,41 +268,44 @@ namespace AmongUsRevamped.Options
             __instance.GetComponentInParent<Scroller>().YBounds.max = (__instance.Children.Length - 7) * 0.5F + 0.13F;
         }
 
-        [HarmonyPatch]
-        private static class GameOptionsDataPatch
+        [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.SetRecommendations))]
+        [HarmonyPostfix]
+        private static void GameOptionsDataSetRecommendations()
         {
-            private static IEnumerable<MethodBase> TargetMethods()
+            foreach (CustomOption option in Options)
             {
-                return typeof(GameOptionsData).GetMethods(typeof(string), typeof(int));
+                option.SetToDefault();
+            }
+        }
+
+        [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.ToHudString))]
+        [HarmonyPostfix]
+        private static void GameOptionsDataToHudString(ref string __result)
+        {
+            int firstNewline = __result.IndexOf('\n');
+
+            StringBuilder sb = new StringBuilder(ClearDefaultHudText ? __result.Substring(0, firstNewline + 1) : __result);
+
+            foreach (CustomOption option in Options)
+            {
+                if (!option.HudVisible) continue;
+
+                string prefix = "";
+                if (option is CustomHeaderOption) prefix += "\n";
+                if (option.Indent) prefix += "    ";
+                
+                sb.AppendLine(prefix + option.ToString());
             }
 
-            private static void Postfix(ref string __result)
+            __result = sb.ToString();
+
+            if (Scrollable && (HudManager.Instance?.GameSettings?.renderedHeight).GetValueOrDefault() + 0.02F > HudPosition.Height)
             {
-                int firstNewline = __result.IndexOf('\n');
-
-                StringBuilder sb = new StringBuilder(ClearDefaultHudText ? __result.Substring(0, firstNewline + 1) : __result);
-
-                foreach (CustomOption option in Options)
-                {
-                    if (!option.HudVisible) continue;
-
-                    string prefix = "";
-                    if (option is CustomHeaderOption) prefix += "\n";
-                    if (option.Indent) prefix += "    ";
-
-                    sb.AppendLine(prefix + option.ToString());
-                }
-
-                __result = sb.ToString();
-
-                if (Scrollable && (HudManager.Instance?.GameSettings?.renderedHeight).GetValueOrDefault() + 0.02F > HudPosition.Height)
-                {
-                    __result = __result.Insert(firstNewline - 1, " (Scroll for more):");
-                }
-
-                // Remove last newline (for the scroller to not overscroll one line)
-                __result = __result[0..^1];
+                __result = __result.Insert(firstNewline - 1, " (Scroll for more):");
             }
+
+            // Remove last newline (for the scroller to not overscroll one line)
+            __result = __result[0..^1];
         }
 
         private static bool OnEnable(OptionBehaviour opt)
