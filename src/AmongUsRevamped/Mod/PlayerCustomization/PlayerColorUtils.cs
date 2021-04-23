@@ -24,11 +24,16 @@ namespace AmongUsRevamped.Mod.PlayerCustomization
             renderer.material.SetColor(VisorColor, Palette.VisorColor);
         }
 
-        public static bool IsRainbow(int id)
+        public static bool IsRainbow(StringNames name)
+        {
+            return name == ColorPalette.ShortColorName.Rainbow;
+        }
+
+        public static bool IsRainbow(Color color)
         {
             try
             {
-                return Palette.ShortColorNames[id] == ColorPalette.ShortColorName.Rainbow;
+                return ColorPalette.Color.Rainbow.Equals(color);
             }
             catch
             {

@@ -6,19 +6,19 @@ namespace AmongUsRevamped.Mod.PlayerCustomization
     public class PlayerColorBehaviour : MonoBehaviour
     {
         public Renderer Renderer;
-        public int Id;
+        public StringNames ColorName;
 
-        public void SetRenderer(Renderer renderer, int id)
+        public void SetRenderer(Renderer renderer, StringNames colorName)
         {
             Renderer = renderer;
-            Id = id;
+            ColorName = colorName;
         }
 
         public void Update()
         {
             if (Renderer == null) return;
 
-            if (PlayerColorUtils.IsRainbow(Id))
+            if (PlayerColorUtils.IsRainbow(ColorName))
             {
                 PlayerColorUtils.SetRainbow(Renderer);
             }
