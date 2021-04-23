@@ -107,6 +107,9 @@ namespace AmongUsRevamped.Colors
             public static Color32 AmberShadow = new Color32(179, 134, 0, 255);
             public static Color32 Rainbow = new Color32(0, 0, 0, 255);
             public static Color32 RainbowShadow = new Color32(0, 0, 0, 255);
+
+            // Mod color
+            public static Color32 Revamped = new Color32(255, 191, 0, 255);
         }
     }
 }
