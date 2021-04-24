@@ -14,6 +14,9 @@ namespace AmongUsRevamped.Events
         public static event EventHandler<VotingCompletedEventArgs> VotingCompleted;
         public static event EventHandler<VentEventArgs> VentEntered;
         public static event EventHandler<VentEventArgs> VentExited;
+        public static event EventHandler<PlayerMurderedEventArgs> PlayerMurdered;
+        public static event EventHandler<BodyReportedEventArgs> BodyReported;
+        public static event EventHandler<EventArgs> MeetingCalled;
 
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CastVote))]
         [HarmonyPrefix]
@@ -52,6 +55,30 @@ namespace AmongUsRevamped.Events
         {
             var system = ShipUtils.GetSystem(player.GetTruePosition());
             VentExited?.SafeInvoke(__instance, new VentEventArgs(system, player), nameof(VentExited));
+        }
+
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer))]
+        [HarmonyPostfix]
+        private static void MurderPlayer(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl victim)
+        {
+            var system = ShipUtils.GetSystem(victim.GetTruePosition());
+            PlayerMurdered?.SafeInvoke(__instance, new PlayerMurderedEventArgs(__instance, victim, system), nameof(PlayerMurdered));
+        }
+
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CmdReportDeadBody))]
+        [HarmonyPrefix]
+        private static void ReportDeadBodyOrButton(PlayerControl __instance, [HarmonyArgument(0)] GameData.PlayerInfo victim)
+        {
+            if (victim != null)
+            {
+                var victimControls = PlayerControl.AllPlayerControls.ToArray().First(pc => pc.PlayerId == victim.PlayerId);
+                var system = ShipUtils.GetSystem(victimControls?.GetTruePosition() ?? __instance.GetTruePosition());
+                BodyReported?.SafeInvoke(__instance, new BodyReportedEventArgs(__instance, victim, system), nameof(BodyReported));
+            }
+            else
+            {
+                MeetingCalled?.SafeInvoke(__instance, EventArgs.Empty, nameof(MeetingCalled));
+            }
         }
     }
 }

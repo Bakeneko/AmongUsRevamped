@@ -39,5 +39,33 @@ namespace AmongUsRevamped.Events
                 System = system;
             }
         }
+
+        public class PlayerMurderedEventArgs : EventArgs
+        {
+            public readonly PlayerControl Killer;
+            public readonly PlayerControl Victim;
+            public readonly SystemTypes System;
+
+            public PlayerMurderedEventArgs(PlayerControl killer, PlayerControl victim, SystemTypes system)
+            {
+                Killer = killer;
+                Victim = victim;
+                System = system;
+            }
+        }
+
+        public class BodyReportedEventArgs : EventArgs
+        {
+            public readonly PlayerControl Reporter;
+            public readonly GameData.PlayerInfo Victim;
+            public readonly SystemTypes System;
+
+            public BodyReportedEventArgs(PlayerControl reporter, GameData.PlayerInfo victim, SystemTypes system)
+            {
+                Reporter = reporter;
+                Victim = victim;
+                System = system;
+            }
+        }
     }
 }
