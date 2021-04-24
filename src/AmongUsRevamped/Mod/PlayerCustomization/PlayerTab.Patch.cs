@@ -1,32 +1,27 @@
-﻿using HarmonyLib;
+﻿using AmongUsRevamped.Options;
+using HarmonyLib;
 
 namespace AmongUsRevamped.Mod.PlayerCustomization
 {
+    [HarmonyPatch]
     class PlayerTabPatch
     {
         [HarmonyPatch(typeof(PlayerTab), nameof(PlayerTab.OnEnable))]
-        public static class OnEnablePatch
+        [HarmonyPostfix]
+        public static void PlayerTabOnEnablePatch(PlayerTab __instance)
         {
-            public static void Postfix(PlayerTab __instance)
+            foreach (ColorChip chip in __instance.ColorChips)
             {
-                for (int i = 0; i < __instance.ColorChips.Count; i++)
-                {
-                    var chip = __instance.ColorChips.ToArray()[i];
-                    chip.transform.localScale *= 0.7f;
-                    chip.Button.OnClick.AddListener(Click(i));
-                }
+                chip.transform.localScale *= 0.7f;
             }
+        }
 
-            private static System.Action Click(int index)
-            {
-                void SetColor()
-                {
-                    // Save only vanilla colors
-                    SaveManager.BodyColor = (byte)(index < 12 ? index : 0);
-                }
-
-                return SetColor;
-            }
+        [HarmonyPatch(typeof(PlayerTab), nameof(PlayerTab.SelectColor))]
+        [HarmonyPostfix]
+        public static void PlayerTabSelectColorPatch([HarmonyArgument(0)] int colorIndex)
+        {
+            CustomOption.BodyColor.Value = colorIndex;
+            SaveManager.BodyColor = (byte)(colorIndex < 12 ? colorIndex : 0);
         }
     }
 }

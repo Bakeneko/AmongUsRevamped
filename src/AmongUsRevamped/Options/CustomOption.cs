@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AmongUsRevamped.Utils;
 using AmongUsRevamped.Extensions;
+using BepInEx.Configuration;
 using TMPro;
 using Object = UnityEngine.Object;
 
@@ -57,6 +58,11 @@ namespace AmongUsRevamped.Options
         /// Clear the game's default options list before listing custom options in the lobby.
         /// </summary>
         public static bool ClearDefaultHudText { get; set; } = true;
+
+        /// <summary>
+        /// The config entry used to store player body color.
+        /// </summary>
+        public static ConfigEntry<int> BodyColor = AmongUsRevamped.Instance.Config.Bind(PluginUtils.GetCallingPluginId(), "bodyColor", 0);
 
         /// <summary>
         /// ID of the plugin that created the option.
