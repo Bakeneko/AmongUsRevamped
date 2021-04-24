@@ -1,4 +1,5 @@
 ﻿using AmongUsRevamped.Mod.PlayerCustomization;
+using AmongUsRevamped.Events;
 using UnhollowerRuntimeLib;
 
 namespace AmongUsRevamped.Mod
@@ -8,7 +9,6 @@ namespace AmongUsRevamped.Mod
         public static void Load()
         {
             Options.Load();
-            ClassInjector.RegisterTypeInIl2Cpp<PlayerColorBehaviour>();
         }
     }
 }

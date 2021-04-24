@@ -1,5 +1,4 @@
-﻿using AmongUsRevamped.Colors;
-using HarmonyLib;
+﻿using HarmonyLib;
 using Reactor.Extensions;
 using UnityEngine;
 
@@ -12,17 +11,14 @@ namespace AmongUsRevamped.Mod.PlayerCustomization
         {
             var pcb = renderer.gameObject.GetComponent<PlayerColorBehaviour>();
 
-            if (!PlayerColorUtils.IsRainbow(Palette.ShortColorNames[colorId]))
+            if (!PlayerColorUtils.IsRainbow(colorId))
             {
                 pcb?.Destroy();
                 return true;
             }
 
-            if (pcb == null)
-            {
-                pcb = renderer.gameObject.AddComponent<PlayerColorBehaviour>();
-            }
-            pcb.SetRenderer(renderer, ColorPalette.ShortColorName.Rainbow);
+            pcb = pcb ?? renderer.gameObject.AddComponent<PlayerColorRainbowBehaviour>();
+            pcb.SetRenderer(renderer);
 
             return false;
         }
@@ -41,11 +37,8 @@ namespace AmongUsRevamped.Mod.PlayerCustomization
                 return true;
             }
 
-            if (pcb == null)
-            {
-                pcb = renderer.gameObject.AddComponent<PlayerColorBehaviour>();
-            }
-            pcb.SetRenderer(renderer, ColorPalette.ShortColorName.Rainbow);
+            pcb = pcb ?? renderer.gameObject.AddComponent<PlayerColorRainbowBehaviour>();
+            pcb.SetRenderer(renderer);
 
             return false;
         }

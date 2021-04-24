@@ -29,6 +29,18 @@ namespace AmongUsRevamped.Mod.PlayerCustomization
             return name == ColorPalette.ShortColorName.Rainbow;
         }
 
+        public static bool IsRainbow(int colorId)
+        {
+            try
+            {
+                return IsRainbow(Palette.ShortColorNames[colorId]);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public static bool IsRainbow(Color color)
         {
             try
