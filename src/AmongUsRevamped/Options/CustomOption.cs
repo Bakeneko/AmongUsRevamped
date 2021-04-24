@@ -56,7 +56,7 @@ namespace AmongUsRevamped.Options
         /// <summary>
         /// Clear the game's default options list before listing custom options in the lobby.
         /// </summary>
-        public static bool ClearDefaultHudText { get; set; } = false;
+        public static bool ClearDefaultHudText { get; set; } = true;
 
         /// <summary>
         /// ID of the plugin that created the option.

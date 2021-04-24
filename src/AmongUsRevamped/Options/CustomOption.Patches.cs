@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using AmongUsRevamped.Events;
 using AmongUsRevamped.UI;
 using HarmonyLib;
+using Reactor;
 using Reactor.Extensions;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -245,7 +245,6 @@ namespace AmongUsRevamped.Options
         [HarmonyPostfix]
         private static void GameOptionsMenuUpdate(GameOptionsMenu __instance)
         {
-
             float y = __instance.GetComponentsInChildren<OptionBehaviour>().Count > 0 ?
                 __instance.GetComponentsInChildren<OptionBehaviour>().Max(option => option.transform.localPosition.y) : 0;
 
@@ -299,13 +298,48 @@ namespace AmongUsRevamped.Options
 
             __result = sb.ToString();
 
+            string insert = ClearDefaultHudText ? " - Press Tab to expand" : " - Press Tab to collapse";
+
             if (Scrollable && (HudManager.Instance?.GameSettings?.renderedHeight).GetValueOrDefault() + 0.02F > HudPosition.Height)
             {
-                __result = __result.Insert(firstNewline - 1, " (Scroll for more):");
+                insert += " (Scroll for more):";
             }
+
+            __result = __result.Insert(firstNewline - 1, insert);
 
             // Remove last newline (for the scroller to not overscroll one line)
             __result = __result[0..^1];
+        }
+
+
+        /// <summary>
+        /// Component used to expand or collapse game options
+        /// </summary>
+        [RegisterInIl2Cpp]
+        private class LobbyGameOptionsKeyboardShim : MonoBehaviour
+        {
+            public LobbyGameOptionsKeyboardShim(IntPtr ptr) : base(ptr)
+            {
+            }
+
+            private void Update()
+            {
+                if (Input.GetKeyDown(KeyCode.Tab))
+                {
+                    ClearDefaultHudText = !ClearDefaultHudText;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Attach <see cref="LobbyGameOptionsKeyboardShim"/> to <see cref="LobbyBehaviour"/> to expand or collapse game options 
+        /// </summary>
+        [HarmonyPatch(typeof(LobbyBehaviour), nameof(LobbyBehaviour.Start))]
+        [HarmonyPostfix]
+        private static void LobbyBehaviourStartPatch (LobbyBehaviour __instance)
+        {
+            var pcb = __instance.gameObject.GetComponent<LobbyGameOptionsKeyboardShim>() ??
+                __instance.gameObject.AddComponent<LobbyGameOptionsKeyboardShim>();
         }
 
         private static bool OnEnable(OptionBehaviour opt)
