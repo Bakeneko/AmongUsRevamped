@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AmongUsRevamped.Extensions;
 using AmongUsRevamped.Utils;
 using HarmonyLib;
@@ -16,7 +16,7 @@ namespace AmongUsRevamped.Events
         public static void EnterVent(Vent __instance, [HarmonyArgument(0)] PlayerControl player)
         {
             var system = ShipUtils.GetSystem(player.GetTruePosition());
-            VentEntered?.SafeInvoke(null, new VentEventArgs(__instance.Id, __instance.name, system, player), nameof(VentEntered));
+            VentEntered?.SafeInvoke(__instance, new VentEventArgs(system, player), nameof(VentEntered));
         }
 
         [HarmonyPatch(typeof(Vent), nameof(Vent.ExitVent), typeof(PlayerControl))]
@@ -24,7 +24,7 @@ namespace AmongUsRevamped.Events
         public static void ExitVent(Vent __instance, [HarmonyArgument(0)] PlayerControl player)
         {
             var system = ShipUtils.GetSystem(player.GetTruePosition());
-            VentExited?.SafeInvoke(null, new VentEventArgs(__instance.Id, __instance.name, system, player), nameof(VentExited));
+            VentExited?.SafeInvoke(__instance, new VentEventArgs(system, player), nameof(VentExited));
         }
     }
 }

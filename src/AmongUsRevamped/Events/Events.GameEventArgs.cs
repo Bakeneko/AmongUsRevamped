@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace AmongUsRevamped.Events
 {
@@ -11,10 +11,8 @@ namespace AmongUsRevamped.Events
             public readonly SystemTypes System;
             public readonly PlayerControl Player;
 
-            public VentEventArgs(int id, string name, SystemTypes system, PlayerControl player)
+            public VentEventArgs(SystemTypes system, PlayerControl player)
             {
-                Id = id;
-                Name = name;
                 Player = player;
                 System = system;
             }
