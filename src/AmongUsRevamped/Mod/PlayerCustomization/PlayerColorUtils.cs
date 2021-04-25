@@ -16,8 +16,8 @@ namespace AmongUsRevamped.Mod.PlayerCustomization
 
         public static void SetRainbow(Renderer renderer)
         {
-            HSBColor rainbow = new HSBColor(PingPong(0, 1, 0.3f), 1, 1);
-            HSBColor rainbowShadow = new HSBColor(rainbow);
+            HSBColor rainbow = new(PingPong(0, 1, 0.3f), 1, 1);
+            HSBColor rainbowShadow = new(rainbow);
             rainbowShadow.b -= 0.3f;
             renderer.material.SetColor(BackColor, rainbowShadow.ToColor());
             renderer.material.SetColor(BodyColor, rainbow.ToColor());

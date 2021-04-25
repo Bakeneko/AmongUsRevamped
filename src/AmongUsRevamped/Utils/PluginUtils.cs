@@ -15,7 +15,7 @@ namespace AmongUsRevamped.Utils
         /// <returns>A plugin id or <see cref="string.Empty"/></returns>
         public static string GetCallingPluginId(int frameIndex = 3)
         {
-            StackTrace stackTrace = new StackTrace(frameIndex);
+            StackTrace stackTrace = new(frameIndex);
             for (int i = 0; i < stackTrace.GetFrames().Length; i++)
             {
                 MethodBase method = stackTrace.GetFrame(i).GetMethod();

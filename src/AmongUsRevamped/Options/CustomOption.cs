@@ -37,7 +37,7 @@ namespace AmongUsRevamped.Options
         /// <summary>
         /// List of added options.
         /// </summary>
-        public static List<CustomOption> Options = new List<CustomOption>();
+        public static List<CustomOption> Options = new();
 
         /// <summary>
         /// Enable/disable debug logging messages.

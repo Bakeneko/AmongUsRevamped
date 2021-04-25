@@ -67,7 +67,7 @@ namespace AmongUsRevamped
 
         public static void Debug(string msg, object obj, int line, string caller, string path)
         {
-            Logger.LogMessage($"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")} {path.Split('\\').Last()} {caller}:{line}{(string.IsNullOrEmpty(msg) ? "" : " " + msg)} {obj}");
+            Logger.LogMessage($"{DateTime.Now:yyyy/MM/dd HH:mm:ss} {path.Split('\\').Last()} {caller}:{line}{(string.IsNullOrEmpty(msg) ? "" : " " + msg)} {obj}");
         }
     }
 }

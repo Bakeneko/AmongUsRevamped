@@ -83,7 +83,7 @@ namespace AmongUsRevamped.Options
         private static List<OptionBehaviour> GetGameOptions(GameOptionsMenu __instance) 
         {
 
-            List<OptionBehaviour> options = new List<OptionBehaviour>();
+            List<OptionBehaviour> options = new();
 
             ToggleOption toggleOption = Object.FindObjectsOfType<ToggleOption>().FirstOrDefault();
             NumberOption numberOption = Object.FindObjectsOfType<NumberOption>().FirstOrDefault();
@@ -283,7 +283,7 @@ namespace AmongUsRevamped.Options
         {
             int firstNewline = __result.IndexOf('\n');
 
-            StringBuilder sb = new StringBuilder(ClearDefaultHudText ? __result.Substring(0, firstNewline + 1) : __result);
+            StringBuilder sb = new(ClearDefaultHudText ? __result.Substring(0, firstNewline + 1) : __result);
 
             foreach (CustomOption option in Options)
             {
@@ -322,6 +322,7 @@ namespace AmongUsRevamped.Options
             {
             }
 
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051")]
             private void Update()
             {
                 if (Input.GetKeyDown(KeyCode.Tab))
@@ -338,7 +339,7 @@ namespace AmongUsRevamped.Options
         [HarmonyPostfix]
         private static void LobbyBehaviourStartPatch (LobbyBehaviour __instance)
         {
-            var pcb = __instance.gameObject.GetComponent<LobbyGameOptionsKeyboardShim>() ??
+            _ = __instance.gameObject.GetComponent<LobbyGameOptionsKeyboardShim>() ??
                 __instance.gameObject.AddComponent<LobbyGameOptionsKeyboardShim>();
         }
 

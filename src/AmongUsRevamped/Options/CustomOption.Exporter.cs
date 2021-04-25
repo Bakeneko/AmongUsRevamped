@@ -17,7 +17,7 @@ namespace AmongUsRevamped.Options
     public class CustomExporterOption : CustomButtonOption
     {
 
-        public List<CustomButtonOption> SlotButtons = new List<CustomButtonOption>();
+        public List<CustomButtonOption> SlotButtons = new();
         public List<OptionBehaviour> PreviousOptions;
         public CustomButtonOption Loading;
 

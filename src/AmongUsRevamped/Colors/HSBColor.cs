@@ -83,7 +83,7 @@ namespace AmongUsRevamped.Colors
 
                 if (ret.h < 0)
                 {
-                    ret.h = ret.h + 360f;
+                    ret.h += 360f;
                 }
             }
             else

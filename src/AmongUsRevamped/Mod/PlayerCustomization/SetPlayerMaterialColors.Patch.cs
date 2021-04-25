@@ -17,7 +17,7 @@ namespace AmongUsRevamped.Mod.PlayerCustomization
                 return true;
             }
 
-            pcb = pcb ?? renderer.gameObject.AddComponent<PlayerColorRainbowBehaviour>();
+            pcb ??= renderer.gameObject.AddComponent<PlayerColorRainbowBehaviour>();
             pcb.SetRenderer(renderer);
 
             return false;
@@ -37,7 +37,7 @@ namespace AmongUsRevamped.Mod.PlayerCustomization
                 return true;
             }
 
-            pcb = pcb ?? renderer.gameObject.AddComponent<PlayerColorRainbowBehaviour>();
+            pcb ??= renderer.gameObject.AddComponent<PlayerColorRainbowBehaviour>();
             pcb.SetRenderer(renderer);
 
             return false;
