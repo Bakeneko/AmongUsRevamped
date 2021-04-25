@@ -1,124 +1,135 @@
-﻿using Assets.CoreScripts;
+﻿using System.Collections.Generic;
+using AmongUsRevamped.Options;
+using Assets.CoreScripts;
+using HarmonyLib;
+using UnhollowerBaseLib;
+using UnityEngine;
+
+using PaletteColor = AmongUsRevamped.Colors.ColorPalette.PaletteColor;
 
 namespace AmongUsRevamped.Colors
 {
-	public static class PalettePatch
+    [HarmonyPatch]
+    public static class PalettePatch
     {
         public static void Load()
         {
-			var shortColorNames = new[]
-			{
-				// Vanilla colors
-				ColorPalette.ShortColorName.Red,
-				ColorPalette.ShortColorName.Blue,
-				ColorPalette.ShortColorName.Green,
-				ColorPalette.ShortColorName.Pink,
-				ColorPalette.ShortColorName.Orange,
-				ColorPalette.ShortColorName.Yellow,
-				ColorPalette.ShortColorName.Black,
-				ColorPalette.ShortColorName.White,
-				ColorPalette.ShortColorName.Purple,
-				ColorPalette.ShortColorName.Brown,
-				ColorPalette.ShortColorName.Cyan,
-				ColorPalette.ShortColorName.Lime,
-			    // New colors
-			    ColorPalette.ShortColorName.Watermelon,
-				ColorPalette.ShortColorName.Chocolate,
-				ColorPalette.ShortColorName.SkyBlue,
-				ColorPalette.ShortColorName.Beige,
-				ColorPalette.ShortColorName.HotPink,
-				ColorPalette.ShortColorName.Turquoise,
-				ColorPalette.ShortColorName.Lilac,
-				ColorPalette.ShortColorName.Amber,
-				ColorPalette.ShortColorName.Rainbow
-			};
+            List<PaletteColor> palette = new()
+            {
+                PaletteColor.Red,
+                PaletteColor.Blue,
+                PaletteColor.Green,
+                PaletteColor.Pink,
+                PaletteColor.Orange,
+                PaletteColor.Yellow,
+                PaletteColor.Black,
+                PaletteColor.White,
+                PaletteColor.Purple,
+                PaletteColor.Brown,
+                PaletteColor.Cyan,
+                PaletteColor.Lime,
+                PaletteColor.Mint,
+                PaletteColor.Salmon,
+                PaletteColor.Nougat,
+                PaletteColor.Bordeaux,
+                PaletteColor.Lavender,
+                PaletteColor.Wasabi,
+                PaletteColor.Turqoise,
+                PaletteColor.HotPink,
+                PaletteColor.Petrol,
+                PaletteColor.Amber,
+                PaletteColor.Gray,
+                PaletteColor.Rainbow
+            };
 
-			var colorNames = new[]
-			{
-				// Vanilla colors
-				ColorPalette.ColorName.Red,
-				ColorPalette.ColorName.Blue,
-				ColorPalette.ColorName.Green,
-				ColorPalette.ColorName.Pink,
-				ColorPalette.ColorName.Orange,
-				ColorPalette.ColorName.Yellow,
-				ColorPalette.ColorName.Black,
-				ColorPalette.ColorName.White,
-				ColorPalette.ColorName.Purple,
-				ColorPalette.ColorName.Brown,
-				ColorPalette.ColorName.Cyan,
-				ColorPalette.ColorName.Lime,
-			    // New colors
-			    ColorPalette.ColorName.Watermelon,
-				ColorPalette.ColorName.Chocolate,
-				ColorPalette.ColorName.SkyBlue,
-				ColorPalette.ColorName.Beige,
-				ColorPalette.ColorName.HotPink,
-				ColorPalette.ColorName.Turquoise,
-				ColorPalette.ColorName.Lilac,
-				ColorPalette.ColorName.Amber,
-				ColorPalette.ColorName.Rainbow
-			};
+            List<StringNames> shortColorNames = new();
+            List<StringNames> colorNames = new();
 
-			var playerColors = new[]
-			{
-				// Vanilla colors
-				ColorPalette.Color.Red,
-				ColorPalette.Color.Blue,
-				ColorPalette.Color.Green,
-				ColorPalette.Color.Pink,
-				ColorPalette.Color.Orange,
-				ColorPalette.Color.Yellow,
-				ColorPalette.Color.Black,
-				ColorPalette.Color.White,
-				ColorPalette.Color.Purple,
-				ColorPalette.Color.Brown,
-				ColorPalette.Color.Cyan,
-				ColorPalette.Color.Lime,
-			    // New colors
-			    ColorPalette.Color.Watermelon,
-				ColorPalette.Color.Chocolate,
-				ColorPalette.Color.SkyBlue,
-				ColorPalette.Color.Beige,
-				ColorPalette.Color.HotPink,
-				ColorPalette.Color.Turquoise,
-				ColorPalette.Color.Lilac,
-				ColorPalette.Color.Amber,
-				ColorPalette.Color.Rainbow
-			};
+            List<Color32> playerColors = new();
+            List<Color32> shadowColors = new();
 
-			var shadowColors = new[]
-			{
-				// Vanilla colors
-				ColorPalette.Color.RedShadow,
-				ColorPalette.Color.BlueShadow,
-				ColorPalette.Color.GreenShadow,
-				ColorPalette.Color.PinkShadow,
-				ColorPalette.Color.OrangeShadow,
-				ColorPalette.Color.YellowShadow,
-				ColorPalette.Color.BlackShadow,
-				ColorPalette.Color.WhiteShadow,
-				ColorPalette.Color.PurpleShadow,
-				ColorPalette.Color.BrownShadow,
-				ColorPalette.Color.CyanShadow,
-				ColorPalette.Color.LimeShadow,
-			    // New colors
-			    ColorPalette.Color.WatermelonShadow,
-				ColorPalette.Color.ChocolateShadow,
-				ColorPalette.Color.SkyBlueShadow,
-				ColorPalette.Color.BeigeShadow,
-				ColorPalette.Color.HotPinkShadow,
-				ColorPalette.Color.TurquoiseShadow,
-				ColorPalette.Color.LilacShadow,
-				ColorPalette.Color.AmberShadow,
-				ColorPalette.Color.RainbowShadow
-			};
+            int id = 900000;
+            foreach (PaletteColor col in palette)
+            {
+                shortColorNames.Add((StringNames)id);
+                colorNames.Add((StringNames)id);
 
-			Palette.ShortColorNames = shortColorNames;
-            Palette.PlayerColors = playerColors;
-            Palette.ShadowColors = shadowColors;
-            MedScanMinigame.ColorNames = colorNames;
-            Telemetry.ColorNames = colorNames;
+                playerColors.Add(col.Color);
+                shadowColors.Add(col.Shadow);
+
+                PaletteColor.ColorNames[id++] = col.ShortName;
+                PaletteColor.ColorNames[id++] = col.LongName;
+            }
+
+            Palette.ShortColorNames = shortColorNames.ToArray();
+            Palette.PlayerColors = playerColors.ToArray();
+            Palette.ShadowColors = shadowColors.ToArray();
+            MedScanMinigame.ColorNames = colorNames.ToArray();
+            Telemetry.ColorNames = colorNames.ToArray();
+        }
+
+
+        /// <summary>
+        /// Resolve palette color names
+        /// </summary>
+        [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.GetString),
+        new[] { typeof(StringNames), typeof(Il2CppReferenceArray<Il2CppSystem.Object>) }
+        )]
+        [HarmonyPrefix]
+        public static bool TranslationControllerGetStringPatch(ref string __result, [HarmonyArgument(0)] StringNames name)
+        {
+            return !PaletteColor.ColorNames.TryGetValue((int)name, out __result);
+        }
+
+        /// <summary>
+        /// Dynamically position color chips
+        /// </summary>
+        [HarmonyPatch(typeof(PlayerTab), nameof(PlayerTab.OnEnable))]
+        [HarmonyPostfix]
+        public static void PlayerTabOnEnablePatch(PlayerTab __instance)
+        {
+            Il2CppArrayBase<ColorChip> chips = __instance.ColorChips.ToArray();
+
+            float left = 1.4f;
+            float top = -0.35f;
+            float right = 3.89f;
+            float bottom = -3.84f;
+            float width = right - left;
+            float height = top - bottom;
+            float baseScale = 1.3f;
+            float baseCols = 3.0f;
+            float baseRows = 5.0f;
+            float ratio = 0.714f;
+            
+            int rows = (int)Mathf.Ceil(Mathf.Sqrt(chips.Length / ratio ));
+            int cols = (int) Mathf.Ceil(chips.Length / (float) rows);
+ 
+            float scale = Mathf.Min(baseCols / cols, baseRows / rows) * baseScale;
+            float chipSize = 0.565f;
+            float chipMargin = Mathf.Min((width - cols * chipSize) / (cols + 1), (height - rows * chipSize) / (rows + 1));
+
+            float horizPadding = (width - cols * (chipSize + chipMargin) - chipMargin) / 2;
+            float vertPadding = (height - rows * (chipSize + chipMargin) - chipMargin) / 2;
+
+            for (int i = 0; i < chips.Length; i++)
+            {
+                ColorChip chip = chips[i];
+                int row = i / cols, col = i % cols;
+                chip.transform.localPosition = new Vector3(left + horizPadding + chipMargin + (col * (chipSize + chipMargin)), top - vertPadding - chipMargin - (row * (chipSize + chipMargin)), chip.transform.localPosition.z);
+                chip.transform.localScale = new Vector3(scale, scale, 1.0f);
+            }
+        }
+
+        /// <summary>
+        /// Persist selected body color
+        /// </summary>
+        [HarmonyPatch(typeof(PlayerTab), nameof(PlayerTab.SelectColor))]
+        [HarmonyPostfix]
+        public static void PlayerTabSelectColorPatch([HarmonyArgument(0)] int colorIndex)
+        {
+            CustomSettings.BodyColor.Value = colorIndex;
+            // Only save vanilla colors 
+            SaveManager.BodyColor = (byte)(colorIndex < 12 ? colorIndex : 0);
         }
     }
 }

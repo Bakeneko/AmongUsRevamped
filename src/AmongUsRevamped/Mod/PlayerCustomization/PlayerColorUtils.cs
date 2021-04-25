@@ -26,7 +26,7 @@ namespace AmongUsRevamped.Mod.PlayerCustomization
 
         public static bool IsRainbow(StringNames name)
         {
-            return name == ColorPalette.ShortColorName.Rainbow;
+            return ColorPalette.PaletteColor.Rainbow.ShortName.Equals(ColorPalette.PaletteColor.ColorNames[(int)name]);
         }
 
         public static bool IsRainbow(int colorId)
@@ -45,7 +45,7 @@ namespace AmongUsRevamped.Mod.PlayerCustomization
         {
             try
             {
-                return ColorPalette.Color.Rainbow.Equals(color);
+                return ColorPalette.PaletteColor.Rainbow.Color.Equals(color);
             }
             catch
             {

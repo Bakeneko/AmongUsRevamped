@@ -30,14 +30,14 @@ namespace AmongUsRevamped.Extensions
             return ColorUtils.ToHtmlStringRGBA(color);
         }
 
-        public static string ToColorTag(this Color color)
+        public static string ToColorTag(this Color color, string text)
         {
-            return $"<color={ColorUtils.ToHtmlStringRGBA(color)}>";
+            return $"<color={ColorUtils.ToHtmlStringRGBA(color)}>{text}</color>";
         }
 
-        public static string ToColorTag(this Color32 color)
+        public static string ToColorTag(this Color32 color, string text)
         {
-            return $"<color={ColorUtils.ToHtmlStringRGBA(color)}>";
+            return $"<color={ColorUtils.ToHtmlStringRGBA(color)}>{text}</color>";
         }
     }
 }

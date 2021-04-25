@@ -13,7 +13,7 @@ namespace AmongUsRevamped.Mod
             __instance.text.fontSize = 2.2f;
             __instance.text.transform.localPosition = new HudPosition(2.5f, 0.3f, HudAlignment.TopRight);
 
-            __instance.text.text = $"{Color.Revamped.ToColorTag()}{AmongUsRevamped.Name} v{AmongUsRevamped.Version}</color>";
+            __instance.text.text = Color.Revamped.ToColorTag($"{AmongUsRevamped.Name} v{AmongUsRevamped.Version}");
             __instance.text.text += $"\nPing: {AmongUsClient.Instance.Ping} ms";
         }
     }

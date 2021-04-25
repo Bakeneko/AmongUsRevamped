@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using AmongUsRevamped.Extensions;
+using UnityEngine;
+using PaletteColors = AmongUsRevamped.Colors.ColorPalette.Color.Palette;
 
 namespace AmongUsRevamped.Colors
 {
@@ -7,108 +10,113 @@ namespace AmongUsRevamped.Colors
     /// </summary>
     public static class ColorPalette
     {
-        public static class ShortColorName
+        public class PaletteColor
         {
-            // Vanilla colors
-            public const StringNames Red = StringNames.VitalsRED;
-            public const StringNames Blue = StringNames.VitalsBLUE;
-            public const StringNames Green = StringNames.VitalsGRN;
-            public const StringNames Pink = StringNames.VitalsPINK;
-            public const StringNames Orange = StringNames.VitalsORGN;
-            public const StringNames Yellow = StringNames.VitalsYLOW;
-            public const StringNames Black = StringNames.VitalsBLAK;
-            public const StringNames White = StringNames.VitalsWHTE;
-            public const StringNames Purple = StringNames.VitalsPURP;
-            public const StringNames Brown = StringNames.VitalsBRWN;
-            public const StringNames Cyan = StringNames.VitalsCYAN;
-            public const StringNames Lime = StringNames.VitalsLIME;
-            // New colors
-            public const StringNames Watermelon = (StringNames)999999;
-            public const StringNames Chocolate = (StringNames)999998;
-            public const StringNames SkyBlue = (StringNames)999997;
-            public const StringNames Beige = (StringNames)999996;
-            public const StringNames HotPink = (StringNames)999995;
-            public const StringNames Turquoise = (StringNames)999994;
-            public const StringNames Lilac = (StringNames)999993;
-            public const StringNames Amber = (StringNames)999992;
-            public const StringNames Rainbow = (StringNames)999991;
-        }
+            public static Dictionary<int, string> ColorNames = new();
 
-        public static class ColorName
-        {
             // Vanilla colors
-            public const StringNames Red = StringNames.ColorRed;
-            public const StringNames Blue = StringNames.ColorBlue;
-            public const StringNames Green = StringNames.ColorGreen;
-            public const StringNames Pink = StringNames.ColorPink;
-            public const StringNames Orange = StringNames.ColorOrange;
-            public const StringNames Yellow = StringNames.ColorYellow;
-            public const StringNames Black = StringNames.ColorBlack;
-            public const StringNames White = StringNames.ColorWhite;
-            public const StringNames Purple = StringNames.ColorPurple;
-            public const StringNames Brown = StringNames.ColorBrown;
-            public const StringNames Cyan = StringNames.ColorCyan;
-            public const StringNames Lime = StringNames.ColorLime;
-            // New colors
-            public const StringNames Watermelon = (StringNames)899999;
-            public const StringNames Chocolate = (StringNames)899998;
-            public const StringNames SkyBlue = (StringNames)899997;
-            public const StringNames Beige = (StringNames)899996;
-            public const StringNames HotPink = (StringNames)899995;
-            public const StringNames Turquoise = (StringNames)899994;
-            public const StringNames Lilac = (StringNames)899993;
-            public const StringNames Amber = (StringNames)899992;
-            public const StringNames Rainbow = (StringNames)899991;
+            public static PaletteColor Red = new("RED", "Red", PaletteColors.Red, PaletteColors.RedShadow);
+            public static PaletteColor Blue = new("BLUE", "Blue", PaletteColors.Blue, PaletteColors.BlueShadow);
+            public static PaletteColor Green = new("GRN", "Green", PaletteColors.Green, PaletteColors.GreenShadow);
+            public static PaletteColor Pink = new("PINK", "Pink", PaletteColors.Pink, PaletteColors.PinkShadow);
+            public static PaletteColor Orange = new("ORGN", "Orange", PaletteColors.Orange, PaletteColors.OrangeShadow);
+            public static PaletteColor Yellow = new("YLOW", "Yellow", PaletteColors.Yellow, PaletteColors.YellowShadow);
+            public static PaletteColor Black = new("BLAK", "Black", PaletteColors.Black, PaletteColors.BlackShadow);
+            public static PaletteColor White = new("WHTE", "White", PaletteColors.White, PaletteColors.WhiteShadow);
+            public static PaletteColor Purple = new("PURP", "Purple", PaletteColors.Purple, PaletteColors.PurpleShadow);
+            public static PaletteColor Brown = new("BRWN", "Brown", PaletteColors.Brown, PaletteColors.BrownShadow);
+            public static PaletteColor Cyan = new("CYAN", "Cyan", PaletteColors.Cyan, PaletteColors.CyanShadow);
+            public static PaletteColor Lime = new("LIME", "Lime", PaletteColors.Lime, PaletteColors.LimeShadow);
+
+            // New colours
+            public static PaletteColor Mint = new("MINT", "Mint", PaletteColors.Mint, PaletteColors.MintShadow);
+            public static PaletteColor Salmon = new("SALMN", "Salmon", PaletteColors.Salmon, PaletteColors.SalmonShadow);
+            public static PaletteColor Nougat = new("NOUGT", "Nougat", PaletteColors.Nougat, PaletteColors.NougatShadow);
+            public static PaletteColor Bordeaux = new("BRDX", "Bordeaux", PaletteColors.Bordeaux, PaletteColors.BordeauxShadow);
+            public static PaletteColor Lavender = new("LVNDR", "Lavender", PaletteColors.Lavender, PaletteColors.LavenderShadow);
+            public static PaletteColor Wasabi = new("WSBI", "Wasabi", PaletteColors.Wasabi, PaletteColors.WasabiShadow);
+            public static PaletteColor Turqoise = new("TURQ", "Turqoise", PaletteColors.Turquoise, PaletteColors.TurquoiseShadow);
+            public static PaletteColor HotPink = new("HPNK", "Hot Pink", PaletteColors.HotPink, PaletteColors.HotPinkShadow);
+            public static PaletteColor Petrol = new("PTRL", "Petrol", PaletteColors.Petrol, PaletteColors.PetrolShadow);
+            public static PaletteColor Amber = new("AMBR", "Amber", PaletteColors.Amber, PaletteColors.AmberShadow);
+            public static PaletteColor Gray = new("GRAY", "Gray", PaletteColors.Gray, PaletteColors.GrayShadow);
+            public static PaletteColor Rainbow = new("RNBW", "Rainbow", PaletteColors.Rainbow, PaletteColors.Rainbow);
+
+            public string ShortName;
+            public string LongName;
+            public Color32 Color;
+            public Color32 Shadow;
+
+            public PaletteColor(string shortname, string longName, Color32 color, Color32 shadow)
+            {
+                ShortName = shortname;
+                LongName = longName;
+                Color = color;
+                Shadow = shadow;
+            }
+
+            public string ToColorTag(string text)
+            {
+                return Color.ToColorTag(text);
+            }
         }
 
         public static class Color
         {
-            // Vanilla colors
-            public static Color32 Red = new(198, 17, 17, 255);
-            public static Color32 RedShadow = new(122, 8, 56, 255);
-            public static Color32 Blue = new(19, 46, 210, 255);
-            public static Color32 BlueShadow = new(9, 21, 142, 255);
-            public static Color32 Green = new(17, 128, 45, 255);
-            public static Color32 GreenShadow = new(10, 77, 46, 255);
-            public static Color32 Pink = new(238, 84, 187, 255);
-            public static Color32 PinkShadow = new(172, 43, 174, 255);
-            public static Color32 Orange = new(240, 125, 13, 255);
-            public static Color32 OrangeShadow = new(180, 62, 21, 255);
-            public static Color32 Yellow = new(246, 246, 87, 255);
-            public static Color32 YellowShadow = new(195, 136, 34, 255);
-            public static Color32 Black = new(63, 71, 78, 255);
-            public static Color32 BlackShadow = new(30, 31, 38, 255);
-            public static Color32 White = new(215, 225, 241, 255);
-            public static Color32 WhiteShadow = new(132, 149, 192, 255);
-            public static Color32 Purple = new(107, 47, 188, 255);
-            public static Color32 PurpleShadow = new(59, 23, 124, 255);
-            public static Color32 Brown = new(113, 73, 30, 255);
-            public static Color32 BrownShadow = new(94, 38, 21, 255);
-            public static Color32 Cyan = new(56, 255, 221, 255);
-            public static Color32 CyanShadow = new(36, 169, 191, 255);
-            public static Color32 Lime = new(80, 240, 57, 255);
-            public static Color32 LimeShadow = new(21, 168, 66, 255);
-            // New colours
-            public static Color32 Watermelon = new(168, 50, 62, 255);
-            public static Color32 WatermelonShadow = new(101, 30, 37, 255);
-            public static Color32 Chocolate = new(60, 48, 44, 255);
-            public static Color32 ChocolateShadow = new(30, 24, 22, 255);
-            public static Color32 SkyBlue = new(61, 129, 255, 255);
-            public static Color32 SkyBlueShadow = new(31, 65, 128, 255);
-            public static Color32 Beige = new(240, 211, 165, 255);
-            public static Color32 BeigeShadow = new(120, 106, 83, 255);
-            public static Color32 HotPink = new(236, 61, 255, 255);
-            public static Color32 HotPinkShadow = new(118, 31, 128, 255);
-            public static Color32 Turquoise = new(61, 255, 181, 255);
-            public static Color32 TurquoiseShadow = new(31, 128, 91, 255);
-            public static Color32 Lilac = new(186, 161, 255, 255);
-            public static Color32 LilacShadow = new(93, 81, 128, 255);
-            public static Color32 Amber = new(255, 191, 0, 255);
-            public static Color32 AmberShadow = new(179, 134, 0, 255);
-            public static Color32 Rainbow = new(0, 0, 0, 255);
-            public static Color32 RainbowShadow = new(0, 0, 0, 255);
+            public static class Palette
+            {
+                // Vanilla colors
+                public static Color32 Red = new(198, 17, 17, 255);
+                public static Color32 RedShadow = new(122, 8, 56, 255);
+                public static Color32 Blue = new(19, 46, 210, 255);
+                public static Color32 BlueShadow = new(9, 21, 142, 255);
+                public static Color32 Green = new(17, 128, 45, 255);
+                public static Color32 GreenShadow = new(10, 77, 46, 255);
+                public static Color32 Pink = new(238, 84, 187, 255);
+                public static Color32 PinkShadow = new(172, 43, 174, 255);
+                public static Color32 Orange = new(240, 125, 13, 255);
+                public static Color32 OrangeShadow = new(180, 62, 21, 255);
+                public static Color32 Yellow = new(246, 246, 87, 255);
+                public static Color32 YellowShadow = new(195, 136, 34, 255);
+                public static Color32 Black = new(63, 71, 78, 255);
+                public static Color32 BlackShadow = new(30, 31, 38, 255);
+                public static Color32 White = new(215, 225, 241, 255);
+                public static Color32 WhiteShadow = new(132, 149, 192, 255);
+                public static Color32 Purple = new(107, 47, 188, 255);
+                public static Color32 PurpleShadow = new(59, 23, 124, 255);
+                public static Color32 Brown = new(113, 73, 30, 255);
+                public static Color32 BrownShadow = new(94, 38, 21, 255);
+                public static Color32 Cyan = new(56, 255, 221, 255);
+                public static Color32 CyanShadow = new(36, 169, 191, 255);
+                public static Color32 Lime = new(80, 240, 57, 255);
+                public static Color32 LimeShadow = new(21, 168, 66, 255);
 
-            // Mod color
+                // New colours
+                public static Color32 Mint = new(111, 192, 156, 255);
+                public static Color32 MintShadow = new(65, 148, 111, 255);
+                public static Color32 Salmon = new(239, 191, 192, 255);
+                public static Color32 SalmonShadow = new(182, 119, 114, 255);
+                public static Color32 Nougat = new(160, 101, 56, 255);
+                public static Color32 NougatShadow = new(109, 69, 38, 255);
+                public static Color32 Bordeaux = new(109, 7, 26, 255);
+                public static Color32 BordeauxShadow = new(54, 2, 11, 255);
+                public static Color32 Lavender = new(173, 126, 201, 255);
+                public static Color32 LavenderShadow = new(131, 58, 203, 255);
+                public static Color32 Wasabi = new(112, 143, 46, 255);
+                public static Color32 WasabiShadow = new(72, 92, 29, 255);
+                public static Color32 Turquoise = new(22, 132, 176, 255);
+                public static Color32 TurquoiseShadow = new(15, 89, 117, 255);
+                public static Color32 HotPink = new(255, 51, 102, 255);
+                public static Color32 HotPinkShadow = new(232, 0, 58, 255);
+                public static Color32 Petrol = new(0, 99, 105, 255);
+                public static Color32 PetrolShadow = new(0, 61, 54, 255);
+                public static Color32 Amber = new(255, 191, 0, 255);
+                public static Color32 AmberShadow = new(179, 134, 0, 255);
+                public static Color32 Gray = new(147, 147, 147, 255);
+                public static Color32 GrayShadow = new(120, 120, 120, 255);
+                public static Color32 Rainbow = new(0, 0, 0, 255);
+            }
+
             public static Color32 Revamped = new(255, 191, 0, 255);
         }
     }
