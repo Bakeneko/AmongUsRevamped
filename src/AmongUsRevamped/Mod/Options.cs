@@ -1,4 +1,4 @@
-﻿using AmongUsRevamped.Options;
+using AmongUsRevamped.Options;
 
 namespace AmongUsRevamped.Mod
 {
@@ -6,6 +6,7 @@ namespace AmongUsRevamped.Mod
     {
         public static void Load()
         {
+            CustomSettings.Load();
             CustomOption.CreateExporter();
             CustomOption.CreateImporter();
         }

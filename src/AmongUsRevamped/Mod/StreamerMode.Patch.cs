@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using AmongUsRevamped.Colors;
 using AmongUsRevamped.Options;
 using HarmonyLib;
@@ -43,6 +43,22 @@ namespace AmongUsRevamped.Mod
                     });
                     UpdateStreamerModeButton();
                 }
+            }
+        }
+
+        [HarmonyPatch(typeof(TextBoxTMP), nameof(TextBoxTMP.SetText))]
+        public static class TextBoxTMPStreamerModeFilterPatch
+        {
+            private static readonly HashSet<string> filter = new()
+            {
+                "GameIdText",
+                "ServerAddressText",
+                "ServerPortText"
+            };
+            private static void Postfix(TextBoxTMP __instance)
+            {
+                if(CustomSettings.StreamerMode.Value && filter.Contains(__instance.name))
+                    __instance.outputText.text = new string('*', __instance.text.Length);
             }
         }
     }

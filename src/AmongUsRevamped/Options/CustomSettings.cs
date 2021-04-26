@@ -10,6 +10,9 @@ namespace AmongUsRevamped.Options
     {
         public static string ConfigSection = "GameSettings";
 
+        public static ConfigEntry<string> ServerAddress { get; set; }
+        public static ConfigEntry<ushort> ServerPort { get; set; }
+
         public static ConfigEntry<bool> StreamerMode { get; set; }
 
         /// <summary>
@@ -19,7 +22,11 @@ namespace AmongUsRevamped.Options
 
         public static void Load()
         {
+            ServerAddress = LoadSetting("serverAddress", "127.0.0.1", "Custom Server Address");
+            ServerPort = LoadSetting("serverPort", (ushort)22023, "Custom Server Port");
+
             StreamerMode = LoadSetting("streamerMode", false, "Enable Streamer Mode");
+
             BodyColor = LoadSetting("bodyColor", 0, "Player Body Color");
         }
 
