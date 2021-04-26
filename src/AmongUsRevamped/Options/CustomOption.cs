@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using AmongUsRevamped.Utils;
 using AmongUsRevamped.Extensions;
-using BepInEx.Configuration;
 using TMPro;
 using Object = UnityEngine.Object;
 
@@ -60,14 +59,14 @@ namespace AmongUsRevamped.Options
         public static bool ClearDefaultHudText { get; set; } = true;
 
         /// <summary>
-        /// The config entry used to store player body color.
-        /// </summary>
-        public static ConfigEntry<int> BodyColor = AmongUsRevamped.Instance.Config.Bind(PluginUtils.GetCallingPluginId(), "bodyColor", 0);
-
-        /// <summary>
         /// ID of the plugin that created the option.
         /// </summary>
-        public readonly string PluginId;
+        public static string PluginId;
+
+        /// <summary>
+        /// Section used in the config to store the option.
+        /// </summary>
+        public static string SectionId;
 
         /// <summary>
         /// Key value used in the config to store the option's value (when Persist is true).
@@ -196,6 +195,7 @@ namespace AmongUsRevamped.Options
                 if (value == null) throw new ArgumentNullException(nameof(value), "Value cannot be null");
 
                 PluginId = PluginUtils.GetCallingPluginId();
+                SectionId = "GameOptions";
                 ConfigId = id;
                 Id = $"{PluginId}_{ConfigId}";
 

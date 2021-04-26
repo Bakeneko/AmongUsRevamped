@@ -343,17 +343,6 @@ namespace AmongUsRevamped.Options
                 __instance.gameObject.AddComponent<LobbyGameOptionsKeyboardShim>();
         }
 
-        /// <summary>
-        /// Patch player body color with config value 
-        /// </summary>
-        [HarmonyPatch(typeof(SaveManager), nameof(SaveManager.BodyColor), MethodType.Getter)]
-        [HarmonyPrefix]
-        private static bool SaveManagerBodyColorPatch(out byte __result)
-        {
-            __result = (byte) BodyColor.Value;
-            return false;
-        }
-
         private static bool OnEnable(OptionBehaviour opt)
         {
             CustomOption customOption = Options.FirstOrDefault(option => option.GameObject == opt);

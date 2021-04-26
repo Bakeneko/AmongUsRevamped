@@ -43,7 +43,7 @@ namespace AmongUsRevamped.Options
                 if (ConfigEntry != null && GameObject is StringOption && AmongUsClient.Instance?.AmHost == true && PlayerControl.LocalPlayer) ConfigEntry.Value = GetValue();
             };
 
-            ConfigEntry = persist ? AmongUsRevamped.Instance.Config.Bind(PluginId, ConfigId, GetDefaultValue()) : null;
+            ConfigEntry = persist ? AmongUsRevamped.Instance.Config.Bind(SectionId, ConfigId, GetDefaultValue(), name) : null;
             SetValue(ConfigEntry?.Value ?? GetDefaultValue(), false);
 
             ValueStringFormat = (sender, value) => _values[(int)value];

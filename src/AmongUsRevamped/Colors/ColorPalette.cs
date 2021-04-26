@@ -118,6 +118,8 @@ namespace AmongUsRevamped.Colors
             }
 
             public static Color32 Revamped = new(255, 191, 0, 255);
+
+            public static Color32 SettingGreen = new(0, 255, 42, 255);
         }
     }
 }

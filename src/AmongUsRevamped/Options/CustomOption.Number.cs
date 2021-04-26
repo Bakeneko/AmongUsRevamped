@@ -76,7 +76,7 @@ namespace AmongUsRevamped.Options
             };
 
 
-            ConfigEntry = persist ? AmongUsRevamped.Instance.Config.Bind(PluginId, ConfigId, GetDefaultValue()) : null;
+            ConfigEntry = persist ? AmongUsRevamped.Instance.Config.Bind(SectionId, ConfigId, GetDefaultValue(), name) : null;
             SetValue(ConfigEntry?.Value ?? GetDefaultValue(), false);
 
             ValueStringFormat = valueFormat ?? ((sender, value) => value.ToString());
