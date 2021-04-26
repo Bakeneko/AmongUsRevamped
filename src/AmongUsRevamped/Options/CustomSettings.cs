@@ -1,4 +1,4 @@
-using AmongUsRevamped.Extensions;
+﻿using AmongUsRevamped.Extensions;
 using BepInEx.Configuration;
 using HarmonyLib;
 using Color = AmongUsRevamped.Colors.ColorPalette.Color;
@@ -14,6 +14,7 @@ namespace AmongUsRevamped.Options
         public static ConfigEntry<ushort> ServerPort { get; set; }
 
         public static ConfigEntry<bool> StreamerMode { get; set; }
+        public static ConfigEntry<string> StreamerModePlaceholder { get; set; }
 
         /// <summary>
         /// Player body color.
@@ -26,6 +27,7 @@ namespace AmongUsRevamped.Options
             ServerPort = LoadSetting("serverPort", (ushort)22023, "Custom Server Port");
 
             StreamerMode = LoadSetting("streamerMode", false, "Enable Streamer Mode");
+            StreamerModePlaceholder = LoadSetting("streamerPlaceholder", Color.Revamped.ToColorTag(AmongUsRevamped.Name), "Streamer Mode Placeholder");
 
             BodyColor = LoadSetting("bodyColor", 0, "Player Body Color");
         }

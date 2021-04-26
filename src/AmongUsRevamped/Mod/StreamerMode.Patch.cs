@@ -2,6 +2,7 @@
 using AmongUsRevamped.Colors;
 using AmongUsRevamped.Options;
 using HarmonyLib;
+using UnhollowerBaseLib;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -11,6 +12,8 @@ namespace AmongUsRevamped.Mod
     [HarmonyPatch]
     public static class StreamerModePatch
     {
+        private static string LobbyCodeText = "";
+
         [HarmonyPatch(typeof(OptionsMenuBehaviour), nameof(OptionsMenuBehaviour.Start))]
         public static class OptionsMenuBehaviourStartPatch
         {
@@ -57,9 +60,28 @@ namespace AmongUsRevamped.Mod
             };
             private static void Postfix(TextBoxTMP __instance)
             {
-                if(CustomSettings.StreamerMode.Value && filter.Contains(__instance.name))
+                if (CustomSettings.StreamerMode.Value && filter.Contains(__instance.name))
                     __instance.outputText.text = new string('*', __instance.text.Length);
             }
+        }
+
+        [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Start))]
+        [HarmonyPostfix]
+        public static void GameStartManagerStartPatch(GameStartManager __instance)
+        {
+            // Copy lobby code
+            string code = InnerNet.GameCode.IntToGameName(AmongUsClient.Instance.GameId);
+            GUIUtility.systemCopyBuffer = code;
+            LobbyCodeText = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.RoomCode, new Il2CppReferenceArray<Il2CppSystem.Object>(0)) + "\r\n" + code;
+            __instance.GameRoomName.transform.localPosition += Vector3.down * 0.4f;
+        }
+
+        [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
+        [HarmonyPostfix]
+        public static void GameStartManagerUpdatePatch(GameStartManager __instance)
+        {
+            // Lobby code replacement
+            __instance.GameRoomName.text = CustomSettings.StreamerMode.Value ? CustomSettings.StreamerModePlaceholder.Value : LobbyCodeText;
         }
     }
 }
