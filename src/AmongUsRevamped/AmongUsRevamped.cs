@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using AmongUsRevamped.Colors;
 using AmongUsRevamped.Mod;
@@ -20,6 +20,7 @@ namespace AmongUsRevamped
         public const string Id = "app.bakeneko.revamped";
         public const string Name = "Revamped";
         public const string Version = "0.1.0";
+        public const byte Major = 0, Minor = 1, Patch = 0;
 
         public static AmongUsRevamped Instance { get { return PluginSingleton<AmongUsRevamped>.Instance; } }
 

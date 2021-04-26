@@ -7,6 +7,7 @@ using AmongUsRevamped.UI;
 using HarmonyLib;
 using Reactor;
 using Reactor.Extensions;
+using UnhollowerBaseLib;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -217,6 +218,14 @@ namespace AmongUsRevamped.Options
             }
 
             return options;
+        }
+
+        [HarmonyPatch(typeof(GameSettingMenu), nameof(GameSettingMenu.OnEnable))]
+        [HarmonyPrefix]
+        public static void GameSettingOnEnable(ref GameSettingMenu __instance)
+        {
+            // Unlocks map/impostor amount changing in online
+            __instance.HideForOnline = new Il2CppReferenceArray<Transform>(0);
         }
 
         [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.Start))]

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using AmongUsRevamped.Utils;
+using AmongUsRevamped.Mod;
 using BepInEx.IL2CPP;
 using Hazel;
 using Reactor;
@@ -10,7 +11,7 @@ namespace AmongUsRevamped.Options
     public partial class CustomOption
     {
 
-        [RegisterCustomRpc(0)]
+        [RegisterCustomRpc((uint)CustomRpcCalls.SettingsSync)]
         private protected class Rpc : PlayerCustomRpc<BasePlugin, (byte[], CustomOptionType, object)>
         {
             public static Rpc Instance { get { return Rpc<Rpc>.Instance; } }
@@ -19,7 +20,7 @@ namespace AmongUsRevamped.Options
             {
             }
 
-            public override RpcLocalHandling LocalHandling { get { return RpcLocalHandling.None; } }
+            public override RpcLocalHandling LocalHandling => RpcLocalHandling.None;
 
             public override void Write(MessageWriter writer, (byte[], CustomOptionType, object) option)
             {
