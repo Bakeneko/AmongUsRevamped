@@ -55,17 +55,17 @@ namespace AmongUsRevamped.Options
 
                 if (customOption == null)
                 {
-                    AmongUsRevamped.Logger.LogWarning($"Received option that could not be found, hash: \"{string.Join("", hash.Select(b => $"{b:X2}"))}\", type: {type}.");
+                    AmongUsRevamped.LogWarning($"Received option that could not be found, hash: \"{string.Join("", hash.Select(b => $"{b:X2}"))}\", type: {type}.");
                     return;
                 }
 
                 object value = option.Item3;
 
-                if (Debug) AmongUsRevamped.Logger.LogDebug($"\"{customOption.Id}\" type: {type}, value: {value}, current value: {customOption.Value}");
+                if (Debug) AmongUsRevamped.Log($"\"{customOption.Id}\" type: {type}, value: {value}, current value: {customOption.Value}");
 
                 customOption.SetValue(value, true);
 
-                if (Debug) AmongUsRevamped.Logger.LogDebug($"\"{customOption.Id}\", set value: {customOption.Value}");
+                if (Debug) AmongUsRevamped.Log($"\"{customOption.Id}\", set value: {customOption.Value}");
             }
         }
 

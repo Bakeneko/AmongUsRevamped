@@ -4,7 +4,6 @@ namespace AmongUsRevamped.Utils
 {
     public static class ColorUtils
     {
-
         public static Color32 ToColor32(Color color)
         {
             // Round to int to prevent precision issues that, for example cause values very close to 1 to become FE instead of FF (case 770904).

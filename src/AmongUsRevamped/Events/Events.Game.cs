@@ -18,9 +18,9 @@ namespace AmongUsRevamped.Events
         public static event EventHandler<BodyReportedEventArgs> BodyReported;
         public static event EventHandler<EventArgs> MeetingCalled;
 
-        [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CastVote))]
         [HarmonyPrefix]
-        private static void CastVote(
+        [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CastVote))]
+        private static bool CastVote(
             MeetingHud __instance,
             [HarmonyArgument(0)] byte votingPlayerId,
             [HarmonyArgument(1)] sbyte votedPlayerId)
@@ -28,10 +28,11 @@ namespace AmongUsRevamped.Events
             var player = GameData.Instance.AllPlayers.ToArray().FirstOrDefault(pi => pi.PlayerId == votingPlayerId);
             var voted = GameData.Instance.AllPlayers.ToArray().FirstOrDefault(pi => pi.PlayerId == votedPlayerId);
             VoteCasted?.SafeInvoke(__instance, new VoteCastedEventArgs(player, voted), nameof(VoteCasted));
+            return true;
         }
 
-        [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.VotingComplete))]
         [HarmonyPostfix]
+        [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.VotingComplete))]
         private static void VotingComplete(
             MeetingHud __instance,
             [HarmonyArgument(0)] Il2CppStructArray<byte> states,
@@ -41,33 +42,35 @@ namespace AmongUsRevamped.Events
             VotingCompleted?.SafeInvoke(__instance, new VotingCompletedEventArgs(ejectedPlayer), nameof(VotingCompleted));
         }
 
-        [HarmonyPatch(typeof(Vent), nameof(Vent.EnterVent), typeof(PlayerControl))]
         [HarmonyPrefix]
-        private static void EnterVent(Vent __instance, [HarmonyArgument(0)] PlayerControl player)
+        [HarmonyPatch(typeof(Vent), nameof(Vent.EnterVent), typeof(PlayerControl))]
+        private static bool EnterVent(Vent __instance, [HarmonyArgument(0)] PlayerControl player)
         {
             var system = ShipUtils.GetSystem(player.GetTruePosition());
             VentEntered?.SafeInvoke(__instance, new VentEventArgs(system, player), nameof(VentEntered));
+            return true;
         }
 
-        [HarmonyPatch(typeof(Vent), nameof(Vent.ExitVent), typeof(PlayerControl))]
         [HarmonyPrefix]
-        private static void ExitVent(Vent __instance, [HarmonyArgument(0)] PlayerControl player)
+        [HarmonyPatch(typeof(Vent), nameof(Vent.ExitVent), typeof(PlayerControl))]
+        private static bool ExitVent(Vent __instance, [HarmonyArgument(0)] PlayerControl player)
         {
             var system = ShipUtils.GetSystem(player.GetTruePosition());
             VentExited?.SafeInvoke(__instance, new VentEventArgs(system, player), nameof(VentExited));
+            return true;
         }
 
-        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer))]
         [HarmonyPostfix]
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer))]
         private static void MurderPlayer(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl victim)
         {
             var system = ShipUtils.GetSystem(victim.GetTruePosition());
             PlayerMurdered?.SafeInvoke(__instance, new PlayerMurderedEventArgs(__instance, victim, system), nameof(PlayerMurdered));
         }
 
-        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CmdReportDeadBody))]
         [HarmonyPrefix]
-        private static void ReportDeadBodyOrButton(PlayerControl __instance, [HarmonyArgument(0)] GameData.PlayerInfo victim)
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CmdReportDeadBody))]
+        private static bool ReportDeadBodyOrButton(PlayerControl __instance, [HarmonyArgument(0)] GameData.PlayerInfo victim)
         {
             if (victim != null)
             {
@@ -79,6 +82,7 @@ namespace AmongUsRevamped.Events
             {
                 MeetingCalled?.SafeInvoke(__instance, EventArgs.Empty, nameof(MeetingCalled));
             }
+            return true;
         }
     }
 }

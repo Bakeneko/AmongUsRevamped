@@ -65,8 +65,8 @@ namespace AmongUsRevamped.Mod
             }
         }
 
-        [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Start))]
         [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Start))]
         public static void GameStartManagerStartPatch(GameStartManager __instance)
         {
             // Copy lobby code
@@ -76,8 +76,8 @@ namespace AmongUsRevamped.Mod
             __instance.GameRoomName.transform.localPosition += Vector3.down * 0.4f;
         }
 
-        [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
         [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
         public static void GameStartManagerUpdatePatch(GameStartManager __instance)
         {
             // Lobby code replacement

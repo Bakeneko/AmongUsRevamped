@@ -111,7 +111,7 @@ namespace AmongUsRevamped.Options
             }
             catch (Exception ex)
             {
-                AmongUsRevamped.Logger.LogWarning($"An exception has occurred reading settings: {ex}");
+                AmongUsRevamped.LogWarning($"An exception has occurred reading settings: {ex}");
                 ImportEnd(FlashRed);
                 return;
             }
@@ -131,7 +131,7 @@ namespace AmongUsRevamped.Options
 
                 if (option == null)
                 {
-                    AmongUsRevamped.Logger.LogWarning($"Parsed a setting that could not be found, configId: \"{configId}\".");
+                    AmongUsRevamped.LogWarning($"Parsed a setting that could not be found, configId: \"{configId}\".");
                     issues++;
                     continue;
                 }
@@ -153,7 +153,7 @@ namespace AmongUsRevamped.Options
                 }
                 catch (Exception ex)
                 {
-                    AmongUsRevamped.Logger.LogError($"An exception has occurred parsing a setting, configId: \"{configId}\" value: \"{value}\": {ex}");
+                    AmongUsRevamped.LogError($"An exception has occurred parsing a setting, configId: \"{configId}\" value: \"{value}\": {ex}");
                     issues++;
                 }
             }

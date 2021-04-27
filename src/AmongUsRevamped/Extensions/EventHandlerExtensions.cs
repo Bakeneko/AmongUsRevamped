@@ -37,7 +37,7 @@ namespace AmongUsRevamped.Extensions
                 }
                 catch (Exception ex)
                 {
-                    AmongUsRevamped.Logger.LogWarning($"Exception in event handler index {i} for event \"{eventName}\": {ex}");
+                    AmongUsRevamped.LogWarning($"Exception in event handler index {i} for event \"{eventName}\": {ex}");
                 }
             }
         }

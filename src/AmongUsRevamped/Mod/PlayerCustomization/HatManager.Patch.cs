@@ -9,8 +9,8 @@ namespace AmongUsRevamped.Mod.PlayerCustomization
         /// <summary>
         /// Unlock all hats
         /// </summary>
-        [HarmonyPatch(typeof(HatManager), nameof(HatManager.GetUnlockedHats))]
         [HarmonyPrefix]
+        [HarmonyPatch(typeof(HatManager), nameof(HatManager.GetUnlockedHats))]
         private static bool GetUnlockedHats(HatManager __instance, ref Il2CppReferenceArray<HatBehaviour> __result)
         {
             __result = (Il2CppReferenceArray<HatBehaviour>)__instance.AllHats.ToArray();
@@ -20,8 +20,8 @@ namespace AmongUsRevamped.Mod.PlayerCustomization
         /// <summary>
         /// Unlock all pets
         /// </summary>
-        [HarmonyPatch(typeof(HatManager), nameof(HatManager.GetUnlockedPets))]
         [HarmonyPrefix]
+        [HarmonyPatch(typeof(HatManager), nameof(HatManager.GetUnlockedPets))]
         private static bool GetUnlockedPets(HatManager __instance, ref Il2CppReferenceArray<PetBehaviour> __result)
         {
             __result = (Il2CppReferenceArray<PetBehaviour>)__instance.AllPets.ToArray();
@@ -31,8 +31,8 @@ namespace AmongUsRevamped.Mod.PlayerCustomization
         /// <summary>
         /// Unlock all skins
         /// </summary>
-        [HarmonyPatch(typeof(HatManager), nameof(HatManager.GetUnlockedSkins))]
         [HarmonyPrefix]
+        [HarmonyPatch(typeof(HatManager), nameof(HatManager.GetUnlockedSkins))]
         private static bool GetUnlockedSkins(HatManager __instance, ref Il2CppReferenceArray<SkinData> __result)
         {
             __result = (Il2CppReferenceArray<SkinData>)__instance.AllSkins.ToArray();

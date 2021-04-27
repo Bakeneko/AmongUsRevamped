@@ -40,9 +40,9 @@ namespace AmongUsRevamped.Options
         /// <summary>
         /// Patch player body color with config value
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051")]
-        [HarmonyPatch(typeof(SaveManager), nameof(SaveManager.BodyColor), MethodType.Getter)]
         [HarmonyPrefix]
+        [HarmonyPatch(typeof(SaveManager), nameof(SaveManager.BodyColor), MethodType.Getter)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051")]
         private static bool SaveManagerBodyColorPatch(out byte __result)
         {
             __result = (byte)BodyColor.Value;

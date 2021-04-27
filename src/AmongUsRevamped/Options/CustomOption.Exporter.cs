@@ -137,7 +137,7 @@ namespace AmongUsRevamped.Options
             }
             catch (Exception ex)
             {
-                AmongUsRevamped.Logger.LogError($"An exception has occurred exporting settings: {ex}");
+                AmongUsRevamped.LogError($"An exception has occurred exporting settings: {ex}");
                 ExportEnd(FlashRed);
             }
         }

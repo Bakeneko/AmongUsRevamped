@@ -4,10 +4,12 @@ using UnityEngine;
 
 namespace AmongUsRevamped.Mod.PlayerCustomization
 {
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.SetPlayerMaterialColors), typeof(int), typeof(Renderer))]
-    public class SetPlayerMaterialColorsIntPatch
+    [HarmonyPatch]
+    public static class SetPlayerMaterialColorsPatch
     {
-        public static bool Prefix([HarmonyArgument(0)] int colorId, [HarmonyArgument(1)] Renderer renderer)
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.SetPlayerMaterialColors), typeof(int), typeof(Renderer))]
+        public static bool SetPlayerMaterialColorsIntPatch([HarmonyArgument(0)] int colorId, [HarmonyArgument(1)] Renderer renderer)
         {
             var pcb = renderer.gameObject.GetComponent<PlayerColorBehaviour>();
 
@@ -22,12 +24,10 @@ namespace AmongUsRevamped.Mod.PlayerCustomization
 
             return false;
         }
-    }
 
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.SetPlayerMaterialColors), typeof(Color), typeof(Renderer))]
-    public class SetPlayerMaterialColorsColorPatch
-    {
-        public static bool Prefix([HarmonyArgument(0)] Color color, [HarmonyArgument(1)] Renderer renderer)
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.SetPlayerMaterialColors), typeof(Color), typeof(Renderer))]
+        public static bool SetPlayerMaterialColorsColorPatch([HarmonyArgument(0)] Color color, [HarmonyArgument(1)] Renderer renderer)
         {
             var pcb = renderer.gameObject.GetComponent<PlayerColorBehaviour>();
 

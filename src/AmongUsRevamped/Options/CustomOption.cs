@@ -217,7 +217,7 @@ namespace AmongUsRevamped.Options
             }
             catch (Exception ex)
             {
-                AmongUsRevamped.Logger.LogWarning($"An exception has occurred for option \"{name}\": {ex}");
+                AmongUsRevamped.LogWarning($"An exception has occurred for option \"{name}\": {ex}");
             }
         }
 
@@ -269,7 +269,7 @@ namespace AmongUsRevamped.Options
             }
             catch (Exception ex)
             {
-                AmongUsRevamped.Logger.LogWarning($"An exception has occurred in {nameof(OnGameObjectCreated)} for option \"{Name}\" ({Type}): {ex}");
+                AmongUsRevamped.LogWarning($"An exception has occurred in {nameof(OnGameObjectCreated)} for option \"{Name}\" ({Type}): {ex}");
             }
 
             return false;
@@ -332,7 +332,7 @@ namespace AmongUsRevamped.Options
             }
             catch (Exception ex)
             {
-                AmongUsRevamped.Logger.LogWarning($"Failed to update game setting value for option \"{Name}\" ({Type}): {ex}");
+                AmongUsRevamped.LogWarning($"Failed to update game setting value for option \"{Name}\" ({Type}): {ex}");
             }
 
             return false;
@@ -381,7 +381,7 @@ namespace AmongUsRevamped.Options
                         args.NewValue = lastValue;
                         args.Cancel = false;
 
-                        AmongUsRevamped.Logger.LogWarning($"A handler for option \"{Name}\" ({Type}) attempted to change value type, ignored.");
+                        AmongUsRevamped.LogWarning($"A handler for option \"{Name}\" ({Type}) attempted to change value type, ignored.");
                     }
 
                     lastValue = args.NewValue;

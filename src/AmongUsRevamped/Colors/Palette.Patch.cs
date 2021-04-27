@@ -72,10 +72,10 @@ namespace AmongUsRevamped.Colors
         /// <summary>
         /// Resolve palette color names
         /// </summary>
+        [HarmonyPrefix]
         [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.GetString),
         new[] { typeof(StringNames), typeof(Il2CppReferenceArray<Il2CppSystem.Object>) }
         )]
-        [HarmonyPrefix]
         public static bool TranslationControllerGetStringPatch(ref string __result, [HarmonyArgument(0)] StringNames name)
         {
             return !PaletteColor.ColorNames.TryGetValue((int)name, out __result);
@@ -84,8 +84,8 @@ namespace AmongUsRevamped.Colors
         /// <summary>
         /// Dynamically position color chips
         /// </summary>
-        [HarmonyPatch(typeof(PlayerTab), nameof(PlayerTab.OnEnable))]
         [HarmonyPostfix]
+        [HarmonyPatch(typeof(PlayerTab), nameof(PlayerTab.OnEnable))]
         public static void PlayerTabOnEnablePatch(PlayerTab __instance)
         {
             Il2CppArrayBase<ColorChip> chips = __instance.ColorChips.ToArray();
@@ -123,8 +123,8 @@ namespace AmongUsRevamped.Colors
         /// <summary>
         /// Persist selected body color
         /// </summary>
-        [HarmonyPatch(typeof(PlayerTab), nameof(PlayerTab.SelectColor))]
         [HarmonyPostfix]
+        [HarmonyPatch(typeof(PlayerTab), nameof(PlayerTab.SelectColor))]
         public static void PlayerTabSelectColorPatch([HarmonyArgument(0)] int colorIndex)
         {
             CustomSettings.BodyColor.Value = colorIndex;

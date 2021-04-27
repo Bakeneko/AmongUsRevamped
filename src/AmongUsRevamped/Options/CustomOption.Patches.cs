@@ -220,16 +220,16 @@ namespace AmongUsRevamped.Options
             return options;
         }
 
-        [HarmonyPatch(typeof(GameSettingMenu), nameof(GameSettingMenu.OnEnable))]
         [HarmonyPrefix]
+        [HarmonyPatch(typeof(GameSettingMenu), nameof(GameSettingMenu.OnEnable))]
         public static void GameSettingOnEnable(ref GameSettingMenu __instance)
         {
             // Unlocks map/impostor amount changing in online
             __instance.HideForOnline = new Il2CppReferenceArray<Transform>(0);
         }
 
-        [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.Start))]
         [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.Start))]
         private static void GameOptionsMenuStart(GameOptionsMenu __instance)
         {
             List<OptionBehaviour> options = GetGameOptions(__instance);
@@ -249,9 +249,9 @@ namespace AmongUsRevamped.Options
 
             __instance.Children = options.ToArray();
         }
-        
-        [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.Update))]
+
         [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.Update))]
         private static void GameOptionsMenuUpdate(GameOptionsMenu __instance)
         {
             float y = __instance.GetComponentsInChildren<OptionBehaviour>().Count > 0 ?
@@ -276,8 +276,8 @@ namespace AmongUsRevamped.Options
             __instance.GetComponentInParent<Scroller>().YBounds.max = (__instance.Children.Length - 7) * 0.5F + 0.13F;
         }
 
-        [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.SetRecommendations))]
         [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.SetRecommendations))]
         private static void GameOptionsDataSetRecommendations()
         {
             foreach (CustomOption option in Options)
@@ -286,8 +286,8 @@ namespace AmongUsRevamped.Options
             }
         }
 
-        [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.ToHudString))]
         [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.ToHudString))]
         private static void GameOptionsDataToHudString(ref string __result)
         {
             int firstNewline = __result.IndexOf('\n');
@@ -344,8 +344,8 @@ namespace AmongUsRevamped.Options
         /// <summary>
         /// Attach <see cref="LobbyGameOptionsKeyboardShim"/> to <see cref="LobbyBehaviour"/> to expand or collapse game options 
         /// </summary>
-        [HarmonyPatch(typeof(LobbyBehaviour), nameof(LobbyBehaviour.Start))]
         [HarmonyPostfix]
+        [HarmonyPatch(typeof(LobbyBehaviour), nameof(LobbyBehaviour.Start))]
         private static void LobbyBehaviourStartPatch (LobbyBehaviour __instance)
         {
             _ = __instance.gameObject.GetComponent<LobbyGameOptionsKeyboardShim>() ??

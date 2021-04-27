@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.IO;
 using System.Linq;
 using AmongUsRevamped.Colors;
 using AmongUsRevamped.Mod;
@@ -24,19 +25,25 @@ namespace AmongUsRevamped
 
         public static AmongUsRevamped Instance { get { return PluginSingleton<AmongUsRevamped>.Instance; } }
 
-        internal static ManualLogSource Logger { get { return Instance.Log; } }
+        internal static ManualLogSource Logger { get { return ((BasePlugin)Instance).Log; } }
 
         public Harmony Harmony { get; } = new Harmony(Id);
+
+        public string RevampedFolder => Path.Combine(Paths.PluginPath, AmongUsRevamped.Name);
 
         public override void Load()
         {
             PluginSingleton<AmongUsRevamped>.Instance = this;
 
-            Logger.LogInfo($"Loading {Name} {Version}...");
+            LogInfo($"Loading {Name} {Version}...");
+
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
 
             try
             {
-                Harmony.PatchAll();
+                if (!Directory.Exists(RevampedFolder)) Directory.CreateDirectory(RevampedFolder);
+
+                LoadPatches();
 
                 RegisterInIl2CppAttribute.Register();
                 RegisterCustomRpcAttribute.Register(this);
@@ -44,19 +51,27 @@ namespace AmongUsRevamped
                 ReactorVersionShower.TextUpdated += (text) =>
                 {
                     text.fontSize = 1.4f;
-                    string txt = text.text;
-                    int index = txt.IndexOf('\n');
-                    txt = txt.Insert(index == -1 ? txt.Length - 1 : index, $"\n{Name} {Version}");
-                    text.text = txt;
+                    text.text = text.text.Insert(0, $"\n{Name} {Version}\n");
                 };
-
                 HudPosition.Load();
                 PalettePatch.Load();
                 RevampedMod.Load();
             }
             catch (Exception ex)
             {
-                Logger.LogError($"An exception has occurred loading plugin: {ex}");
+                LogError($"An exception has occurred loading plugin:\r\n{ex}");
+            }
+        }
+
+        public void LoadPatches()
+        {
+            try
+            {
+                Harmony.PatchAll();
+            }
+            catch (Exception ex)
+            {
+                LogError($"An exception has occurred loading patches:\r\n{ex}");
             }
         }
 
@@ -66,9 +81,22 @@ namespace AmongUsRevamped
             return base.Unload();
         }
 
+        private static void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (e.ExceptionObject is Exception ex)
+            {
+                LogError($"Unhandled exception:\r\n{ex}");
+            }
+        }
+
+        public static new void Log(object message) => Logger.LogMessage(message?.ToString() ?? "");
+        public static void LogInfo(object message) => Logger.LogInfo(message?.ToString() ?? "");
+        public static void LogWarning(object message) => Logger.LogWarning(message?.ToString() ?? "");
+        public static void LogError(object message) => Logger.LogError(message?.ToString() ?? "");
+
         public static void Debug(string msg, object obj, int line, string caller, string path)
         {
-            Logger.LogMessage($"{DateTime.Now:yyyy/MM/dd HH:mm:ss} {path.Split('\\').Last()} {caller}:{line}{(string.IsNullOrEmpty(msg) ? "" : " " + msg)} {obj}");
+            Log($"{DateTime.Now:yyyy/MM/dd HH:mm:ss} {path.Split('\\').Last()} {caller}:{line}{(string.IsNullOrEmpty(msg) ? "" : " " + msg)} {obj}");
         }
     }
 }

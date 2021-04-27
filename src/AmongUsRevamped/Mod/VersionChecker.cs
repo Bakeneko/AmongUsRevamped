@@ -18,16 +18,16 @@ namespace AmongUsRevamped.Mod
         public static Dictionary<byte, Tuple<byte, byte, byte>> playerVersions = new();
         private static bool VersionSent = false;
 
-        [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Start))]
         [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Start))]
         public static void GameStartManagerStartPatch()
         {
             // Trigger version refresh
             VersionSent = false;
         }
 
-        [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
         [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
         public static void GameStartManagerUpdatePatch(GameStartManager __instance)
         {
             // Send version as soon as possible
@@ -78,8 +78,8 @@ namespace AmongUsRevamped.Mod
             }
         }
 
-        [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.BeginGame))]
         [HarmonyPrefix]
+        [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.BeginGame))]
         public static bool GameStartManagerBeginGamePatch()
         {
             bool canBegin = true;

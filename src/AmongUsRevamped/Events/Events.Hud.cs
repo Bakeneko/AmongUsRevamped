@@ -13,8 +13,8 @@ namespace AmongUsRevamped.Events
         public static event EventHandler<HudStateChangedEventArgs> HudStateChanged;
         public static event EventHandler<ResolutionChangedEventArgs> ResolutionChanged;
 
-        [HarmonyPatch(typeof(HudManager), nameof(HudManager.Start))]
         [HarmonyPostfix]
+        [HarmonyPatch(typeof(HudManager), nameof(HudManager.Start))]
         private static void HudManagerStart()
         {
             HudCreated?.SafeInvoke(HudManager.Instance, EventArgs.Empty, nameof(HudCreated));
@@ -23,9 +23,10 @@ namespace AmongUsRevamped.Events
         [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
         private static class HudManagerUpdate
         {
-            private static void Prefix()
+            private static bool Prefix()
             {
                 OnHudUpdate?.SafeInvoke(HudManager.Instance, EventArgs.Empty, nameof(OnHudUpdate));
+                return true;
             }
 
             private static void Postfix()
@@ -34,8 +35,8 @@ namespace AmongUsRevamped.Events
             }
         }
 
-        [HarmonyPatch(typeof(HudManager), nameof(HudManager.SetHudActive))]
         [HarmonyPostfix]
+        [HarmonyPatch(typeof(HudManager), nameof(HudManager.SetHudActive))]
         private static void HudManagerSetHudActive([HarmonyArgument(0)] bool isActive)
         {
             HudStateChanged?.SafeInvoke(HudManager.Instance, new HudStateChangedEventArgs(isActive), nameof(HudStateChanged));

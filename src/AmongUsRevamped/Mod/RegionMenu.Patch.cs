@@ -42,8 +42,8 @@ namespace AmongUsRevamped.Mod
             serverManager.AvailableRegions = regions;
         }
 
-        [HarmonyPatch(typeof(RegionMenu), nameof(RegionMenu.Open))]
         [HarmonyPostfix]
+        [HarmonyPatch(typeof(RegionMenu), nameof(RegionMenu.Open))]
         public static void RegionMenuOpenPatch(RegionMenu __instance)
         {
             var gameIdText = DestroyableSingleton<JoinGameButton>.Instance.GameIdText;
