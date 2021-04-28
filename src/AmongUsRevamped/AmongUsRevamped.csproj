@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Version>0.1.0</Version>
         <Description>A massive Among Us mod including a lot of improvements, settings and roles</Description>
@@ -10,7 +10,7 @@
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(GamePlatform)' == 'Steam'">
-        <GameVersion>2021.4.12s</GameVersion>
+        <GameVersion>2021.4.14s</GameVersion>
         <DefineConstants>$(DefineConstants);STEAM</DefineConstants>
     </PropertyGroup>
 
