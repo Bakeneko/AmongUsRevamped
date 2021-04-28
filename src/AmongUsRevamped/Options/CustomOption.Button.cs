@@ -47,7 +47,40 @@ namespace AmongUsRevamped.Options
         /// </summary>
         public virtual void Click()
         {
+            SetValue(!GetValue());
             ActionOnClick?.Invoke();
+        }
+
+        protected virtual void SetValue(bool newValue, bool raiseEvents)
+        {
+            base.SetValue(newValue, raiseEvents);
+        }
+
+        /// <summary>
+        /// Sets a new value
+        /// </summary>
+        /// <param name="newValue">The new value</param>
+        public virtual void SetValue(bool newValue)
+        {
+            SetValue(newValue, true);
+        }
+
+        /// <returns>The boolean-casted default value.</returns>
+        public virtual bool GetDefaultValue()
+        {
+            return GetDefaultValue<bool>();
+        }
+
+        /// <returns>The boolean-casted old value.</returns>
+        public virtual bool GetOldValue()
+        {
+            return GetOldValue<bool>();
+        }
+
+        /// <returns>The boolean-casted current value.</returns>
+        public virtual bool GetValue()
+        {
+            return GetValue<bool>();
         }
     }
 
