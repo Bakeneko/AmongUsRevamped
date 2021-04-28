@@ -15,7 +15,7 @@ namespace AmongUsRevamped.Mod
     [HarmonyPatch]
     public static class VersionChecker
     {
-        public static Dictionary<byte, Tuple<byte, byte, byte>> playerVersions = new();
+        public static Dictionary<int, Tuple<byte, byte, byte>> playerVersions = new();
         private static bool VersionSent = false;
 
         [HarmonyPostfix]
@@ -34,49 +34,53 @@ namespace AmongUsRevamped.Mod
             if (PlayerControl.LocalPlayer != null && !VersionSent)
             {
                 VersionSent = true;
-                Rpc.Instance.SendTo(AmongUsClient.Instance.HostId,
-                    new Tuple<byte, byte, byte>(AmongUsRevamped.Major, AmongUsRevamped.Minor, AmongUsRevamped.Patch));
+                playerVersions[AmongUsClient.Instance.ClientId] = new Tuple<byte, byte, byte>(AmongUsRevamped.Major, AmongUsRevamped.Minor, AmongUsRevamped.Patch);
+                Rpc.Instance.Send(new Rpc.VersionHandshake(AmongUsClient.Instance.ClientId, playerVersions[AmongUsClient.Instance.ClientId], true));
             }
 
-            // Host update infos with handshakes
-            if (AmongUsClient.Instance.AmHost)
+            // Retrieve host version
+            if (!playerVersions.TryGetValue(AmongUsClient.Instance.HostId, out Tuple<byte, byte, byte> hostVersion)) return;
+
+            // Update infos with handshakes
+            bool blockStart = false;
+            string message = "";
+            foreach (InnerNet.ClientData client in AmongUsClient.Instance.allClients.ToArray())
             {
-                bool blockStart = false;
-                string message = "";
-                foreach (InnerNet.ClientData client in AmongUsClient.Instance.allClients.ToArray())
+                // Skip dummies
+                if (client.Character == null) continue;
+                var dummyComponent = client.Character.GetComponent<DummyBehaviour>();
+                if (dummyComponent != null && dummyComponent.enabled) continue;
+                var player = client.Character.Data;
+                var prefix = PlayerControl.LocalPlayer.PlayerId == player.PlayerId ? "You have" : $"{player.PlayerName} has";
+
+                if (!playerVersions.TryGetValue(client.Id, out Tuple<byte, byte, byte> version))  // Block no mod
                 {
-                    // Skip dummies
-                    if (client.Character == null) continue;
-                    var dummyComponent = client.Character.GetComponent<DummyBehaviour>();
-                    if (dummyComponent != null && dummyComponent.enabled) continue;
-                    var player = client.Character.Data;
-
-                    if (!playerVersions.TryGetValue(player.PlayerId, out Tuple<byte, byte, byte> version))  // Block no mod
-                    {
-                        blockStart = true;
-                        message += Color.Error.ToColorTag($"{player.PlayerName} has no version of Revamped\n");
-                    }
-                    else if (version.Item1 != AmongUsRevamped.Major || version.Item2 != AmongUsRevamped.Minor || version.Item3 != AmongUsRevamped.Patch) // Block minor veersion difference
-                    {
-                        blockStart = true;
-                        message += Color.Error.ToColorTag($"{player.PlayerName} has a different version v{version.Item1}.{version.Item2}.{version.Item3} of Revamped\n");
-                    } else if (version.Item3 != AmongUsRevamped.Patch) { // Warn patch version difference
-                        message += Color.Warning.ToColorTag($"{player.PlayerName} has a different version v{version.Item1}.{version.Item2}.{version.Item3} of Revamped\n");
-                    }
+                    blockStart = true;
+                    message += Color.Error.ToColorTag($"{prefix} no version of Revamped\n");
                 }
+                else if (version.Item1 != hostVersion.Item1 || version.Item2 != hostVersion.Item2) // Block minor version difference
+                {
+                    blockStart = true;
+                    message += Color.Error.ToColorTag($"{prefix} a different version v{version.Item1}.{version.Item2}.{version.Item3} of Revamped\n");
+                } else if (version.Item3 != hostVersion.Item3) { // Warn patch version difference
+                    message += Color.Warning.ToColorTag($"{prefix} a different version v{version.Item1}.{version.Item2}.{version.Item3} of Revamped\n");
+                }
+            }
 
+            // Prevent start
+            if (AmongUsClient.Instance.AmHost)
                 __instance.StartButton.color = ((!blockStart && __instance.LastPlayerCount >= __instance.MinPlayers) ? Palette.EnabledColor : Palette.DisabledClear);
 
-                if (message.Length > 0)
-                {
-                    __instance.GameStartText.text = message;
-                    __instance.GameStartText.fontSize = 3.5f;
-                    __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 2;
-                }
-                else {
-                    __instance.GameStartText.fontSize = 5.0f;
-                    __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition;
-                }
+            // Display warnings
+            if (message.Length > 0)
+            {
+                __instance.GameStartText.text = message;
+                __instance.GameStartText.fontSize = 3.5f;
+                __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 2;
+            }
+            else {
+                __instance.GameStartText.fontSize = 5.0f;
+                __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition;
             }
         }
 
@@ -96,11 +100,11 @@ namespace AmongUsRevamped.Mod
                     var dummyComponent = client.Character.GetComponent<DummyBehaviour>();
                     if (dummyComponent != null && dummyComponent.enabled) continue;
 
-                    if (!playerVersions.TryGetValue(client.Character.Data.PlayerId, out Tuple<byte, byte, byte> version)) // Block no mod
+                    if (!playerVersions.TryGetValue(client.Id, out Tuple<byte, byte, byte> version)) // Block no mod
                     {
                         canBegin = false;
                     }
-                    else if (version.Item1 != AmongUsRevamped.Major || version.Item2 != AmongUsRevamped.Minor) // Block minor veersion difference
+                    else if (version.Item1 != AmongUsRevamped.Major || version.Item2 != AmongUsRevamped.Minor) // Block minor version difference
                     {
                         canBegin = false;
                     }
@@ -111,7 +115,7 @@ namespace AmongUsRevamped.Mod
         }
 
         [RegisterCustomRpc((uint)CustomRpcCalls.VersionCheck)]
-        private protected class Rpc : PlayerCustomRpc<BasePlugin, Tuple<byte, byte, byte>>
+        private protected class Rpc : PlayerCustomRpc<BasePlugin, Rpc.VersionHandshake>
         {
             public static Rpc Instance { get { return Rpc<Rpc>.Instance; } }
 
@@ -119,24 +123,53 @@ namespace AmongUsRevamped.Mod
             {
             }
 
+            public readonly struct VersionHandshake
+            {
+                public readonly int ClientId; 
+                public readonly Tuple<byte, byte, byte> Version;
+                public readonly bool Ping;
+
+                public VersionHandshake(int clientId, Tuple<byte, byte, byte> version, bool ping)
+                {
+                    ClientId = clientId;
+                    Version = version;
+                    Ping = ping;
+                }
+            }
+
             public override RpcLocalHandling LocalHandling => RpcLocalHandling.None;
-            public override void Write(MessageWriter writer, Tuple<byte, byte, byte> handshake)
+            public override void Write(MessageWriter writer, VersionHandshake handshake)
             {
-                writer.Write(handshake.Item1);
-                writer.Write(handshake.Item2);
-                writer.Write(handshake.Item3);
+                writer.WritePacked(handshake.ClientId);
+                writer.Write(handshake.Version.Item1);
+                writer.Write(handshake.Version.Item2);
+                writer.Write(handshake.Version.Item3);
+                writer.Write(handshake.Ping);
             }
 
-            public override Tuple<byte, byte, byte> Read(MessageReader reader)
+            public override VersionHandshake Read(MessageReader reader)
             {
-                return new Tuple<byte, byte, byte>(reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
+                return new VersionHandshake(
+                    reader.ReadPackedInt32(),
+                    new Tuple<byte, byte, byte>(reader.ReadByte(), reader.ReadByte(), reader.ReadByte()),
+                    reader.ReadBoolean());
             }
 
-            public override void Handle(PlayerControl sender, Tuple<byte, byte, byte> handshake)
+            public override void Handle(PlayerControl sender, VersionHandshake handshake)
             {
-                if (sender?.Data == null) return;
+                // Received a new version handshake, save it
+                if (!playerVersions.TryGetValue(handshake.ClientId, out Tuple<byte, byte, byte> version) || !handshake.Version.Equals(version))
+                {
+                    playerVersions[handshake.ClientId] = handshake.Version;
+                }
 
-                playerVersions[sender.Data.PlayerId] = handshake;
+                // Send version back
+                if (handshake.Ping)
+                {
+                    Instance.SendTo(handshake.ClientId, new Rpc.VersionHandshake(AmongUsClient.Instance.ClientId,
+                        new Tuple<byte, byte, byte>(AmongUsRevamped.Major, AmongUsRevamped.Minor, AmongUsRevamped.Patch),
+                        false));
+                }
             }
         }
     }
