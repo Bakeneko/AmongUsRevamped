@@ -1,4 +1,4 @@
-using HarmonyLib;
+﻿using HarmonyLib;
 using InnerNet;
 
 namespace AmongUsRevamped.Mod
@@ -6,6 +6,24 @@ namespace AmongUsRevamped.Mod
     [HarmonyPatch]
     public static class PlayerControlPatch
     {
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.FixedUpdate))]
+        public static class PlayerControlFixedUpdatePatch
+        {
+            public static void Postfix(PlayerControl __instance)
+            {
+                if (AmongUsClient.Instance.GameState != InnerNetClient.GameStates.Started) return;
+
+                if (PlayerControl.LocalPlayer != __instance) return;
+
+                foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                {
+                    // Only show other players info if we are a ghost
+                    if (player == PlayerControl.LocalPlayer || PlayerControl.LocalPlayer.Data.IsDead)
+                        PlayerInfo.UpdatePlayerTextInfo(player, true);
+                }
+            }
+        }
+
         /// <summary>
         /// Fix player ability to move during events
         /// </summary>
