@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnhollowerBaseLib;
+using Newtonsoft.Json;
 using Reactor.Extensions;
+using UnhollowerBaseLib;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -103,30 +104,21 @@ namespace AmongUsRevamped.Options
             }
 
             var issues = 0;
-            string content;
+            Dictionary<string, object> import;
             try
             {
-                var file = Path.Combine(Application.persistentDataPath, $"{PluginId}.Settings.Slot{slotId}");
-                content = File.ReadAllText(file);
+                var file = Path.Combine(AmongUsRevamped.RevampedFolder, $"Settings.Slot{slotId}.json");
+                import = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(file));
             }
             catch (Exception ex)
             {
-                AmongUsRevamped.LogWarning($"An exception has occurred reading settings: {ex}");
+                AmongUsRevamped.LogWarning($"An exception has occurred parsing settings: {ex}");
                 ImportEnd(FlashRed);
                 return;
             }
 
-            var lines = content.Split("\n").ToList();
-
-            while (lines.Count > 1)
+            foreach(string configId in import.Keys)
             {
-                var configId = lines[0].Trim();
-                lines.RemoveAt(0);
-                var value = lines[0].Trim();
-                lines.RemoveAt(0);
-
-                if (value == null) continue;
-
                 CustomOption option = Options.FirstOrDefault(o => o.ConfigId.Equals(configId, StringComparison.Ordinal));
 
                 if (option == null)
@@ -136,19 +128,21 @@ namespace AmongUsRevamped.Options
                     continue;
                 }
 
+                var value = import[configId];
+
                 try
                 {
                     if (option is CustomNumberOption number)
                     {
-                        number.SetValue(float.Parse(value));
+                        number.SetValue((float)value);
                     }
                     else if (option is CustomToggleOption toggle)
                     {
-                        toggle.SetValue(bool.Parse(value));
+                        toggle.SetValue((bool)value);
                     }
                     else if (option is CustomStringOption str)
                     {
-                        str.SetValue(int.Parse(value));
+                        str.SetValue((string)value);
                     }
                 }
                 catch (Exception ex)

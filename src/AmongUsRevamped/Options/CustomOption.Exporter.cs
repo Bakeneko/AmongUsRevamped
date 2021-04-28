@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Il2CppSystem.Text;
+using Newtonsoft.Json;
 using Reactor.Extensions;
 using UnhollowerBaseLib;
 using UnityEngine;
@@ -103,34 +103,30 @@ namespace AmongUsRevamped.Options
                 option.ActionOnClick = null;
             }
 
-            var sb = new StringBuilder();
-
+            var export = new Dictionary<string, object>();
             foreach(var option in Options)
             {
                 if (!option.Persist) continue;
 
                 if (option is CustomNumberOption number)
                 {
-                    sb.AppendLine(number.ConfigId);
-                    sb.AppendLine(number.GetValue().ToString());
+                    export.Add(number.ConfigId, number.GetValue());
                 }
                 else if (option is CustomToggleOption toggle)
                 {
-                    sb.AppendLine(toggle.ConfigId);
-                    sb.AppendLine(toggle.GetValue().ToString());
+                    export.Add(toggle.ConfigId, toggle.GetValue());
                 }
                 else if (option is CustomStringOption str)
                 {
-                    sb.AppendLine(str.ConfigId);
-                    sb.AppendLine(str.GetValue().ToString());
+                    export.Add(str.ConfigId, str.GetValue());
                 }
             }
 
-            var tmp = Path.Combine(Application.persistentDataPath, $"{PluginId}.Settings.Slot{slotId}.tmp");
+            var tmp = Path.Combine(AmongUsRevamped.RevampedFolder, $"Settings.Slot{slotId}.json.tmp");
             try
             {
-                File.WriteAllText(tmp, sb.ToString());
-                var file = Path.Combine(Application.persistentDataPath, $"{PluginId}.Settings.Slot{slotId}");
+                File.WriteAllText(tmp, JsonConvert.SerializeObject(export, Formatting.Indented));
+                var file = Path.Combine(AmongUsRevamped.RevampedFolder, $"Settings.Slot{slotId}.json");
                 File.Delete(file);
                 File.Move(tmp, file);
                 ExportEnd(FlashGreen);
