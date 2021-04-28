@@ -51,28 +51,30 @@ namespace AmongUsRevamped.Mod
                     if (dummyComponent != null && dummyComponent.enabled) continue;
                     var player = client.Character.Data;
 
-                    if (!playerVersions.TryGetValue(player.PlayerId, out Tuple<byte, byte, byte> version))
+                    if (!playerVersions.TryGetValue(player.PlayerId, out Tuple<byte, byte, byte> version))  // Block no mod
                     {
                         blockStart = true;
                         message += Color.Error.ToColorTag($"{player.PlayerName} has no version of Revamped\n");
                     }
-                    else if (version.Item1 != AmongUsRevamped.Major || version.Item2 != AmongUsRevamped.Minor || version.Item3 != AmongUsRevamped.Patch)
+                    else if (version.Item1 != AmongUsRevamped.Major || version.Item2 != AmongUsRevamped.Minor || version.Item3 != AmongUsRevamped.Patch) // Block minor veersion difference
                     {
                         blockStart = true;
                         message += Color.Error.ToColorTag($"{player.PlayerName} has a different version v{version.Item1}.{version.Item2}.{version.Item3} of Revamped\n");
+                    } else if (version.Item3 != AmongUsRevamped.Patch) { // Warn patch version difference
+                        message += Color.Warning.ToColorTag($"{player.PlayerName} has a different version v{version.Item1}.{version.Item2}.{version.Item3} of Revamped\n");
                     }
                 }
-                if (blockStart)
+
+                __instance.StartButton.color = ((!blockStart && __instance.LastPlayerCount >= __instance.MinPlayers) ? Palette.EnabledColor : Palette.DisabledClear);
+
+                if (message.Length > 0)
                 {
-                    __instance.StartButton.color = Palette.DisabledClear;
                     __instance.GameStartText.text = message;
                     __instance.GameStartText.fontSize = 3.5f;
                     __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 2;
                 }
-                else
-                {
+                else {
                     __instance.GameStartText.fontSize = 5.0f;
-                    __instance.StartButton.color = ((__instance.LastPlayerCount >= __instance.MinPlayers) ? Palette.EnabledColor : Palette.DisabledClear);
                     __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition;
                 }
             }
@@ -94,11 +96,11 @@ namespace AmongUsRevamped.Mod
                     var dummyComponent = client.Character.GetComponent<DummyBehaviour>();
                     if (dummyComponent != null && dummyComponent.enabled) continue;
 
-                    if (!playerVersions.TryGetValue(client.Character.Data.PlayerId, out Tuple<byte, byte, byte> version))
+                    if (!playerVersions.TryGetValue(client.Character.Data.PlayerId, out Tuple<byte, byte, byte> version)) // Block no mod
                     {
                         canBegin = false;
                     }
-                    else if (version.Item1 != AmongUsRevamped.Major || version.Item2 != AmongUsRevamped.Minor || version.Item3 != AmongUsRevamped.Patch)
+                    else if (version.Item1 != AmongUsRevamped.Major || version.Item2 != AmongUsRevamped.Minor) // Block minor veersion difference
                     {
                         canBegin = false;
                     }
