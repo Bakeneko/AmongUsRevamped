@@ -14,6 +14,21 @@ namespace AmongUsRevamped.Mod
             return GameData.Instance.AllPlayers.ToArray().FirstOrDefault(pi => pi.PlayerId == id);
         }
 
+        public static void UpdatePlayerTextInfos()
+        {
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+            {
+                if (player == PlayerControl.LocalPlayer)
+                {
+                    UpdatePlayerTextInfo(player, Options.Values.DisplayTasks);
+                }
+                else if (PlayerControl.LocalPlayer.Data.IsDead)
+                {
+                    UpdatePlayerTextInfo(player, Options.Values.GhostsSeeTasks);
+                }
+            }
+        }
+
         public static void UpdatePlayerTextInfo(PlayerControl player, bool showTasks)
         {
             // Retrieve or instantiate player text

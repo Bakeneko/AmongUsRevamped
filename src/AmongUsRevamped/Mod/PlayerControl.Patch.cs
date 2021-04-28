@@ -15,12 +15,7 @@ namespace AmongUsRevamped.Mod
 
                 if (PlayerControl.LocalPlayer != __instance) return;
 
-                foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-                {
-                    // Only show other players info if we are a ghost
-                    if (player == PlayerControl.LocalPlayer || PlayerControl.LocalPlayer.Data.IsDead)
-                        PlayerInfo.UpdatePlayerTextInfo(player, true);
-                }
+                PlayerInfo.UpdatePlayerTextInfos();
             }
         }
 
