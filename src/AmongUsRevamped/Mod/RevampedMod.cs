@@ -8,6 +8,12 @@ namespace AmongUsRevamped.Mod
         {
             Options.Load();
             RegionMenuPatch.LoadRegions();
+
+            Options.TestMode.ValueChanged += (_, e) =>
+            {
+                if ((bool)e.NewValue) TestMode.Load();
+                else TestMode.Unload();
+            };
         }
     }
 }
