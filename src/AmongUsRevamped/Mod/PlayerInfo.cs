@@ -31,8 +31,10 @@ namespace AmongUsRevamped.Mod
 
         public static void UpdatePlayerTextInfo(PlayerControl player, bool showTasks)
         {
+            if (player == null) return;
+
             // Retrieve or instantiate player text
-            Transform playerInfoTransform = player.transform.FindChild("PlayerInfo");
+            Transform playerInfoTransform = player.transform?.FindChild("PlayerInfo");
             TMPro.TextMeshPro playerInfo = playerInfoTransform?.GetComponent<TMPro.TextMeshPro>();
             if (playerInfo == null)
             {
@@ -41,10 +43,9 @@ namespace AmongUsRevamped.Mod
                 playerInfo.fontSize *= 0.75f;
                 playerInfo.gameObject.name = "PlayerInfo";
             }
-
             // Retrieve or instantiate player meeting text
             PlayerVoteArea playerVoteArea = MeetingHud.Instance?.playerStates?.FirstOrDefault(x => x.TargetPlayerId == player.PlayerId);
-            Transform meetingInfoTransform = playerVoteArea?.transform.FindChild("PlayerInfo");
+            Transform meetingInfoTransform = playerVoteArea != default ? playerVoteArea.transform?.FindChild("PlayerInfo") : null;
             TMPro.TextMeshPro meetingInfo = meetingInfoTransform?.GetComponent<TMPro.TextMeshPro>();
             if (meetingInfo == null && playerVoteArea != null)
             {
