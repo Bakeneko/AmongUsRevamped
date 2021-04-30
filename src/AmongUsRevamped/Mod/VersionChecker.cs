@@ -51,8 +51,8 @@ namespace AmongUsRevamped.Mod
                 var dummyComponent = client.Character.GetComponent<DummyBehaviour>();
                 if (dummyComponent != null && dummyComponent.enabled) continue;
                 var player = client.Character.Data;
-                var prefix = PlayerControl.LocalPlayer.PlayerId == player.PlayerId ? "You have" : $"{player.PlayerName} has";
-
+                var prefix = PlayerControl.LocalPlayer.PlayerId == player.PlayerId ? "You have" : $"{player?.PlayerName ?? player.PlayerId.ToString()} has";
+                
                 if (!playerVersions.TryGetValue(client.Id, out Tuple<byte, byte, byte> version))  // Block no mod
                 {
                     blockStart = true;
@@ -71,10 +71,11 @@ namespace AmongUsRevamped.Mod
             if (AmongUsClient.Instance.AmHost)
                 __instance.StartButton.color = ((!blockStart && __instance.LastPlayerCount >= __instance.MinPlayers) ? Palette.EnabledColor : Palette.DisabledClear);
 
+            __instance.GameStartText.text = message;
+
             // Display warnings
             if (message.Length > 0)
             {
-                __instance.GameStartText.text = message;
                 __instance.GameStartText.fontSize = 3.5f;
                 __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 2;
             }
