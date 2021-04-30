@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AmongUsRevamped.Colors;
 using Newtonsoft.Json;
 using Reactor.Extensions;
 using UnhollowerBaseLib;
@@ -104,7 +105,7 @@ namespace AmongUsRevamped.Options
             }
 
             var export = new Dictionary<string, object>();
-            foreach(var option in Options)
+            foreach (var option in Options)
             {
                 if (!option.Persist) continue;
 
@@ -174,7 +175,7 @@ namespace AmongUsRevamped.Options
 
         private IEnumerator FlashGreen()
         {
-            GameObject.Cast<ToggleOption>().TitleText.color = Color.green;
+            GameObject.Cast<ToggleOption>().TitleText.color = ColorPalette.Color.Success;
             yield return new WaitForSeconds(0.5f);
             GameObject.Cast<ToggleOption>().TitleText.color = Color.white;
             yield return null;
@@ -182,7 +183,7 @@ namespace AmongUsRevamped.Options
 
         private IEnumerator FlashRed()
         {
-            GameObject.Cast<ToggleOption>().TitleText.color = Color.red;
+            GameObject.Cast<ToggleOption>().TitleText.color = ColorPalette.Color.Error;
             yield return new WaitForSeconds(0.5f);
             GameObject.Cast<ToggleOption>().TitleText.color = Color.white;
             yield return null;

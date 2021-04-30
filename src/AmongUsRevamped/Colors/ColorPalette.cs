@@ -121,6 +121,7 @@ namespace AmongUsRevamped.Colors
 
             public static Color32 SettingGreen = new(0, 255, 42, 255);
 
+            public static Color32 Success = new(0, 255, 0, 255);
             public static Color32 Warning = new(255, 255, 0, 255);
             public static Color32 Error = new(255, 0, 0, 255);
 
