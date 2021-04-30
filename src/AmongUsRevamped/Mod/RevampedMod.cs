@@ -14,6 +14,7 @@ namespace AmongUsRevamped.Mod
                 if ((bool)e.NewValue) TestMode.Load();
                 else TestMode.Unload();
             };
+            if (Options.TestMode.GetValue()) TestMode.Load();
         }
     }
 }

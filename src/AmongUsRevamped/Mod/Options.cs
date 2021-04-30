@@ -20,7 +20,7 @@ namespace AmongUsRevamped.Mod
 
             // Custom Game Settings
             CustomGameSettings = new CustomHeaderOption("customGameSettings", Color.Revamped.ToColorTag("Custom Game Settings"));
-            TestMode = new CustomToggleOption("testMode", "Test mode", false, false, true);
+            TestMode = new CustomToggleOption("testMode", "Test mode", true, false, true);
             DisplayTasks = new CustomToggleOption("displayTasks", "Display remaining tasks", true, true, true);
             GhostsSeeTasks = new CustomToggleOption("ghostsSeeTasks", "Ghosts see remaining tasks", true, true, true);
             List<CustomOption> customGameSettingsBag = new(){ TestMode, DisplayTasks, GhostsSeeTasks };
