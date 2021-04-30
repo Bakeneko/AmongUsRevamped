@@ -74,11 +74,12 @@ namespace AmongUsRevamped.Mod
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
-        private static void GameStartManagerUpdatePatch(GameStartManager __instance)
+        private static bool GameStartManagerUpdatePatch(GameStartManager __instance)
         {
-            if (!Options.Values.TestMode) return;
+            if (!Options.Values.TestMode) return true;
             __instance.MinPlayers = 1;
             __instance.countDownTimer = 0;
+            return true;
         }
 
         [HarmonyPostfix]
