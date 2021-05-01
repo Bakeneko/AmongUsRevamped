@@ -11,7 +11,7 @@ namespace AmongUsRevamped.Utils
                 (byte)Mathf.Clamp(Mathf.RoundToInt(color.r * 255), 0, 255),
                 (byte)Mathf.Clamp(Mathf.RoundToInt(color.g * 255), 0, 255),
                 (byte)Mathf.Clamp(Mathf.RoundToInt(color.b * 255), 0, 255),
-                1);
+                255);
         }
 
         public static string ToHtmlStringRGB(Color color)
