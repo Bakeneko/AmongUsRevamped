@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using AmongUsRevamped.Colors;
 using AmongUsRevamped.Extensions;
@@ -36,10 +36,12 @@ namespace AmongUsRevamped.Mod.Roles
                 defaultButton.renderer.enabled = false;
                 defaultButton.isActive = false;
                 defaultButton.enabled = false;
-                KillButton = new CooldownButton((Sprite)null, new HudPosition(GameButton.ButtonSize, 0f, HudAlignment.BottomRight), PlayerControl.GameOptions.KillCooldown, 0f, 10f);
-                KillButton.HotKey = KeyCode.Q;
-                KillButton.Clickable = false;
-                KillButton.Visible = true;
+                KillButton = new CooldownButton((Sprite)null, new HudPosition(GameButton.ButtonSize, 0f, HudAlignment.BottomRight), PlayerControl.GameOptions.KillCooldown, 0f, 10f)
+                {
+                    HotKey = KeyCode.Q,
+                    Clickable = false,
+                    Visible = true
+                };
                 KillButton.Clicked += OnKillButtonClicked;
                 KillButton.ApplyCooldown(KillButton.InitialCooldownDuration);
             }

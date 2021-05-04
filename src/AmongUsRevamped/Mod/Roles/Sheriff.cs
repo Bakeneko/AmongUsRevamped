@@ -27,10 +27,12 @@ namespace AmongUsRevamped.Mod.Roles
             CurrentTarget = null;
             if (Player.IsCurrentPlayer)
             {
-                KillButton = new CooldownButton((Sprite)null, new HudPosition(GameButton.ButtonSize, 0f, HudAlignment.BottomRight), Options.Values.SheriffKillCooldown, 0f, 10f);
-                KillButton.HotKey = KeyCode.Q;
-                KillButton.Clickable = false;
-                KillButton.Visible = true;
+                KillButton = new CooldownButton((Sprite)null, new HudPosition(GameButton.ButtonSize, 0f, HudAlignment.BottomRight), Options.Values.SheriffKillCooldown, 0f, 10f)
+                {
+                    HotKey = KeyCode.Q,
+                    Clickable = false,
+                    Visible = true
+                };
                 KillButton.Clicked += OnKillButtonClicked;
                 KillButton.ApplyCooldown(KillButton.InitialCooldownDuration);
             }
