@@ -23,6 +23,7 @@ namespace AmongUsRevamped.Mod
         public static CustomHeaderOption ModifiersSettings;
         public static CustomNumberOption MaxModifiers;
         public static CustomNumberOption FlashSpawnRate;
+        public static CustomNumberOption DrunkSpawnRate;
 
         public static void Load()
         {
@@ -48,6 +49,7 @@ namespace AmongUsRevamped.Mod
             RolesSettings = new CustomHeaderOption("modifiersSettings", "Modifiers Settings");
             MaxModifiers = new CustomNumberOption("maxModifiers", "Max modifiers", true, 0f, 0f, 10f, 1f, true);
             FlashSpawnRate = new CustomNumberOption("flashSpawnRate", $"{Color.ModifierFlash.ToColorTag("Flash")} spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
+            DrunkSpawnRate = new CustomNumberOption("drunkSpawnRate", $"{Color.ModifierDrunk.ToColorTag("Drunk")} spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
         }
 
         public static class Values
@@ -65,6 +67,7 @@ namespace AmongUsRevamped.Mod
 
             public static int MaxModifiers => (int)Options.MaxModifiers.GetValue();
             public static float FlashSpawnRate => Options.FlashSpawnRate.GetValue();
+            public static float DrunkSpawnRate => Options.DrunkSpawnRate.GetValue();
         }
     }
 }

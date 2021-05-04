@@ -133,6 +133,7 @@ namespace AmongUsRevamped.Colors
             public static Color32 RoleImpostor = new(255, 25, 25, 255);
 
             public static Color32 ModifierFlash = new(255, 56, 56, 255);
+            public static Color32 ModifierDrunk = new(117, 127, 0, 255);
         }
     }
 }

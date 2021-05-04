@@ -171,6 +171,7 @@ namespace AmongUsRevamped.Mod
             int maxModifiers = Mathf.Min(players.Count, Options.Values.MaxModifiers);
             generator = new DistributedRandomNumberGenerator<byte>();
             if (Options.Values.FlashSpawnRate > 0) generator.AddNumber((byte)ModifierType.Flash, Options.Values.FlashSpawnRate);
+            if (Options.Values.DrunkSpawnRate > 0) generator.AddNumber((byte)ModifierType.Drunk, Options.Values.DrunkSpawnRate);
 
             for (int i = 0; i < maxModifiers; i++)
             {
@@ -235,6 +236,9 @@ namespace AmongUsRevamped.Mod
             {
                 case ModifierType.Flash:
                     new Flash(player);
+                    break;
+                case ModifierType.Drunk:
+                    new Drunk(player);
                     break;
                 default:
                     AmongUsRevamped.LogWarning($"Player {player} was assigned unhandled modifier {type}");

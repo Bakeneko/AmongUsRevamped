@@ -148,5 +148,6 @@ namespace AmongUsRevamped.Mod.Modifiers
         // Default
         None,
         Flash,
+        Drunk,
     }
 }
