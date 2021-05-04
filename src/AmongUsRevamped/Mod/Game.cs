@@ -45,20 +45,24 @@ namespace AmongUsRevamped.Mod
             SwitchSystem switchSystem = systemType?.TryCast<SwitchSystem>();
             if (switchSystem == null) return true;
 
+            float visionRange = player.VisionRange;
+            if (visionRange <= 0) _ = PlayerControl.GameOptions.CrewLightMod;
+
             float light = switchSystem.Value / 255f;
 
             if (player == null || player.IsDead) // Ghost
             {
-                radius = shipStatus.MaxLightRadius;
+                visionRange = 1f;
+                light = 1f;
             }
-            else if (player.IsImpostor) // Impostor
+            else if (player.HasNightVision) // Role or modifier with night vision
             {
-                radius = shipStatus.MaxLightRadius * PlayerControl.GameOptions.ImpostorLightMod;
+                light = 1f;
             }
-            else // Crew
-            {
-                radius = Mathf.Lerp(shipStatus.MinLightRadius, shipStatus.MaxLightRadius, light) * PlayerControl.GameOptions.CrewLightMod;
-            }
+
+            radius = Mathf.Lerp(shipStatus.MinLightRadius, shipStatus.MaxLightRadius, light) * visionRange;
+
+            AmongUsRevamped.Log($"player {player} radius : {radius} light {light} visionRange {visionRange} hasNightVision {player.HasNightVision}");
 
             return false;
         }
@@ -170,8 +174,9 @@ namespace AmongUsRevamped.Mod
 
             int maxModifiers = Mathf.Min(players.Count, Options.Values.MaxModifiers);
             generator = new DistributedRandomNumberGenerator<byte>();
-            if (Options.Values.FlashSpawnRate > 0) generator.AddNumber((byte)ModifierType.Flash, Options.Values.FlashSpawnRate);
             if (Options.Values.DrunkSpawnRate > 0) generator.AddNumber((byte)ModifierType.Drunk, Options.Values.DrunkSpawnRate);
+            if (Options.Values.FlashSpawnRate > 0) generator.AddNumber((byte)ModifierType.Flash, Options.Values.FlashSpawnRate);
+            if (Options.Values.TorchSpawnRate > 0) generator.AddNumber((byte)ModifierType.Torch, Options.Values.TorchSpawnRate);
 
             for (int i = 0; i < maxModifiers; i++)
             {
@@ -234,11 +239,14 @@ namespace AmongUsRevamped.Mod
         {
             switch (type)
             {
+                case ModifierType.Drunk:
+                    new Drunk(player);
+                    break;
                 case ModifierType.Flash:
                     new Flash(player);
                     break;
-                case ModifierType.Drunk:
-                    new Drunk(player);
+                case ModifierType.Torch:
+                    new Torch(player);
                     break;
                 default:
                     AmongUsRevamped.LogWarning($"Player {player} was assigned unhandled modifier {type}");

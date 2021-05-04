@@ -22,8 +22,9 @@ namespace AmongUsRevamped.Mod
 
         public static CustomHeaderOption ModifiersSettings;
         public static CustomNumberOption MaxModifiers;
-        public static CustomNumberOption FlashSpawnRate;
         public static CustomNumberOption DrunkSpawnRate;
+        public static CustomNumberOption FlashSpawnRate;
+        public static CustomNumberOption TorchSpawnRate;
 
         public static void Load()
         {
@@ -48,8 +49,9 @@ namespace AmongUsRevamped.Mod
 
             RolesSettings = new CustomHeaderOption("modifiersSettings", "Modifiers Settings");
             MaxModifiers = new CustomNumberOption("maxModifiers", "Max modifiers", true, 0f, 0f, 10f, 1f, true);
-            FlashSpawnRate = new CustomNumberOption("flashSpawnRate", $"{Color.ModifierFlash.ToColorTag("Flash")} spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
             DrunkSpawnRate = new CustomNumberOption("drunkSpawnRate", $"{Color.ModifierDrunk.ToColorTag("Drunk")} spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
+            FlashSpawnRate = new CustomNumberOption("flashSpawnRate", $"{Color.ModifierFlash.ToColorTag("Flash")} spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
+            TorchSpawnRate = new CustomNumberOption("torchSpawnRate", $"{Color.ModifierTorch.ToColorTag("Torch")} spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
         }
 
         public static class Values
@@ -66,8 +68,9 @@ namespace AmongUsRevamped.Mod
             public static float SheriffKillCooldown => Options.SheriffKillCooldown.GetValue();
 
             public static int MaxModifiers => (int)Options.MaxModifiers.GetValue();
-            public static float FlashSpawnRate => Options.FlashSpawnRate.GetValue();
             public static float DrunkSpawnRate => Options.DrunkSpawnRate.GetValue();
+            public static float FlashSpawnRate => Options.FlashSpawnRate.GetValue();
+            public static float TorchSpawnRate => Options.TorchSpawnRate.GetValue();
         }
     }
 }

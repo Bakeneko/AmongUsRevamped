@@ -30,6 +30,9 @@ namespace AmongUsRevamped.Mod.Roles
         protected internal Faction Faction { get; set; } = Faction.Crewmates;
         protected internal float MoveSpeed { get; set; } = 1f;
 
+        protected internal float VisionRange { get; set; } = PlayerControl.GameOptions.CrewLightMod;
+        protected internal bool HasNightVision { get; set; } = false;
+
         protected internal Func<string> IntroDescription;
         protected internal Func<string> TaskDescription;
         protected internal Func<string> ExileDescription;

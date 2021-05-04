@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using AmongUsRevamped.Colors;
 using AmongUsRevamped.Extensions;
@@ -18,6 +18,8 @@ namespace AmongUsRevamped.Mod.Roles
             Faction = Faction.Impostors;
             RoleType = RoleType.Impostor;
             Color = ColorPalette.Color.RoleImpostor;
+            VisionRange = PlayerControl.GameOptions.ImpostorLightMod;
+            HasNightVision = true;
             IntroDescription = () => "Sabotage and kill everyone";
             TaskDescription = () => Color.ToColorTag($"{Name}: Sabotage and kill everyone");
             ExileDescription = () => $"{Player.Name} was an {Name}";

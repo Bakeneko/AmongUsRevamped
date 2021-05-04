@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AmongUsRevamped.Extensions;
@@ -28,6 +28,8 @@ namespace AmongUsRevamped.Mod.Modifiers
         protected internal ModifierType ModifierType { get; set; }
         protected internal Player Player { get; set; }
         protected internal float MoveSpeed { get; set; } = 1f;
+        protected internal float VisionRangeModifier { get; set; } = 1f;
+        protected internal bool HasNightVision { get; set; } = false;
 
         protected internal Func<string> IntroDescription;
         protected internal Func<string> TaskDescription;
@@ -147,7 +149,8 @@ namespace AmongUsRevamped.Mod.Modifiers
     {
         // Default
         None,
-        Flash,
         Drunk,
+        Flash,
+        Torch,
     }
 }
