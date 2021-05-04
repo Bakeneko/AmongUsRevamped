@@ -27,6 +27,8 @@ namespace AmongUsRevamped
 
         internal static ManualLogSource Logger { get { return ((BasePlugin)Instance).Log; } }
 
+        public static Random Rand { get; } = new((int)DateTime.Now.Ticks);
+
         public static string RevampedFolder => Path.Combine(Paths.PluginPath, Name);
 
         public Harmony Harmony { get; } = new Harmony(Id);

@@ -3,6 +3,11 @@
     public enum CustomRpcCalls : uint
     {
         SettingsSync,
-        VersionCheck
+        VersionCheck,
+
+        RoleAssignation,
+        ModifierAssignation,
+
+        Murder,
     }
 }

@@ -23,6 +23,8 @@ namespace AmongUsRevamped.Mod
         private static int[] DefaultRecommendedImpostorsValues;
         private static int[] MDefaultaxImpostorsValues;
 
+        public static bool DisableGameEnd => Options.Values.TestMode && (Component?.DisableGameEnd ?? false);
+
         public static void Load()
         {
             Component?.Destroy();
@@ -97,7 +99,7 @@ namespace AmongUsRevamped.Mod
         [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.CheckEndCriteria))]
         private static bool ShipStatusCheckEndCriteriaPatch()
         {
-            return !Options.Values.TestMode;
+            return !DisableGameEnd;
         }   
     }
 
@@ -107,14 +109,21 @@ namespace AmongUsRevamped.Mod
         [HideFromIl2Cpp]
         public DragWindow TestWindow { get; }
 
+        [HideFromIl2Cpp]
+        public bool DisableGameEnd { get; set; }
+
         public TestModeComponent(IntPtr ptr) : base(ptr)
         {
-            TestWindow = new DragWindow(new Rect(20, 200, 0, 0), "Test Mode", () =>
+            TestWindow = new DragWindow(new Rect(0, Screen.height * 0.5f, 100, 100), "Test Mode", () =>
             {
+                GUILayout.Label($"Name: {PlayerControl.LocalPlayer?.Data?.PlayerName ?? SaveManager.PlayerName}", new Il2CppReferenceArray<GUILayoutOption>(0));
+
+                DisableGameEnd = GUILayout.Toggle(DisableGameEnd, "Disable game end", new Il2CppReferenceArray<GUILayoutOption>(0));
+
                 GUILayout.Label($"Name: {PlayerControl.LocalPlayer?.Data?.PlayerName ?? SaveManager.PlayerName}",
                     new Il2CppReferenceArray<GUILayoutOption>(0));
 
-                if (GUILayout.Button("Spawn a dummy", new Il2CppReferenceArray<GUILayoutOption>(0)))
+                if ((LobbyBehaviour.Instance || ShipStatus.Instance) && GUILayout.Button("Spawn a dummy", new Il2CppReferenceArray<GUILayoutOption>(0)))
                 {
                     SpawnDummy();
                 }
@@ -132,7 +141,7 @@ namespace AmongUsRevamped.Mod
                 }
             })
             {
-                Enabled = false
+                Enabled = Options.Values.TestMode
             };
         }
 
@@ -159,12 +168,19 @@ namespace AmongUsRevamped.Mod
             ShipStatus.RpcEndGame(GameOverReason.ImpostorDisconnect, false);
         }
 
-        private void Update()
+        protected void Update()
         {
-            TestWindow.Enabled = Options.Values.TestMode;
+            if (!Options.Values.TestMode)
+            {
+                TestWindow.Enabled = false;
+            }
+            else if (Input.GetKeyDown(KeyCode.F1))
+            {
+                TestWindow.Enabled = !TestWindow.Enabled;
+            }
         }
 
-        private void OnGUI()
+        protected void OnGUI()
         {
             TestWindow.OnGUI();
         }

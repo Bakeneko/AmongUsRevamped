@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using AmongUsRevamped.Extensions;
+﻿using AmongUsRevamped.Extensions;
 using AmongUsRevamped.Options;
 using Color = AmongUsRevamped.Colors.ColorPalette.Color;
 
@@ -10,7 +9,20 @@ namespace AmongUsRevamped.Mod
         public static CustomHeaderOption CustomGameSettings;
         public static CustomToggleOption TestMode;
         public static CustomToggleOption DisplayTasks;
+        public static CustomToggleOption GhostsSeeRoles;
         public static CustomToggleOption GhostsSeeTasks;
+
+        public static CustomHeaderOption RolesSettings;
+        public static CustomNumberOption MaxCrewmateRoles;
+        public static CustomNumberOption MaxImpostorRoles;
+
+        public static CustomHeaderOption SheriffSettings;
+        public static CustomNumberOption SheriffSpawnRate;
+        public static CustomNumberOption SheriffKillCooldown;
+
+        public static CustomHeaderOption ModifiersSettings;
+        public static CustomNumberOption MaxModifiers;
+        public static CustomNumberOption FlashSpawnRate;
 
         public static void Load()
         {
@@ -22,25 +34,37 @@ namespace AmongUsRevamped.Mod
             CustomGameSettings = new CustomHeaderOption("customGameSettings", Color.Revamped.ToColorTag("Custom Game Settings"));
             TestMode = new CustomToggleOption("testMode", "Test mode", true, false, true);
             DisplayTasks = new CustomToggleOption("displayTasks", "Display remaining tasks", true, true, true);
+            GhostsSeeRoles = new CustomToggleOption("ghostsSeeRoles", "Ghosts see roles", true, true, true);
             GhostsSeeTasks = new CustomToggleOption("ghostsSeeTasks", "Ghosts see remaining tasks", true, true, true);
-            List<CustomOption> customGameSettingsBag = new(){ TestMode, DisplayTasks, GhostsSeeTasks };
-            CustomGameSettings.OnValueChanged += (sender, e) => ExpandOptions(customGameSettingsBag, (bool)e.NewValue);
-            ExpandOptions(customGameSettingsBag, false);
-        }
 
-        private static void ExpandOptions(List<CustomOption> options, bool expand = true)
-        {
-            foreach(CustomOption opt in options)
-            {
-                opt.MenuVisible = expand;
-            }
+            RolesSettings = new CustomHeaderOption("rolesSettings", "Roles Settings");
+            MaxCrewmateRoles = new CustomNumberOption("maxCrewmateRoles", "Max crewmate roles", true, 0f, 0f, 9f, 1f, true);
+            MaxImpostorRoles = new CustomNumberOption("maxImpostorRoles", "Max impostor roles", true, 0f, 0f, 3f, 1f, true);
+
+            SheriffSettings = new CustomHeaderOption("sheriffSettings", Color.RoleSheriff.ToColorTag("Sheriff"));
+            SheriffSpawnRate = new CustomNumberOption("sheriffSpawnRate", "Spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
+            SheriffKillCooldown = new CustomNumberOption("sheriffKillCooldown", "Kill cooldown", true, 30f, 10f, 60f, 2.5f, true, CustomNumberOption.SecondsStringFormat);
+
+            RolesSettings = new CustomHeaderOption("modifiersSettings", "Modifiers Settings");
+            MaxModifiers = new CustomNumberOption("maxModifiers", "Max modifiers", true, 0f, 0f, 10f, 1f, true);
+            FlashSpawnRate = new CustomNumberOption("flashSpawnRate", $"{Color.ModifierFlash.ToColorTag("Flash")} spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
         }
 
         public static class Values
         {
             public static bool TestMode => Options.TestMode.GetValue();
             public static bool DisplayTasks => Options.DisplayTasks.GetValue();
+            public static bool GhostsSeeRoles => Options.GhostsSeeRoles.GetValue();
             public static bool GhostsSeeTasks => Options.GhostsSeeTasks.GetValue();
+
+            public static int MaxCrewmateRoles => (int)Options.MaxCrewmateRoles.GetValue();
+            public static int MaxImpostorRoles => (int)Options.MaxImpostorRoles.GetValue();
+
+            public static float SheriffSpawnRate => Options.SheriffSpawnRate.GetValue();
+            public static float SheriffKillCooldown => Options.SheriffKillCooldown.GetValue();
+
+            public static int MaxModifiers => (int)Options.MaxModifiers.GetValue();
+            public static float FlashSpawnRate => Options.FlashSpawnRate.GetValue();
         }
     }
 }
