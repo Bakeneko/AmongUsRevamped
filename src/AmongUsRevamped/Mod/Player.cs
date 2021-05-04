@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using AmongUsRevamped.Colors;
@@ -40,7 +40,7 @@ namespace AmongUsRevamped.Mod
         public bool IsVisible => Control.Visible;
         public bool CanMove => Control.CanMove;
 
-        public float MoveSpeed => IsDead ? 1f : (Role?.MoveSpeed ?? 1f) * (Modifier?.MoveSpeed ?? 1f);
+        public float MoveSpeed => IsDead ? 1f : (Role?.MoveSpeed ?? 1f) * (Modifier?.MoveSpeedModifier ?? 1f);
         public float VisionRange => (Role?.VisionRange ?? PlayerControl.GameOptions.CrewLightMod) * (Modifier?.VisionRangeModifier ?? 1f);
         public bool HasNightVision => Role?.HasNightVision == true || Modifier?.HasNightVision == true;
 

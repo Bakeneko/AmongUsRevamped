@@ -11,7 +11,7 @@ namespace AmongUsRevamped.Mod.Modifiers
             Name = "Drunk";
             ModifierType = ModifierType.Drunk;
             Color = ColorPalette.Color.ModifierDrunk;
-            MoveSpeed = -1f;
+            MoveSpeedModifier = -1f;
             IntroDescription = () => Color.ToColorTag($"{Name}: Go home, you're drunk!");
             TaskDescription = () => Color.ToColorTag($"{Name}: Go home, you're drunk!");
         }

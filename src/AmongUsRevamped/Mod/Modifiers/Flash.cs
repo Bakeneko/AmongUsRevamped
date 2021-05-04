@@ -11,7 +11,7 @@ namespace AmongUsRevamped.Mod.Modifiers
             Name = "Flash";
             ModifierType = ModifierType.Flash;
             Color = ColorPalette.Color.ModifierFlash;
-            MoveSpeed = 2f;
+            MoveSpeedModifier = 2f;
             IntroDescription = () => Color.ToColorTag($"{Name}: Zooooom!");
             TaskDescription = () => Color.ToColorTag($"{Name}: Zooooom!");
         }
