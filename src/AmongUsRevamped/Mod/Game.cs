@@ -62,8 +62,6 @@ namespace AmongUsRevamped.Mod
 
             radius = Mathf.Lerp(shipStatus.MinLightRadius, shipStatus.MaxLightRadius, light) * visionRange;
 
-            AmongUsRevamped.Log($"player {player} radius : {radius} light {light} visionRange {visionRange} hasNightVision {player.HasNightVision}");
-
             return false;
         }
 
@@ -107,7 +105,7 @@ namespace AmongUsRevamped.Mod
         private static void OnPingTrackerUpdate(PingTracker pingTracker)
         {
             pingTracker.text.fontSize = 2.5f;
-            pingTracker.text.transform.localPosition = new HudPosition(2f, 0.3f, HudAlignment.TopRight);
+            pingTracker.text.transform.localPosition = new HudPosition(2.5f, 0.35f, HudAlignment.TopRight);
 
             pingTracker.text.text = ColorPalette.Color.Revamped.ToColorTag($"{AmongUsRevamped.Name} v{AmongUsRevamped.Version}");
             pingTracker.text.text += $"\nPing: {AmongUsClient.Instance.Ping} ms";
