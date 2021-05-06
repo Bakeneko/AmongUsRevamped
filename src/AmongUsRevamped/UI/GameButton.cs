@@ -6,7 +6,6 @@ using System.Reflection;
 using AmongUsRevamped.Events;
 using AmongUsRevamped.Extensions;
 using InnerNet;
-using Reactor.Extensions;
 using UnityEngine;
 using ButtonManager = KillButtonManager;
 using Object = UnityEngine.Object;

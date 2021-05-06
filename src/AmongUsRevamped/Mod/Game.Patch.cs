@@ -1,5 +1,8 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using HarmonyLib;
+using InnerNet;
 using UnhollowerBaseLib;
 
 namespace AmongUsRevamped.Mod
@@ -7,6 +10,53 @@ namespace AmongUsRevamped.Mod
     [HarmonyPatch]
     public partial class Game
     {
+#if STEAM
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(Steamworks.SteamAPI), nameof(Steamworks.SteamAPI.RestartAppIfNecessary))]
+        private static bool SteamAPIRestartAppIfNecessaryPatch(ref bool __result)
+        {
+            // Ensure steam app id file existence
+            const string file = "steam_appid.txt";
+            const string content = "945360";
+            try
+            {
+                if(!File.Exists(file) || !content.Equals(File.ReadAllText(file)))
+                    File.WriteAllText(file, content);
+            }
+            catch {}
+            return __result = false;
+        }
+#endif
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(ChatController), nameof(ChatController.Awake))]
+        private static void ChatControllerAwakePatch()
+        {
+            if (EOSManager.Instance.IsMinor())
+            {
+                SaveManager.chatModeType = (int)QuickChatModes.QuickChatOnly;
+                SaveManager.isGuest = true;
+            }
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(GameData), nameof(GameData.GetAvailableId))]
+        private static bool GameDataGetAvailableIdPatch(GameData __instance, out sbyte __result)
+        {
+            for (sbyte i = 0; i < sbyte.MaxValue; i++)
+            {
+                if (!__instance.AllPlayers.ToArray().Any(p => p.PlayerId == i))
+                {
+                    __result = i;
+                    return false;
+                }
+            }
+
+            __result = -1;
+            return false;
+        }
+
+
         [HarmonyPrefix]
         [HarmonyPatch(typeof(LobbyBehaviour), nameof(LobbyBehaviour.Start))]
         private static bool LobbyBehaviourStartPatch(LobbyBehaviour __instance)

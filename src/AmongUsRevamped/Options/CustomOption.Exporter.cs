@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AmongUsRevamped.Colors;
+using AmongUsRevamped.Extensions;
 using Newtonsoft.Json;
-using Reactor.Extensions;
 using UnhollowerBaseLib;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -141,7 +141,7 @@ namespace AmongUsRevamped.Options
 
         protected internal void ExportEnd(Func<IEnumerator> flashCoroutine)
         {
-            Reactor.Coroutines.Start(ExportEndCoroutine(flashCoroutine));
+            Coroutines.Start(ExportEndCoroutine(flashCoroutine));
         }
 
         protected internal IEnumerator ExportEndCoroutine(Func<IEnumerator> flashCoroutine)

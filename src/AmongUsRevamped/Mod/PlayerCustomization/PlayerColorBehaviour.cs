@@ -1,5 +1,4 @@
 ﻿using System;
-using Reactor;
 using UnityEngine;
 
 namespace AmongUsRevamped.Mod.PlayerCustomization

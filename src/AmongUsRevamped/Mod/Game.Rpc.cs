@@ -1,11 +1,8 @@
 ﻿using System;
 using AmongUsRevamped.Mod.Modifiers;
 using AmongUsRevamped.Mod.Roles;
-using BepInEx.IL2CPP;
 using HarmonyLib;
 using Hazel;
-using Reactor;
-using Reactor.Networking;
 
 namespace AmongUsRevamped.Mod
 {
@@ -13,13 +10,11 @@ namespace AmongUsRevamped.Mod
     public partial class Game
     {
         [RegisterCustomRpc((uint)CustomRpcCalls.RoleAssignation)]
-        private protected class RoleAssignationRpc : PlayerCustomRpc<BasePlugin, Tuple<byte, byte>>
+        private protected class RoleAssignationRpc : PlayerCustomRpc<Tuple<byte, byte>>
         {
             public static RoleAssignationRpc Instance { get { return Rpc<RoleAssignationRpc>.Instance; } }
 
-            public override RpcLocalHandling LocalHandling => RpcLocalHandling.None;
-
-            public RoleAssignationRpc(BasePlugin plugin, uint id) : base(plugin, id) {}
+            public RoleAssignationRpc(uint id) : base(id) {}
 
             public override void Write(MessageWriter writer, Tuple<byte, byte> assignation)
             {
@@ -39,13 +34,11 @@ namespace AmongUsRevamped.Mod
         }
 
         [RegisterCustomRpc((uint)CustomRpcCalls.ModifierAssignation)]
-        private protected class ModifierAssignationRpc : PlayerCustomRpc<BasePlugin, Tuple<byte, byte>>
+        private protected class ModifierAssignationRpc : PlayerCustomRpc<Tuple<byte, byte>>
         {
             public static ModifierAssignationRpc Instance { get { return Rpc<ModifierAssignationRpc>.Instance; } }
 
-            public override RpcLocalHandling LocalHandling => RpcLocalHandling.None;
-
-            public ModifierAssignationRpc(BasePlugin plugin, uint id) : base(plugin, id) {}
+            public ModifierAssignationRpc(uint id) : base(id) {}
 
             public override void Write(MessageWriter writer, Tuple<byte, byte> assignation)
             {
@@ -65,13 +58,11 @@ namespace AmongUsRevamped.Mod
         }
 
         [RegisterCustomRpc((uint)CustomRpcCalls.Murder)]
-        private protected class MurderRpc : PlayerCustomRpc<BasePlugin, Tuple<byte, byte>>
+        private protected class MurderRpc : PlayerCustomRpc<Tuple<byte, byte>>
         {
             public static MurderRpc Instance { get { return Rpc<MurderRpc>.Instance; } }
 
-            public override RpcLocalHandling LocalHandling => RpcLocalHandling.None;
-
-            public MurderRpc(BasePlugin plugin, uint id) : base(plugin, id) { }
+            public MurderRpc(uint id) : base(id) { }
 
             public override void Write(MessageWriter writer, Tuple<byte, byte> assignation)
             {

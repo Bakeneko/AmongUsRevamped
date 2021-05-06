@@ -7,7 +7,7 @@ namespace AmongUsRevamped.Mod
         public static void Load()
         {
             Options.Load();
-            RegionMenuPatch.LoadRegions();
+            RegionsPatch.LoadRegions();
 
             Options.TestMode.ValueChanged += (_, e) =>
             {
@@ -15,6 +15,11 @@ namespace AmongUsRevamped.Mod
                 else TestMode.Unload();
             };
             if (Options.TestMode.GetValue()) TestMode.Load();
+        }
+
+        public static void Unload()
+        {
+            TestMode.Unload();
         }
     }
 }

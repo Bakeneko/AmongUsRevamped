@@ -1,9 +1,8 @@
 using System;
 using System.Linq;
+using AmongUsRevamped.Extensions;
 using HarmonyLib;
 using InnerNet;
-using Reactor;
-using Reactor.Extensions;
 using UnhollowerBaseLib;
 using UnhollowerBaseLib.Attributes;
 using UnityEngine;
@@ -32,7 +31,7 @@ namespace AmongUsRevamped.Mod
             GameObject?.Destroy();
             GameObject = null;
 
-            GameObject ??= new GameObject(nameof(RevampedMod)).DontDestroy();
+            GameObject ??= new GameObject(nameof(TestMode)).DontDestroy();
             Component ??= GameObject.AddComponent<TestModeComponent>();
 
             DefaultMinPlayersValues = GameOptionsData.MinPlayers;

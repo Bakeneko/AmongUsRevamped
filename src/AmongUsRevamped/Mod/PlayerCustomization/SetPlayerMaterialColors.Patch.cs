@@ -1,5 +1,5 @@
-﻿using HarmonyLib;
-using Reactor.Extensions;
+﻿using AmongUsRevamped.Extensions;
+using HarmonyLib;
 using UnityEngine;
 
 namespace AmongUsRevamped.Mod.PlayerCustomization

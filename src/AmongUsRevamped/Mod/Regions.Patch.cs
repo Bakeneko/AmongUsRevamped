@@ -10,9 +10,10 @@ using Object = UnityEngine.Object;
 namespace AmongUsRevamped.Mod
 {
     [HarmonyPatch]
-    public static class RegionMenuPatch
+    public static class RegionsPatch
     {
-        public static IRegionInfo[] defaultRegions;
+        private static IRegionInfo[] defaultRegions;
+        private static CustomStringNames customRegionName;
 
         private static TextBoxTMP serverAddressText;
         private static TextBoxTMP serverPortText;
@@ -27,11 +28,16 @@ namespace AmongUsRevamped.Mod
             }
             IRegionInfo[] regions = defaultRegions;
 
+            if (customRegionName == null)
+            {
+                customRegionName = CustomStringNames.Register("Custom");
+            }
+
             // Generate custom region
             var CustomRegion = new DnsRegionInfo(
                 CustomSettings.ServerAddress.Value,
-                "Custom",
-                StringNames.NoTranslation,
+                customRegionName.Value,
+                customRegionName,
                 null,
                 CustomSettings.ServerPort.Value
             );
@@ -114,6 +120,31 @@ namespace AmongUsRevamped.Mod
                     LoadRegions();
                     __instance.ChooseOption(ServerManager.DefaultRegions[ServerManager.DefaultRegions.Length - 1]);
                 });
+            }
+        }
+
+        /// <summary>
+        /// Fix 2021.4.1X region text
+        /// </summary>
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(MatchMaker), nameof(MatchMaker.Start))]
+        private static void MatchMakerStartPatch(MatchMaker __instance)
+        {
+            var normalMenu = __instance.transform.parent;
+            if (normalMenu == null) return;
+
+            for (int i = 0; i < normalMenu.transform.childCount; i++)
+            {
+                var child = normalMenu.transform.GetChild(i);
+                if (child.name.Equals("RegionButton"))
+                {
+                    var regionText = child.GetComponentInChildren<TMPro.TextMeshPro>();
+                    if (regionText == null) return;
+
+                    var region = DestroyableSingleton<ServerManager>.Instance.CurrentRegion;
+                    regionText.text = DestroyableSingleton<TranslationController>.Instance.GetStringWithDefault(region.TranslateName, region.Name, Array.Empty<Il2CppSystem.Object>());
+                    return;
+                }
             }
         }
     }

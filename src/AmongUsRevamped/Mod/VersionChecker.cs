@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using AmongUsRevamped.Extensions;
-using BepInEx.IL2CPP;
 using HarmonyLib;
 using Hazel;
-using Reactor;
-using Reactor.Networking;
 using UnityEngine;
 
 using Color = AmongUsRevamped.Colors.ColorPalette.Color;
@@ -116,11 +113,11 @@ namespace AmongUsRevamped.Mod
         }
 
         [RegisterCustomRpc((uint)CustomRpcCalls.VersionCheck)]
-        private protected class Rpc : PlayerCustomRpc<BasePlugin, Rpc.VersionHandshake>
+        private protected class Rpc : PlayerCustomRpc<Rpc.VersionHandshake>
         {
             public static Rpc Instance { get { return Rpc<Rpc>.Instance; } }
 
-            public Rpc(BasePlugin plugin, uint id) : base(plugin, id)
+            public Rpc(uint id) : base(id)
             {
             }
 
@@ -138,7 +135,6 @@ namespace AmongUsRevamped.Mod
                 }
             }
 
-            public override RpcLocalHandling LocalHandling => RpcLocalHandling.None;
             public override void Write(MessageWriter writer, VersionHandshake handshake)
             {
                 writer.WritePacked(handshake.ClientId);

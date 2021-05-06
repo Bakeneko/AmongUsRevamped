@@ -48,17 +48,18 @@ namespace AmongUsRevamped.Colors
             List<Color32> playerColors = new();
             List<Color32> shadowColors = new();
 
-            int id = 900000;
             foreach (PaletteColor col in palette)
             {
-                shortColorNames.Add((StringNames)id);
-                colorNames.Add((StringNames)id);
+                var shortColorName = CustomStringNames.Register(col.ShortName);
+                var colorName = CustomStringNames.Register(col.LongName);
+                shortColorNames.Add(shortColorName);
+                colorNames.Add(colorName);
 
                 playerColors.Add(col.Color);
                 shadowColors.Add(col.Shadow);
 
-                PaletteColor.ColorNames[id++] = col.ShortName;
-                PaletteColor.ColorNames[id++] = col.LongName;
+                PaletteColor.ColorNames[shortColorName.Id] = shortColorName.Value;
+                PaletteColor.ColorNames[colorName.Id] = colorName.Value;
             }
 
             Palette.ShortColorNames = shortColorNames.ToArray();
@@ -66,19 +67,6 @@ namespace AmongUsRevamped.Colors
             Palette.ShadowColors = shadowColors.ToArray();
             MedScanMinigame.ColorNames = colorNames.ToArray();
             Telemetry.ColorNames = colorNames.ToArray();
-        }
-
-
-        /// <summary>
-        /// Resolve palette color names
-        /// </summary>
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.GetString),
-        new[] { typeof(StringNames), typeof(Il2CppReferenceArray<Il2CppSystem.Object>) }
-        )]
-        public static bool TranslationControllerGetStringPatch(ref string __result, [HarmonyArgument(0)] StringNames name)
-        {
-            return !PaletteColor.ColorNames.TryGetValue((int)name, out __result);
         }
 
         /// <summary>

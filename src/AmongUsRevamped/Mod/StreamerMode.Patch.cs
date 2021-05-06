@@ -12,6 +12,7 @@ namespace AmongUsRevamped.Mod
     [HarmonyPatch]
     public static class StreamerModePatch
     {
+        private static string LobbyCode = "";
         private static string LobbyCodeText = "";
 
         [HarmonyPatch(typeof(OptionsMenuBehaviour), nameof(OptionsMenuBehaviour.Start))]
@@ -69,10 +70,10 @@ namespace AmongUsRevamped.Mod
         [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Start))]
         public static void GameStartManagerStartPatch(GameStartManager __instance)
         {
-            // Copy lobby code
-            string code = InnerNet.GameCode.IntToGameName(AmongUsClient.Instance.GameId);
-            GUIUtility.systemCopyBuffer = code;
-            LobbyCodeText = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.RoomCode, new Il2CppReferenceArray<Il2CppSystem.Object>(0)) + "\r\n" + code;
+            LobbyCode = InnerNet.GameCode.IntToGameName(AmongUsClient.Instance.GameId);
+            // Copy lobby code to clipboard
+            GUIUtility.systemCopyBuffer = LobbyCode;
+            LobbyCodeText = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.RoomCode, new Il2CppReferenceArray<Il2CppSystem.Object>(0)) + "\r\n" + LobbyCode;
             __instance.GameRoomName.transform.localPosition += Vector3.down * 0.4f;
         }
 
@@ -82,6 +83,12 @@ namespace AmongUsRevamped.Mod
         {
             // Lobby code replacement
             __instance.GameRoomName.text = CustomSettings.StreamerMode.Value ? CustomSettings.StreamerModePlaceholder.Value : LobbyCodeText;
+
+            // Copy lobby code to clipboard with Control + C
+            if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKeyDown(KeyCode.C))
+            {
+                GUIUtility.systemCopyBuffer = LobbyCode;
+            }
         }
     }
 }

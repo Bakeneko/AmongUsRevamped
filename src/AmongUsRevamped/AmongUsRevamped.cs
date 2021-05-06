@@ -2,20 +2,20 @@
 using System.IO;
 using System.Linq;
 using AmongUsRevamped.Colors;
+using AmongUsRevamped.Extensions;
 using AmongUsRevamped.Mod;
 using AmongUsRevamped.UI;
 using BepInEx;
 using BepInEx.IL2CPP;
 using BepInEx.Logging;
 using HarmonyLib;
-using Reactor;
-using Reactor.Patches;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace AmongUsRevamped
 {
     [BepInPlugin(Id, Name, Version)]
     [BepInProcess("Among Us.exe")]
-    [BepInDependency(ReactorPlugin.Id)]
     public class AmongUsRevamped : BasePlugin
     {
         public const string Id = "app.bakeneko.revamped";
@@ -23,19 +23,37 @@ namespace AmongUsRevamped
         public const string Version = "0.1.0";
         public const byte Major = 0, Minor = 1, Patch = 0;
 
-        public static AmongUsRevamped Instance { get { return PluginSingleton<AmongUsRevamped>.Instance; } }
+        private static AmongUsRevamped _instance;
+        public static AmongUsRevamped Instance
+        {
+            get => _instance ??= IL2CPPChainloader.Instance.Plugins.Values.Select(x => x.Instance).OfType<AmongUsRevamped>().Single();
+
+            set
+            {
+                if (_instance != null)
+                {
+                    throw new Exception($"AmongUsRevamped instance is already set");
+                }
+
+                _instance = value;
+            }
+        }
 
         internal static ManualLogSource Logger { get { return ((BasePlugin)Instance).Log; } }
 
-        public static Random Rand { get; } = new((int)DateTime.Now.Ticks);
+        public static System.Random Rand { get; } = new((int)DateTime.Now.Ticks);
 
         public static string RevampedFolder => Path.Combine(Paths.PluginPath, Name);
 
         public Harmony Harmony { get; } = new Harmony(Id);
 
+        public CustomRpcManager CustomRpcManager { get; } = new CustomRpcManager();
+
+        private GameObject GameObject;
+
         public override void Load()
         {
-            PluginSingleton<AmongUsRevamped>.Instance = this;
+            Instance = this;
 
             LogInfo($"Loading {Name} {Version}...");
 
@@ -45,16 +63,19 @@ namespace AmongUsRevamped
             {
                 if (!Directory.Exists(RevampedFolder)) Directory.CreateDirectory(RevampedFolder);
 
+                RegisterInIl2CppAttribute.Register();
+                RegisterCustomRpcAttribute.Register();
+
+                GameObject = new GameObject(nameof(AmongUsRevamped)).DontDestroy();
+                GameObject.AddComponent<Coroutines.Component>();
+
                 LoadPatches();
 
-                RegisterInIl2CppAttribute.Register();
-                RegisterCustomRpcAttribute.Register(this);
+                VersionShowerPatch.Load();
 
-                ReactorVersionShower.TextUpdated += (text) =>
-                {
-                    text.fontSize = 1.4f;
-                    text.text = text.text.Insert(0, $"\n{Name} {Version}\n");
-                };
+                // Skip splashscreen
+                SceneManager.add_sceneLoaded((Action<Scene, LoadSceneMode>)((scene, _) => { if (scene.name == "SplashIntro") SceneManager.LoadScene("MainMenu"); }));
+
                 HudPosition.Load();
                 PalettePatch.Load();
                 RevampedMod.Load();
@@ -65,7 +86,7 @@ namespace AmongUsRevamped
             }
         }
 
-        public void LoadPatches()
+        private void LoadPatches()
         {
             try
             {
@@ -79,7 +100,9 @@ namespace AmongUsRevamped
 
         public override bool Unload()
         {
+            RevampedMod.Unload();
             Harmony.UnpatchSelf();
+            GameObject.Destroy();
             return base.Unload();
         }
 
@@ -91,14 +114,28 @@ namespace AmongUsRevamped
             }
         }
 
+
+        /// <inheritdoc cref="ManualLogSource.LogMessage"/>
         public static new void Log(object message) => Logger.LogMessage(message?.ToString() ?? "");
+
+        /// <inheritdoc cref="ManualLogSource.LogDebug"/>
+        public static void LogDebug(object message) => Logger.LogDebug(message?.ToString() ?? "");
+
+        /// <inheritdoc cref="ManualLogSource.LogInfo"/>
         public static void LogInfo(object message) => Logger.LogInfo(message?.ToString() ?? "");
+
+        /// <inheritdoc cref="ManualLogSource.LogWarning"/>
         public static void LogWarning(object message) => Logger.LogWarning(message?.ToString() ?? "");
+
+        /// <inheritdoc cref="ManualLogSource.LogError"/>
         public static void LogError(object message) => Logger.LogError(message?.ToString() ?? "");
+
+        /// <inheritdoc cref="ManualLogSource.LogFatal"/>
+        public static void LogFatal(object message) => Logger.LogFatal(message?.ToString() ?? "");
 
         public static void Debug(string msg, object obj, int line, string caller, string path)
         {
-            Log($"{DateTime.Now:yyyy/MM/dd HH:mm:ss} {path.Split('\\').Last()} {caller}:{line}{(string.IsNullOrEmpty(msg) ? "" : " " + msg)} {obj}");
+            LogDebug($"{DateTime.Now:yyyy/MM/dd HH:mm:ss} {path.Split('\\').Last()} {caller}:{line}{(string.IsNullOrEmpty(msg) ? "" : " " + msg)} {obj}");
         }
     }
 }

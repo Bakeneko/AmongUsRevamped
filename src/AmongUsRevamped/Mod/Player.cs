@@ -195,7 +195,7 @@ namespace AmongUsRevamped.Mod
         public virtual void HudUpdate(HudManager hudManager)
         {
             // Reset outline
-            Control.myRend.material.SetFloat("_Outline", 0f);
+            SetOutline(null);
             Role?.HudUpdate(hudManager);
             Modifier?.HudUpdate(hudManager);
         }
@@ -215,11 +215,9 @@ namespace AmongUsRevamped.Mod
             }
         }
 
-        public void SetOutline(Color color)
+        public void SetOutline(Color? color)
         {
-            if (Control?.myRend == null) return;
-            Control.myRend.material.SetFloat("_Outline", 1f);
-            Control.myRend.material.SetColor("_OutlineColor", color);
+            Control?.myRend?.SetOutline(color);
         }
 
         public static void OnIntroStart(IntroCutscene introCutScene, ref Il2CppSystem.Collections.Generic.List<PlayerControl> team)

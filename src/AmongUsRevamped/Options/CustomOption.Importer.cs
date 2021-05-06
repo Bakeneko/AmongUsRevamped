@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AmongUsRevamped.Colors;
+using AmongUsRevamped.Extensions;
 using Newtonsoft.Json;
-using Reactor.Extensions;
 using UnhollowerBaseLib;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -158,7 +158,7 @@ namespace AmongUsRevamped.Options
 
         protected internal void ImportEnd(Func<IEnumerator> flashCoroutine)
         {
-            Reactor.Coroutines.Start(ImportEndCoroutine(flashCoroutine));
+            Coroutines.Start(ImportEndCoroutine(flashCoroutine));
         }
 
         protected internal IEnumerator ImportEndCoroutine(Func<IEnumerator> flashCoroutine)
