@@ -119,8 +119,10 @@ namespace AmongUsRevamped.Mod
 
                 DisableGameEnd = GUILayout.Toggle(DisableGameEnd, "Disable game end", new Il2CppReferenceArray<GUILayoutOption>(0));
 
-                GUILayout.Label($"Name: {PlayerControl.LocalPlayer?.Data?.PlayerName ?? SaveManager.PlayerName}",
-                    new Il2CppReferenceArray<GUILayoutOption>(0));
+                if (AmongUsClient.Instance.AmHost && ShipStatus.Instance && GUILayout.Button("Call a meeting", new Il2CppReferenceArray<GUILayoutOption>(0)))
+                {
+                    CallForMeeting();
+                }
 
                 if ((LobbyBehaviour.Instance || ShipStatus.Instance) && GUILayout.Button("Spawn a dummy", new Il2CppReferenceArray<GUILayoutOption>(0)))
                 {
@@ -142,6 +144,14 @@ namespace AmongUsRevamped.Mod
             {
                 Enabled = Options.Values.TestMode
             };
+        }
+
+        private void CallForMeeting()
+        {
+            MeetingRoomManager.Instance.reporter = PlayerControl.LocalPlayer;
+            MeetingRoomManager.Instance.target = null;
+            DestroyableSingleton<HudManager>.Instance.OpenMeetingRoom(PlayerControl.LocalPlayer);
+            PlayerControl.LocalPlayer.RpcStartMeeting(null);
         }
 
         private void SpawnDummy()
