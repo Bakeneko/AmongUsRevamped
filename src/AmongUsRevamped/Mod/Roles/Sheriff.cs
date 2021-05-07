@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using AmongUsRevamped.Colors;
 using AmongUsRevamped.Extensions;
 using AmongUsRevamped.UI;
@@ -86,9 +87,17 @@ namespace AmongUsRevamped.Mod.Roles
 
         public void OnKillButtonClicked(object sender, EventArgs e)
         {
-            bool killingInnocent = !CurrentTarget.IsImpostor;
+            if (CurrentTarget == null) return;
+
+            var guiltyRoles = new List<RoleType> {
+                RoleType.Impostor,
+                RoleType.Jester
+            };
+
             Player.MurderPlayer(CurrentTarget);
-            if (killingInnocent) Player.MurderPlayer(Player);
+            // Check whether the target is guilty or not
+            if ((CurrentTarget.Role == null && !CurrentTarget.IsImpostor) || !guiltyRoles.Contains(CurrentTarget.Role.RoleType))
+                Player.MurderPlayer(Player);
         }
 
         protected override void Dispose(bool disposing)

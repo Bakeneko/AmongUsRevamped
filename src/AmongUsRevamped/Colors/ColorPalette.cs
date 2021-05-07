@@ -131,6 +131,7 @@ namespace AmongUsRevamped.Colors
             public static Color32 RoleCrewmate = new(139, 253, 253, 255);
             public static Color32 RoleSheriff = new(255, 204, 0, 255);
             public static Color32 RoleImpostor = new(255, 25, 25, 255);
+            public static Color32 RoleJester = new(255, 191, 204, 255);
 
             public static Color32 ModifierDrunk = new(117, 127, 0, 255);
             public static Color32 ModifierFlash = new(255, 56, 56, 255);

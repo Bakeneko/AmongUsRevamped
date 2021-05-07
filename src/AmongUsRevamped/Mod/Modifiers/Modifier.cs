@@ -15,13 +15,7 @@ namespace AmongUsRevamped.Mod.Modifiers
         public static Modifier GetPlayerModifier(int id) => Modifiers.TryGetValue(id, out Modifier modifier) ? modifier : null;
         public static T GetPlayerModifier<T>(int id) where T : Modifier => GetPlayerModifier(id) as T;
         public static List<Modifier> GetModifiers(ModifierType type) => ReverseModifiers.TryGetValue(type, out List<Modifier> modifiers) ? modifiers : new List<Modifier>();
-        public static List<T> GetModifiers<T>(ModifierType type) where T : Modifier => GetModifiers(type) as List<T>;
-
-        public static void ClearModifiers()
-        {
-            ReverseModifiers.Clear();
-            Modifiers.Clear();
-        }
+        public static List<T> GetModifiers<T>(ModifierType type) where T : Modifier => GetModifiers(type).Cast<T>().ToList();
 
         protected internal string Name { get; set; }
         protected internal Color Color { get; set; }
@@ -43,7 +37,6 @@ namespace AmongUsRevamped.Mod.Modifiers
             IntroDescription = () => Color.ToColorTag($"{Name}");
             TaskDescription = () => Color.ToColorTag($"{Name}");
             Modifiers[player.Id] = this;
-            GetModifiers(ModifierType).Add(this);
         }
 
         public virtual void OnIntroStart(IntroCutscene introCutScene)
@@ -85,6 +78,19 @@ namespace AmongUsRevamped.Mod.Modifiers
 
         }
 
+        public void AddToReverseIndex()
+        {
+            RemoveFromReverseIndex();
+            var reverse = GetModifiers(ModifierType);
+            reverse.Add(this);
+            ReverseModifiers[ModifierType] = reverse;
+        }
+
+        public void RemoveFromReverseIndex()
+        {
+            GetModifiers(ModifierType).Remove(this);
+        }
+
         public override bool Equals(object obj)
         {
             if (obj == null) return false;
@@ -124,7 +130,7 @@ namespace AmongUsRevamped.Mod.Modifiers
 
             try
             {
-                GetModifiers(ModifierType).Remove(this);
+                RemoveFromReverseIndex();
                 Modifiers.Remove(Player.Id);
                 Player.UpdateImportantTasks();
             }

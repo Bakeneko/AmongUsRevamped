@@ -15,7 +15,9 @@ namespace AmongUsRevamped.Mod
     [HarmonyPatch]
     public partial class Game
     {
-        public static float BasePlayerSpeed = AmongUsClient.Instance?.PlayerPrefab?.MyPhysics?.Speed ?? 2.5f;
+        private static float BasePlayerSpeed = AmongUsClient.Instance?.PlayerPrefab?.MyPhysics?.Speed ?? 2.5f;
+
+        private static GameOverData GameOver = null;
 
         private static void OnExit()
         {
@@ -30,6 +32,7 @@ namespace AmongUsRevamped.Mod
         private static void Reset()
         {
             BasePlayerSpeed = AmongUsClient.Instance?.PlayerPrefab?.MyPhysics?.Speed ?? 2.5f;
+            GameOver = null;
             Role.AllRoles.ForEach(r => r.Dispose());
             Modifier.AllModifiers.ForEach(m => m.Dispose());
         }
@@ -136,6 +139,7 @@ namespace AmongUsRevamped.Mod
             int maxCrewmateRoles = Mathf.Min(crewmates.Count, Options.Values.MaxCrewmateRoles);
             var generator = new DistributedRandomNumberGenerator<byte>();
             if (Options.Values.SheriffSpawnRate > 0) generator.AddNumber((byte)RoleType.Sheriff, Options.Values.SheriffSpawnRate);
+            if (Options.Values.JesterSpawnRate > 0) generator.AddNumber((byte)RoleType.Jester, Options.Values.JesterSpawnRate);
 
             for (int i = 0; i < maxCrewmateRoles; i++)
             {
@@ -219,13 +223,16 @@ namespace AmongUsRevamped.Mod
             switch (type)
             {
                 case RoleType.Crewmate:
-                    new Crewmate(player);
+                    new Crewmate(player).AddToReverseIndex();
                     break;
                 case RoleType.Sheriff:
-                    new Sheriff(player);
+                    new Sheriff(player).AddToReverseIndex();
                     break;
                 case RoleType.Impostor:
-                    new Impostor(player);
+                    new Impostor(player).AddToReverseIndex();
+                    break;
+                case RoleType.Jester:
+                    new Jester(player).AddToReverseIndex();
                     break;
                 default:
                     AmongUsRevamped.LogWarning($"Player {player} was assigned unhandled role {type}");
@@ -238,13 +245,13 @@ namespace AmongUsRevamped.Mod
             switch (type)
             {
                 case ModifierType.Drunk:
-                    new Drunk(player);
+                    new Drunk(player).AddToReverseIndex();
                     break;
                 case ModifierType.Flash:
-                    new Flash(player);
+                    new Flash(player).AddToReverseIndex();
                     break;
                 case ModifierType.Torch:
-                    new Torch(player);
+                    new Torch(player).AddToReverseIndex();
                     break;
                 default:
                     AmongUsRevamped.LogWarning($"Player {player} was assigned unhandled modifier {type}");
@@ -262,14 +269,39 @@ namespace AmongUsRevamped.Mod
             Player.OnIntroUpdate(introCutScene);
         }
 
-        private static void OnExileBegin()
+        private static void OnExileBegin(Player exiled, bool tie)
+        {
+            exiled?.OnExiled();
+        }
+
+        private static void OnExileEnd(ExileController exileController)
         {
 
         }
 
-        private static void OnExileEnd()
+        private static void OnEmergencyButtonUpdate(EmergencyMinigame emButton)
         {
+            // Check whether role can call for a meeting or not
+            Role role = Player.CurrentPlayer?.Role;
+            if (role?.CanCallMeeting() ?? true) return;
 
+            emButton.StatusText.text = $"{role.Name} can't call for a emergency meeting";
+            emButton.NumberText.text = string.Empty;
+            emButton.ClosedLid.gameObject.SetActive(true);
+            emButton.OpenLid.gameObject.SetActive(false);
+            emButton.ButtonActive = false;
+        }
+
+        private static bool OnPlayerCanUseConsole(Player player, Console console, ref float distance, out bool canUse, out bool couldUse)
+        {
+            canUse = couldUse = false;
+
+            // Prevent roles faking tasks to actually complete them
+            if (console.AllowImpostor || !player.FakesTasks) return true;
+
+            distance = float.MaxValue;
+
+            return false;
         }
 
         private static void OnPlayerCanUseVent(Player player, Vent vent, ref float distance, out bool canUse, out bool couldUse)
@@ -289,15 +321,15 @@ namespace AmongUsRevamped.Mod
             distance = dist;
         }
 
-        public static void PlayerMurderedPlayer(Player player, Player target)
+        public static void PlayerMurderedPlayer(Player killer, Player target)
         {
-            if (player == null && target == null) return;
-            MurderRpc.Instance.Send(new Tuple<byte, byte>(player.Id, target.Id));
+            if (killer == null && target == null) return;
+            MurderRpc.Instance.Send(new Tuple<byte, byte>(killer.Id, target.Id));
         }
 
-        private static void OnPlayerMurderedPlayer(Player player, Player victim)
+        private static void OnPlayerMurderedPlayer(Player killer, Player victim)
         {
-            if (victim.IsCurrentPlayer) victim.UpdateImportantTasks();
+            victim.OnMurdered(killer);
         }
 
         private static bool OnPlayerCallMeeting(Player player)
@@ -362,146 +394,6 @@ namespace AmongUsRevamped.Mod
             }
 
             return null;
-        }
-
-        private static bool CheckEnd(ShipStatus shipStatus)
-        {
-            // Not in a game or not hosting
-            if (!GameData.Instance || !AmongUsClient.Instance.AmHost) return false;
-            // Ignore tutorial
-            if (DestroyableSingleton<TutorialManager>.InstanceExists) return true;
-
-            if (CheckSabotageEnd(shipStatus)) return false;
-            if (CheckImpostorsWin(shipStatus)) return false;
-            if (CheckCompletedTasksWin(shipStatus)) return false;
-            if (CheckCrewmatesWin(shipStatus)) return false;
-
-            return false;
-        }
-
-        /// <summary>
-        /// Check if impostors should win by critical sabotage
-        /// </summary>
-        private static bool CheckSabotageEnd(ShipStatus shipStatus)
-        {
-            if (shipStatus.Systems == null) return false;
-
-            // Check life support failure
-            ISystemType systemType = shipStatus.Systems.ContainsKey(SystemTypes.LifeSupp) ? shipStatus.Systems[SystemTypes.LifeSupp] : null;
-            LifeSuppSystemType lifeSuppSystemType = systemType?.TryCast<LifeSuppSystemType>();
-            if (lifeSuppSystemType?.Countdown < 0f)
-            {
-                shipStatus.enabled = false;
-                ShipStatus.RpcEndGame(GameOverReason.ImpostorBySabotage, false);
-                lifeSuppSystemType.Countdown = 10000f;
-                return true;
-            }
-            // Check for reactor meltdown or seismic stabilizers failure
-            systemType = shipStatus.Systems.ContainsKey(SystemTypes.Reactor) ? shipStatus.Systems[SystemTypes.Reactor] : null;
-            systemType ??= (shipStatus.Systems.ContainsKey(SystemTypes.Laboratory) ? shipStatus.Systems[SystemTypes.Laboratory] : null);
-            ICriticalSabotage criticalSystem = systemType?.TryCast<ICriticalSabotage>();
-            if (criticalSystem?.Countdown < 0f)
-            {
-                shipStatus.enabled = false;
-                ShipStatus.RpcEndGame(GameOverReason.ImpostorBySabotage, false);
-                criticalSystem.ClearSabotage();
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Check if crewmates should win by completing tasks
-        /// </summary>
-        private static bool CheckCompletedTasksWin(ShipStatus shipStatus)
-        {
-            if (GameData.Instance.TotalTasks <= GameData.Instance.CompletedTasks)
-            {
-                shipStatus.enabled = false;
-                ShipStatus.RpcEndGame(GameOverReason.HumansByTask, false);
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Check if impostors should win by numbers
-        /// </summary>
-        private static bool CheckImpostorsWin(ShipStatus shipStatus)
-        {
-            // Process alive players
-            int total = 0, impostors = 0;
-            foreach (Player p in Player.AllPlayers)
-            {
-                if (p.IsDisconnected || p.IsDead) continue;
-                total++;
-                if (p.IsImpostor) impostors++;
-            }
-
-            if (impostors >= total - impostors)
-            {
-                shipStatus.enabled = false;
-                var endReason = TempData.LastDeathReason switch
-                {
-                    DeathReason.Exile => GameOverReason.ImpostorByVote,
-                    DeathReason.Disconnect => GameOverReason.HumansDisconnect,
-                    _ => GameOverReason.ImpostorByKill,
-                };
-                ShipStatus.RpcEndGame(endReason, false);
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Check if crewmates should win by killing all impostors
-        /// </summary>
-        private static bool CheckCrewmatesWin(ShipStatus shipStatus)
-        {
-            // Process alive impostors
-            int impostors = 0;
-            foreach (Player p in Player.AllPlayers)
-            {
-                if (!p.IsDisconnected && !p.IsDead && p.IsImpostor) impostors++;
-            }
-
-            if (impostors == 0)
-            {
-                shipStatus.enabled = false;
-                var endReason = TempData.LastDeathReason switch
-                {
-                    DeathReason.Disconnect => GameOverReason.ImpostorDisconnect,
-                    _ => GameOverReason.HumansByVote,
-                };
-                ShipStatus.RpcEndGame(endReason, false);
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Game ended, process winners and loosers
-        /// </summary>
-        private static void OnEnd(AmongUsClient client, GameOverReason reason)
-        {
-
-        }
-
-        /// <summary>
-        /// Game is over, display game over screen
-        /// </summary>
-        private static void OnGameOver(EndGameManager endGameManager)
-        {
-
-        }
-
-        private static bool IsGameOverDueToDeath()
-        {
-            return false;
         }
     }
 }

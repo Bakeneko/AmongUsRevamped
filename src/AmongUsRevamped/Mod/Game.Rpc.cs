@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using AmongUsRevamped.Mod.Modifiers;
 using AmongUsRevamped.Mod.Roles;
 using HarmonyLib;
@@ -80,6 +82,47 @@ namespace AmongUsRevamped.Mod
                 var killer = Player.GetPlayer(assignation.Item1);
                 var victim = Player.GetPlayer(assignation.Item2);
                 if (killer != null && victim != null) killer.Control.MurderPlayer(victim.Control);
+            }
+        }
+
+        [RegisterCustomRpc((uint)CustomRpcCalls.EndGame)]
+        private protected class EndGameRpc : PlayerCustomRpc<EndGameRpc.GameOver>
+        {
+            public static EndGameRpc Instance { get { return Rpc<EndGameRpc>.Instance; } }
+
+            public EndGameRpc(uint id) : base(id) { }
+            public readonly struct GameOver
+            {
+                public readonly CustomGameOverReason Reason;
+                public readonly List<Player> Winners;
+
+                public GameOver(CustomGameOverReason reason, List<Player> winners)
+                {
+                    Reason = reason;
+                    Winners = winners;
+                }
+            }
+            public override void Write(MessageWriter writer, GameOver gameOver)
+            {
+                writer.Write((byte)gameOver.Reason);
+                writer.WriteBytesAndSize((from p in gameOver.Winners select p.Id).ToArray());
+            }
+
+            public override GameOver Read(MessageReader reader)
+            {
+                var reason = (CustomGameOverReason)reader.ReadByte();
+                var ids = reader.ReadBytesAndSize();
+                var players = new List<Player>();
+                foreach(byte id in ids)
+                {
+                    players.Add(Player.GetPlayer(id));
+                }
+                return new GameOver(reason, players);
+            }
+
+            public override void Handle(PlayerControl sender, GameOver gameOver)
+            {
+                Game.GameOver = new GameOverData(gameOver.Reason, gameOver.Winners);
             }
         }
     }

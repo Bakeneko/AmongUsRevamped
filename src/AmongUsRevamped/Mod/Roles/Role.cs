@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AmongUsRevamped.Colors;
 using AmongUsRevamped.Extensions;
 using UnityEngine;
 
@@ -15,13 +16,7 @@ namespace AmongUsRevamped.Mod.Roles
         public static Role GetPlayerRole(int id) => Roles.TryGetValue(id, out Role role) ? role : null;
         public static T GetPlayerRole<T>(int id) where T : Role => GetPlayerRole(id) as T;
         public static List<Role> GetRoles(RoleType type) => ReverseRoles.TryGetValue(type, out List<Role> roles) ? roles : new List<Role>();
-        public static List<T> GetRoles<T>(RoleType type) where T : Role => GetRoles(type) as List<T>;
-
-        public static void ClearRoles()
-        {
-            ReverseRoles.Clear();
-            Roles.Clear();
-        }
+        public static List<T> GetRoles<T>(RoleType type) where T : Role => GetRoles(type).Cast<T>().ToList();
 
         protected internal string Name { get; set; }
         protected internal Color Color { get; set; }
@@ -33,9 +28,13 @@ namespace AmongUsRevamped.Mod.Roles
         protected internal float VisionRange { get; set; } = PlayerControl.GameOptions.CrewLightMod;
         protected internal bool HasNightVision { get; set; } = false;
 
+        protected internal bool FakesTasks { get; set; } = false;
+
         protected internal Func<string> IntroDescription;
         protected internal Func<string> TaskDescription;
         protected internal Func<string> ExileDescription;
+
+        public bool Exiled;
 
         protected bool Disposed;
 
@@ -47,7 +46,6 @@ namespace AmongUsRevamped.Mod.Roles
             TaskDescription = () => Color.ToColorTag($"{Name}");
             ExileDescription = () => $"{Player.Name} was The {Name}";
             Roles[player.Id] = this;
-            GetRoles(RoleType).Add(this);
         }
 
         public virtual void OnIntroStart(IntroCutscene introCutScene, ref Il2CppSystem.Collections.Generic.List<PlayerControl> team)
@@ -104,6 +102,38 @@ namespace AmongUsRevamped.Mod.Roles
 
         }
 
+        public virtual void OnExiled()
+        {
+            Exiled = true;
+        }
+
+        public virtual void OnMurdered(Player killer)
+        {
+
+        }
+
+        public virtual void OnEnd(Game.GameOverData gameOver)
+        {
+            switch (gameOver.Reason)
+            {
+                case Game.CustomGameOverReason.JesterVotedOut:
+                    gameOver.Text = "Jester wins";
+                    gameOver.BackgroundColor = gameOver.TextColor = ColorPalette.Color.RoleJester;
+                    break;
+            }
+
+            TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+            foreach (Player player in gameOver.Winners)
+            {
+                TempData.winners.Add(new WinningPlayerData(player.Data));
+            }
+        }
+
+        protected internal virtual bool CanCallMeeting()
+        {
+            return true;
+        }
+
         protected internal virtual bool CanUseVent(Vent vent)
         {
             return false;
@@ -112,6 +142,19 @@ namespace AmongUsRevamped.Mod.Roles
         protected internal virtual bool CanSeeRole(Player other)
         {
             return false;
+        }
+
+        public void AddToReverseIndex()
+        {
+            RemoveFromReverseIndex();
+            var reverse = GetRoles(RoleType);
+            reverse.Add(this);
+            ReverseRoles[RoleType] = reverse;
+        }
+
+        public void RemoveFromReverseIndex()
+        {
+            GetRoles(RoleType).Remove(this);
         }
 
         public override bool Equals(object obj)
@@ -153,8 +196,7 @@ namespace AmongUsRevamped.Mod.Roles
 
             try
             {
-                // Restore kill animations
-                GetRoles(RoleType).Remove(this);
+                RemoveFromReverseIndex();
                 Roles.Remove(Player.Id);
                 Player.UpdateImportantTasks();
             }
@@ -192,5 +234,6 @@ namespace AmongUsRevamped.Mod.Roles
         // Impostor
         Impostor,
         // Neutral
+        Jester,
     }
 }

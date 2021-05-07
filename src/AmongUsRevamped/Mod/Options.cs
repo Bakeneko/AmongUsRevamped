@@ -20,6 +20,9 @@ namespace AmongUsRevamped.Mod
         public static CustomNumberOption SheriffSpawnRate;
         public static CustomNumberOption SheriffKillCooldown;
 
+        public static CustomHeaderOption JesterSettings;
+        public static CustomNumberOption JesterSpawnRate;
+
         public static CustomHeaderOption ModifiersSettings;
         public static CustomNumberOption MaxModifiers;
         public static CustomNumberOption DrunkSpawnRate;
@@ -47,6 +50,9 @@ namespace AmongUsRevamped.Mod
             SheriffSpawnRate = new CustomNumberOption("sheriffSpawnRate", "Spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
             SheriffKillCooldown = new CustomNumberOption("sheriffKillCooldown", "Kill cooldown", true, 30f, 10f, 60f, 2.5f, true, CustomNumberOption.SecondsStringFormat);
 
+            JesterSettings = new CustomHeaderOption("jesterSettings", Color.RoleJester.ToColorTag("Jester"));
+            JesterSpawnRate = new CustomNumberOption("jesterSpawnRate", "Spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
+
             RolesSettings = new CustomHeaderOption("modifiersSettings", "Modifiers Settings");
             MaxModifiers = new CustomNumberOption("maxModifiers", "Max modifiers", true, 0f, 0f, 10f, 1f, true);
             DrunkSpawnRate = new CustomNumberOption("drunkSpawnRate", $"{Color.ModifierDrunk.ToColorTag("Drunk")} spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
@@ -66,6 +72,8 @@ namespace AmongUsRevamped.Mod
 
             public static float SheriffSpawnRate => Options.SheriffSpawnRate.GetValue();
             public static float SheriffKillCooldown => Options.SheriffKillCooldown.GetValue();
+
+            public static float JesterSpawnRate => Options.JesterSpawnRate.GetValue();
 
             public static int MaxModifiers => (int)Options.MaxModifiers.GetValue();
             public static float DrunkSpawnRate => Options.DrunkSpawnRate.GetValue();

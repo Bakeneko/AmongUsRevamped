@@ -199,14 +199,14 @@ namespace AmongUsRevamped.Mod
         [HarmonyPatch(typeof(ExileController), nameof(ExileController.Begin))]
         private static void ExileControllerBeginPatch([HarmonyArgument(0)] ref GameData.PlayerInfo exiled, [HarmonyArgument(1)] bool tie)
         {
-            OnExileBegin();
+            OnExileBegin(exiled, tie);
         }
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(ExileController), nameof(ExileController.WrapUp))]
-        private static bool ExileControllerWrapUpPatch()
+        private static bool ExileControllerWrapUpPatch(ExileController __instance)
         {
-            OnExileEnd();
+            OnExileEnd(__instance);
             return true;
         }
 
@@ -224,6 +224,21 @@ namespace AmongUsRevamped.Mod
         {
             RecomputeTaskCount();
             return false;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(EmergencyMinigame), nameof(EmergencyMinigame.Update))]
+        private static void EmergencyMinigameUpdatePatch(EmergencyMinigame __instance)
+        {
+            OnEmergencyButtonUpdate(__instance);
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(Console), nameof(Console.CanUse))]
+        private static bool ConsoleCanUsePatch(ref float __result, Console __instance, [HarmonyArgument(0)] GameData.PlayerInfo player,
+            [HarmonyArgument(1)] out bool canUse, [HarmonyArgument(2)] out bool couldUse)
+        {
+            return OnPlayerCanUseConsole(player, __instance, ref __result, out canUse, out couldUse);
         }
 
         [HarmonyPrefix]
@@ -347,24 +362,24 @@ namespace AmongUsRevamped.Mod
         [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.CheckEndCriteria))]
         private static bool ShipStatusCheckEndCriteriaPatch(ShipStatus __instance)
         {
-            if (TestMode.DisableGameEnd) return false;
             return CheckEnd(__instance);
         }
 
         [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnGameEnd))]
         private class AmongUsClientOnGameEndPatch
         {
-            private static GameOverReason GameOverReason;
-
             private static void Prefix([HarmonyArgument(0)] ref GameOverReason reason, [HarmonyArgument(1)] bool _)
             {
-                GameOverReason = reason;
-                if ((int)reason >= 10) reason = GameOverReason.ImpostorByKill;
+                if (GameOver == null)
+                {
+                    GameOver = new GameOverData((CustomGameOverReason)reason);
+                }
+                if ((int)reason > (int)GameOverReason.HumansDisconnect) reason = GameOverReason.ImpostorByKill;
             }
 
             private static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] GameOverReason reason, [HarmonyArgument(1)] bool showAd)
             {
-                OnEnd(__instance, GameOverReason);
+                OnEnd(__instance, GameOver);
             }
         }
 

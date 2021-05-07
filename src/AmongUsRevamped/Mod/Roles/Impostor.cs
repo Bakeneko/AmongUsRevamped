@@ -19,6 +19,7 @@ namespace AmongUsRevamped.Mod.Roles
             Color = ColorPalette.Color.RoleImpostor;
             VisionRange = PlayerControl.GameOptions.ImpostorLightMod;
             HasNightVision = true;
+            FakesTasks = true;
             IntroDescription = () => "Sabotage and kill everyone";
             TaskDescription = () => Color.ToColorTag($"{Name}: Sabotage and kill everyone");
             ExileDescription = () => $"{Player.Name} was an {Name}";

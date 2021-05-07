@@ -43,6 +43,7 @@ namespace AmongUsRevamped.Mod
         public float MoveSpeed => IsDead ? 1f : (Role?.MoveSpeed ?? 1f) * (Modifier?.MoveSpeedModifier ?? 1f);
         public float VisionRange => (Role?.VisionRange ?? PlayerControl.GameOptions.CrewLightMod) * (Modifier?.VisionRangeModifier ?? 1f);
         public bool HasNightVision => Role?.HasNightVision == true || Modifier?.HasNightVision == true;
+        public bool FakesTasks => Role?.FakesTasks == true;
 
         public Role Role => Role.GetPlayerRole(Id);
         public Modifier Modifier => Modifier.GetPlayerModifier(Id);
@@ -77,6 +78,27 @@ namespace AmongUsRevamped.Mod
             {
                 UpdatePlayerTextInfo(this, Options.Values.GhostsSeeRoles, Options.Values.GhostsSeeTasks);
             }
+        }
+
+        public virtual void OnExiled()
+        {
+            Role?.OnExiled();
+            if (IsCurrentPlayer && FakesTasks) ClearTasks();
+        }
+
+        public virtual void OnMurdered(Player killer)
+        {
+            Role?.OnMurdered(killer);
+            if (IsCurrentPlayer)
+            {
+                UpdateImportantTasks();
+                if (FakesTasks) ClearTasks();
+            }
+        }
+
+        public virtual void OnEnd(Game.GameOverData gameOver)
+        {
+            Role?.OnEnd(gameOver);
         }
 
         public void UpdateImportantTasks()
@@ -145,6 +167,20 @@ namespace AmongUsRevamped.Mod
             }
         }
 
+        public void ClearTasks()
+        {
+            for (int i = 0; i < Control.myTasks.Count; i++)
+            {
+                PlayerTask playerTask = Control.myTasks[i];
+                playerTask.OnRemove();
+                UnityEngine.Object.Destroy(playerTask.gameObject);
+            }
+            Control.myTasks.Clear();
+
+            if (Control.Data != null && Control.Data.Tasks != null)
+                Control.Data.Tasks.Clear();
+        }
+
         /// <summary>
         /// Process completed task
         /// </summary>
@@ -160,7 +196,7 @@ namespace AmongUsRevamped.Mod
 
         public static implicit operator Player(GameData.PlayerInfo playerInfo)
         {
-            return playerInfo.Object;
+            return playerInfo?.Object;
         }
 
         public static implicit operator Player(PlayerControl playerControl)
@@ -179,7 +215,7 @@ namespace AmongUsRevamped.Mod
             var tasks = player.Tasks;
             if (!player.Disconnected && tasks != null &&
                 (!player.IsDead || PlayerControl.GameOptions.GhostsDoTasks) &&
-                !player.IsImpostor
+                Role.GetPlayerRole(player.PlayerId)?.FakesTasks != true
                 )
             {
                 foreach (GameData.TaskInfo task in tasks)

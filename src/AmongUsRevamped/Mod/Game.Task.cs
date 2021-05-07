@@ -1,9 +1,7 @@
 ﻿using System;
-using HarmonyLib;
 
 namespace AmongUsRevamped.Mod
 {
-    [HarmonyPatch]
     public partial class Game
     {
         private static void OnPlayerTasksCreated(Player player)

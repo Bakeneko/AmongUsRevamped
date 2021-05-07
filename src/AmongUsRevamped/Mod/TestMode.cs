@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using AmongUsRevamped.Extensions;
+using AmongUsRevamped.Mod.Roles;
 using HarmonyLib;
 using InnerNet;
 using UnhollowerBaseLib;
@@ -92,14 +93,6 @@ namespace AmongUsRevamped.Mod
                 .Cast<NumberOption>()
                 .ValidRange = new FloatRange(0, byte.MaxValue);
         }
-
-        [HarmonyPrefix]
-        [HarmonyPriority(Priority.First)]
-        [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.CheckEndCriteria))]
-        private static bool ShipStatusCheckEndCriteriaPatch()
-        {
-            return !DisableGameEnd;
-        }   
     }
 
     [RegisterInIl2Cpp]
@@ -173,8 +166,8 @@ namespace AmongUsRevamped.Mod
 
         private void EndGame()
         {
-            ShipStatus.Instance.enabled = false;
-            ShipStatus.RpcEndGame(GameOverReason.ImpostorDisconnect, false);
+            var winners = Role.AllRoles.Where(r => r.Faction == Faction.Crewmates).Select(r => r.Player).ToList();
+            Game.EndGame(Game.CustomGameOverReason.ImpostorDisconnect, winners);
         }
 
         protected void Update()
