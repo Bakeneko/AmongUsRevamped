@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Threading.Tasks;
 using HarmonyLib;
@@ -69,6 +70,11 @@ namespace AmongUsRevamped.Extensions
         public static T LoadAsset<T>(this AssetBundle assetBundle, string name) where T : UnityEngine.Object
         {
             return assetBundle.LoadAsset(name, Il2CppType.Of<T>())?.Cast<T>();
+        }
+
+        public static void Log(this object obj, string msg, [CallerLineNumber] int line = 0, [CallerMemberName] string caller = "", [CallerFilePath] string path = "")
+        {
+            AmongUsRevamped.Debug(msg, obj, line, caller, path);
         }
     }
 }

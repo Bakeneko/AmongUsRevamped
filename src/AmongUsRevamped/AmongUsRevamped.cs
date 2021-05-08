@@ -49,6 +49,8 @@ namespace AmongUsRevamped
 
         public CustomRpcManager CustomRpcManager { get; } = new CustomRpcManager();
 
+        private BepInExLogListener LogListener { get; } = new BepInExLogListener();
+
         private GameObject GameObject;
 
         public override void Load()
@@ -58,6 +60,7 @@ namespace AmongUsRevamped
             LogInfo($"Loading {Name} {Version}...");
 
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
+            BepInEx.Logging.Logger.Listeners.Add(LogListener);
 
             try
             {
@@ -102,6 +105,7 @@ namespace AmongUsRevamped
         {
             RevampedMod.Unload();
             Harmony.UnpatchSelf();
+            BepInEx.Logging.Logger.Listeners.Remove(LogListener);
             GameObject.Destroy();
             return base.Unload();
         }
@@ -113,7 +117,6 @@ namespace AmongUsRevamped
                 LogError($"Unhandled exception:\r\n{ex}");
             }
         }
-
 
         /// <inheritdoc cref="ManualLogSource.LogMessage"/>
         public static new void Log(object message) => Logger.LogMessage(message?.ToString() ?? "");
@@ -136,6 +139,20 @@ namespace AmongUsRevamped
         public static void Debug(string msg, object obj, int line, string caller, string path)
         {
             LogDebug($"{DateTime.Now:yyyy/MM/dd HH:mm:ss} {path.Split('\\').Last()} {caller}:{line}{(string.IsNullOrEmpty(msg) ? "" : " " + msg)} {obj}");
+        }
+
+        /// <summary>
+        /// Listen 
+        /// </summary>
+        private class BepInExLogListener : ILogListener
+        {
+            public void LogEvent(object sender, LogEventArgs e)
+            {
+                if ((e.Level & (LogLevel.Fatal | LogLevel.Error)) == 0) return;
+                if (e.Source.SourceName.Equals(Name)) return;
+            }
+
+            public void Dispose() { }
         }
     }
 }
