@@ -143,34 +143,25 @@ namespace AmongUsRevamped.Mod
 
             for (int i = 0; i < maxCrewmateRoles; i++)
             {
-                if (generator.GetNumberCount() > 0)
-                {
-                    var role = generator.GetDistributedRandomNumber();
-                    generator.RemoveNumber(role);
-                    AssignRoleRandomly((RoleType)role, crewmates);
-                }
-                else // No more special roles, assign base crewmate role
-                {
-                    break;
-                }
+                if (generator.GetNumberCount() == 0) break; // No more special roles, assign base crewmate role
+
+                var role = generator.GetDistributedRandomNumber();
+                generator.RemoveNumber(role);
+                AssignRoleRandomly((RoleType)role, crewmates);
             }
             crewmates.ForEach(p => AssignPlayerRole(p, RoleType.Crewmate));
 
             int maxImpostorRoles = Mathf.Min(impostors.Count, Options.Values.MaxImpostorRoles);
             generator = new DistributedRandomNumberGenerator<byte>();
+            if (Options.Values.SwooperSpawnRate > 0) generator.AddNumber((byte)RoleType.Swooper, Options.Values.SwooperSpawnRate);
 
             for (int i = 0; i < maxImpostorRoles; i++)
             {
-                if (generator.GetNumberCount() > 0)
-                {
-                    var role = generator.GetDistributedRandomNumber();
-                    generator.RemoveNumber(role);
-                    AssignRoleRandomly((RoleType)role, impostors);
-                }
-                else // No more special roles, assign base impostor role
-                {
-                    break;
-                }
+                if (generator.GetNumberCount() == 0) break; // No more special roles, assign base impostor role
+
+                var role = generator.GetDistributedRandomNumber();
+                generator.RemoveNumber(role);
+                AssignRoleRandomly((RoleType)role, impostors);
             }
             impostors.ForEach(p => AssignPlayerRole(p, RoleType.Impostor));
 
@@ -230,6 +221,9 @@ namespace AmongUsRevamped.Mod
                     break;
                 case RoleType.Impostor:
                     new Impostor(player).AddToReverseIndex();
+                    break;
+                case RoleType.Swooper:
+                    new Swooper(player).AddToReverseIndex();
                     break;
                 case RoleType.Jester:
                     new Jester(player).AddToReverseIndex();

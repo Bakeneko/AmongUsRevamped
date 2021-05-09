@@ -87,16 +87,6 @@ namespace AmongUsRevamped.Mod
             return true;
         }
 
-        public virtual void HudUpdate(HudManager hudManager)
-        {
-
-        }
-
-        public virtual void CurrentPlayerHudUpdate(HudManager hudManager)
-        {
-
-        }
-
         [HarmonyPrefix]
         [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.CalculateLightRadius))]
         private static bool ShipStatusCalculateLightRadiusPatch(ShipStatus __instance, ref float __result, [HarmonyArgument(0)] GameData.PlayerInfo player)

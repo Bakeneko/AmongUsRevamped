@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using AmongUsRevamped.Extensions;
 using UnityEngine;
 
@@ -122,9 +121,10 @@ namespace AmongUsRevamped.UI
             Init(cooldownDuration, effectDuration, initialCooldown);
         }
 
-        public CooldownButton(Assembly assembly, string imageEmbededResourcePath, HudPosition position, float cooldownDuration, float effectDuration = 0f, float initialCooldown = 0f) :
-            this(GetBytesFromEmbeddedResource(assembly, imageEmbededResourcePath), position, cooldownDuration, effectDuration, initialCooldown)
+        public CooldownButton(string imageResourcePath, HudPosition position, float cooldownDuration, float effectDuration = 0f, float initialCooldown = 0f) :
+            base(imageResourcePath, position)
         {
+            Init(cooldownDuration, effectDuration, initialCooldown);
         }
 
         private void Init(float cooldownDuration, float effectDuration = 0F, float initialCooldown = 0F)

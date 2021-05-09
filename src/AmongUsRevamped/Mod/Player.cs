@@ -37,7 +37,7 @@ namespace AmongUsRevamped.Mod
         public bool IsDisconnected => Data.Disconnected;
         public bool IsDead => Data.IsDead;
         public bool IsImpostor => Data.IsImpostor;
-        public bool IsVisible => Control.Visible;
+        public bool Visible { get => Control.Visible; set => Control.Visible = value; }
         public bool CanMove => Control.CanMove;
 
         public float MoveSpeed => IsDead ? 1f : (Role?.MoveSpeed ?? 1f) * (Modifier?.MoveSpeedModifier ?? 1f);
@@ -332,7 +332,7 @@ namespace AmongUsRevamped.Mod
             string info = $"{roleInfo} {tasksInfo}".Trim();
 
             playerInfo.text = info;
-            playerInfo.gameObject.SetActive(player.IsVisible);
+            playerInfo.gameObject.SetActive(player.Visible);
             if (meetingInfo != null) meetingInfo.text = MeetingHud.Instance.state == MeetingHud.VoteStates.Results ? "" : info;
         }
     }

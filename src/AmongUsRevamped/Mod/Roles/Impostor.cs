@@ -26,7 +26,7 @@ namespace AmongUsRevamped.Mod.Roles
             Init();
         }
 
-        public void Init()
+        public virtual void Init()
         {
             CurrentTarget = null;
             if (Player.IsCurrentPlayer)

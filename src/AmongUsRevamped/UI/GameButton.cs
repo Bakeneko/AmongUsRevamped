@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
 using AmongUsRevamped.Events;
 using AmongUsRevamped.Extensions;
+using AmongUsRevamped.Utils;
 using InnerNet;
 using UnityEngine;
 using ButtonManager = KillButtonManager;
 using Object = UnityEngine.Object;
-
 
 namespace AmongUsRevamped.UI
 {
@@ -100,12 +98,12 @@ namespace AmongUsRevamped.UI
         }
 
         public GameButton(byte[] imageData, HudPosition position) :
-            this(CreateSprite(imageData ?? throw new ArgumentNullException(nameof(imageData), "Image data required.")), position)
+            this(AssetUtils.LoadSpriteFromBytes(imageData ?? throw new ArgumentNullException(nameof(imageData), "Image data required.")), position)
         {
         }
 
-        public GameButton(Assembly assembly, string imageEmbededResourcePath, HudPosition position) :
-            this(GetBytesFromEmbeddedResource(assembly, imageEmbededResourcePath), position)
+        public GameButton(string imageResourcePath, HudPosition position) :
+            this(AssetUtils.LoadSpriteFromResource(imageResourcePath), position)
         {
         }
 
@@ -127,29 +125,6 @@ namespace AmongUsRevamped.UI
             {
                 AmongUsRevamped.LogWarning($"An exception has occurred updating a button: {ex}");
             }
-        }
-
-        protected static byte[] GetBytesFromEmbeddedResource(Assembly assembly, string embeddedResourcePath)
-        {
-            string embeddedResourceFullPath = assembly.GetManifestResourceNames().FirstOrDefault(resourceName => resourceName.EndsWith(embeddedResourcePath, StringComparison.Ordinal));
-            if (string.IsNullOrEmpty(embeddedResourceFullPath)) throw new ArgumentNullException(nameof(embeddedResourcePath), $"Embedded resource \"{embeddedResourcePath}\" not found in assembly \"{assembly.GetName().Name}\".");
-
-            return assembly.GetManifestResourceStream(embeddedResourceFullPath).ReadFully();
-        }
-
-        protected static Sprite CreateSprite(byte[] imageData, bool dontDestroy = false)
-        {
-            Texture2D tex = GUIExtensions.CreateEmptyTexture();
-            ImageConversion.LoadImage(tex, imageData, false);
-            Sprite sprite = tex.CreateSprite();
-
-            if (dontDestroy)
-            {
-                tex.DontDestroy();
-                sprite.DontDestroy();
-            }
-
-            return sprite;
         }
 
         public virtual void UpdateSprite(Sprite sprite)

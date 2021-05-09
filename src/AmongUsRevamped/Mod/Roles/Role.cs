@@ -233,6 +233,7 @@ namespace AmongUsRevamped.Mod.Roles
         Sheriff,
         // Impostor
         Impostor,
+        Swooper,
         // Neutral
         Jester,
     }

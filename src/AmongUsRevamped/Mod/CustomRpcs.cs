@@ -9,6 +9,8 @@
         ModifierAssignation,
 
         Murder,
+        Swoop,
+
         EndGame,
     }
 }
