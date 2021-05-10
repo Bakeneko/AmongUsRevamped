@@ -154,6 +154,7 @@ namespace AmongUsRevamped.Mod
 
             int maxImpostorRoles = Mathf.Min(impostors.Count, Options.Values.MaxImpostorRoles);
             generator = new DistributedRandomNumberGenerator<byte>();
+            if (Options.Values.CleanerSpawnRate > 0) generator.AddNumber((byte)RoleType.Cleaner, Options.Values.CleanerSpawnRate);
             if (Options.Values.SwooperSpawnRate > 0) generator.AddNumber((byte)RoleType.Swooper, Options.Values.SwooperSpawnRate);
 
             for (int i = 0; i < maxImpostorRoles; i++)
@@ -222,6 +223,9 @@ namespace AmongUsRevamped.Mod
                     break;
                 case RoleType.TimeLord:
                     new TimeLord(player).AddToReverseIndex();
+                    break;
+                case RoleType.Cleaner:
+                    new Cleaner(player).AddToReverseIndex();
                     break;
                 case RoleType.Impostor:
                     new Impostor(player).AddToReverseIndex();
@@ -334,6 +338,13 @@ namespace AmongUsRevamped.Mod
         {
             if (revived == null) return;
             ReviveRpc.Instance.Send(revived.Id);
+        }
+
+        public static void RemoveBody(DeadBody body)
+        {
+            if (body == null) return;
+            RemoveBodyRpc.Instance.Send(body.ParentId);
+            Coroutines.Start(RemoveBodyCoroutine(body.ParentId));
         }
 
         private static bool OnPlayerCallMeeting(Player player)

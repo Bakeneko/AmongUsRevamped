@@ -238,6 +238,7 @@ namespace AmongUsRevamped.Mod.Roles
         Sheriff,
         TimeLord,
         // Impostor
+        Cleaner,
         Impostor,
         Swooper,
         // Neutral

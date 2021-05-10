@@ -109,6 +109,29 @@ namespace AmongUsRevamped.Mod
             }
         }
 
+        [RegisterCustomRpc((uint)CustomRpcCalls.RemoveBody)]
+        private protected class RemoveBodyRpc : PlayerCustomRpc<byte>
+        {
+            public static RemoveBodyRpc Instance { get { return Rpc<RemoveBodyRpc>.Instance; } }
+
+            public RemoveBodyRpc(uint id) : base(id) { }
+
+            public override void Write(MessageWriter writer, byte bodyId)
+            {
+                writer.Write(bodyId); // Body player id
+            }
+
+            public override byte Read(MessageReader reader)
+            {
+                return reader.ReadByte();
+            }
+
+            public override void Handle(PlayerControl sender, byte bodyId)
+            {
+                Coroutines.Start(RemoveBodyCoroutine(bodyId));
+            }
+        }
+
         [RegisterCustomRpc((uint)CustomRpcCalls.OpenDoor)]
         private protected class OpenDoorRpc : PlayerCustomRpc<byte>
         {

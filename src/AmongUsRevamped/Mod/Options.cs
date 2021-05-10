@@ -35,6 +35,10 @@ namespace AmongUsRevamped.Mod
 
         #region Impostors
 
+        // Cleaner
+        public static CustomHeaderOption CleanerSettings;
+        public static CustomNumberOption CleanerSpawnRate;
+
         // Swooper
         public static CustomHeaderOption SwooperSettings;
         public static CustomNumberOption SwooperSpawnRate;
@@ -97,6 +101,11 @@ namespace AmongUsRevamped.Mod
 
             #region Impostors
 
+            // Cleaner
+
+            CleanerSettings = new CustomHeaderOption("cleanerSettings", Color.RoleImpostor.ToColorTag("Cleaner"));
+            CleanerSpawnRate = new CustomNumberOption("cleanerSpawnRate", "Spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
+
             // Swooper
             SwooperSettings = new CustomHeaderOption("swooperSettings", Color.RoleImpostor.ToColorTag("Swooper"));
             SwooperSpawnRate = new CustomNumberOption("swooperSpawnRate", "Spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
@@ -151,6 +160,9 @@ namespace AmongUsRevamped.Mod
             #endregion Crewmates
 
             #region Impostors
+
+            // Cleaner
+            public static float CleanerSpawnRate => Options.CleanerSpawnRate.GetValue();
 
             // Swooper
             public static float SwooperSpawnRate => Options.SwooperSpawnRate.GetValue();

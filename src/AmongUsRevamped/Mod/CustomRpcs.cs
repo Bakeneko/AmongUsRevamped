@@ -10,6 +10,7 @@
 
         Murder,
         Revive,
+        RemoveBody,
         OpenDoor,
         Swoop,
         Rewind,

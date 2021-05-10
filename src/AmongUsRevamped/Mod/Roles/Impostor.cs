@@ -26,7 +26,7 @@ namespace AmongUsRevamped.Mod.Roles
             Init();
         }
 
-        public virtual void Init()
+        protected virtual void Init()
         {
             CurrentTarget = null;
             if (Player.IsCurrentPlayer)
@@ -71,7 +71,7 @@ namespace AmongUsRevamped.Mod.Roles
             CurrentTarget.SetOutline(Color);
         }
 
-        private Player SearchTarget()
+        protected Player SearchTarget()
         {
             // Abort!
             if (!ShipStatus.Instance || Player.IsDead || !Player.Control.CanMove) return null;
@@ -98,7 +98,7 @@ namespace AmongUsRevamped.Mod.Roles
             return target;
         }
 
-        public void OnKillButtonClicked(object sender, EventArgs e)
+        protected virtual void OnKillButtonClicked(object sender, EventArgs e)
         {
             Player.MurderPlayer(CurrentTarget);
         }
