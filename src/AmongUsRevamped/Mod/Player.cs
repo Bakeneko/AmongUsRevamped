@@ -96,6 +96,22 @@ namespace AmongUsRevamped.Mod
             }
         }
 
+        public virtual void OnRevived()
+        {
+            Control.Revive();
+            var body = UnityEngine.Object.FindObjectsOfType<DeadBody>()
+                .FirstOrDefault(b => b.ParentId == Id);
+            body?.gameObject.Destroy();
+
+            Role?.OnRevived();
+
+            if (IsCurrentPlayer)
+            {
+                Control.myTasks.RemoveAt(0);
+                UpdateImportantTasks();
+            }
+        }
+
         public virtual void OnEnd(Game.GameOverData gameOver)
         {
             Role?.OnEnd(gameOver);
@@ -251,9 +267,52 @@ namespace AmongUsRevamped.Mod
             }
         }
 
+        public void Revive()
+        {
+            Game.RevivePlayer(this);
+            OnRevived();
+        }
+
         public void SetOutline(Color? color)
         {
             Control?.myRend?.SetOutline(color);
+        }
+
+        public void SetSkin(int skindId)
+        {
+            if (Control == null) return;
+
+            SkinData nextSkin = DestroyableSingleton<HatManager>.Instance.AllSkins[skindId];
+            var physics = Control.MyPhysics;
+
+            AnimationClip clip;
+            var spriteAnim = physics.Skin.animator;
+            var anim = spriteAnim.m_animator;
+            var skinLayer = physics.Skin;
+
+            var currentPhysicsAnim = physics.Animator.GetCurrentAnimation();
+
+            if (currentPhysicsAnim == physics.RunAnim) clip = nextSkin.RunAnim;
+            else if (currentPhysicsAnim == physics.SpawnAnim) clip = nextSkin.SpawnAnim;
+            else if (currentPhysicsAnim == physics.EnterVentAnim) clip = nextSkin.EnterVentAnim;
+            else if (currentPhysicsAnim == physics.ExitVentAnim) clip = nextSkin.ExitVentAnim;
+            else if (currentPhysicsAnim == physics.IdleAnim) clip = nextSkin.IdleAnim;
+            else clip = nextSkin.IdleAnim;
+
+            float progress = physics.Animator.m_animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
+            skinLayer.skin = nextSkin;
+
+            spriteAnim.Play(clip, 1f);
+            anim.Play("a", 0, progress % 1);
+            anim.Update(0f);
+        }
+
+        public void FixAnimation()
+        {
+            Control.MyPhysics.ResetMoveState(true);
+            Control.Collider.enabled = true;
+            Control.moveable = true;
+            Control.NetTransform.enabled = true;
         }
 
         public static void OnIntroStart(IntroCutscene introCutScene, ref Il2CppSystem.Collections.Generic.List<PlayerControl> team)

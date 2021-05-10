@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AmongUsRevamped.Mod.Modifiers;
@@ -66,10 +66,10 @@ namespace AmongUsRevamped.Mod
 
             public MurderRpc(uint id) : base(id) { }
 
-            public override void Write(MessageWriter writer, Tuple<byte, byte> assignation)
+            public override void Write(MessageWriter writer, Tuple<byte, byte> murder)
             {
-                writer.Write(assignation.Item1); // Murderer id
-                writer.Write(assignation.Item2); // Victim id
+                writer.Write(murder.Item1); // Murderer id
+                writer.Write(murder.Item2); // Victim id
             }
 
             public override Tuple<byte, byte> Read(MessageReader reader)
@@ -77,11 +77,35 @@ namespace AmongUsRevamped.Mod
                 return new Tuple<byte, byte>(reader.ReadByte(), reader.ReadByte());
             }
 
-            public override void Handle(PlayerControl sender, Tuple<byte, byte> assignation)
+            public override void Handle(PlayerControl sender, Tuple<byte, byte> murder)
             {
-                var killer = Player.GetPlayer(assignation.Item1);
-                var victim = Player.GetPlayer(assignation.Item2);
+                var killer = Player.GetPlayer(murder.Item1);
+                var victim = Player.GetPlayer(murder.Item2);
                 if (killer != null && victim != null) killer.Control.MurderPlayer(victim.Control);
+            }
+        }
+
+        [RegisterCustomRpc((uint)CustomRpcCalls.Revive)]
+        private protected class ReviveRpc : PlayerCustomRpc<byte>
+        {
+            public static ReviveRpc Instance { get { return Rpc<ReviveRpc>.Instance; } }
+
+            public ReviveRpc(uint id) : base(id) { }
+
+            public override void Write(MessageWriter writer, byte revived)
+            {
+                writer.Write(revived); // Revived player id
+            }
+
+            public override  byte Read(MessageReader reader)
+            {
+                return reader.ReadByte();
+            }
+
+            public override void Handle(PlayerControl sender, byte revived)
+            {
+                var player = Player.GetPlayer(revived);
+                player?.OnRevived();
             }
         }
 

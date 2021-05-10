@@ -112,6 +112,11 @@ namespace AmongUsRevamped.Mod.Roles
 
         }
 
+        public virtual void OnRevived()
+        {
+
+        }
+
         public virtual void OnEnd(Game.GameOverData gameOver)
         {
             switch (gameOver.Reason)
@@ -231,6 +236,7 @@ namespace AmongUsRevamped.Mod.Roles
         // Crew
         Crewmate,
         Sheriff,
+        TimeLord,
         // Impostor
         Impostor,
         Swooper,

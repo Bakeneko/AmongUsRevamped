@@ -139,6 +139,7 @@ namespace AmongUsRevamped.Mod
             int maxCrewmateRoles = Mathf.Min(crewmates.Count, Options.Values.MaxCrewmateRoles);
             var generator = new DistributedRandomNumberGenerator<byte>();
             if (Options.Values.SheriffSpawnRate > 0) generator.AddNumber((byte)RoleType.Sheriff, Options.Values.SheriffSpawnRate);
+            if (Options.Values.TimeLordSpawnRate > 0) generator.AddNumber((byte)RoleType.TimeLord, Options.Values.TimeLordSpawnRate);
             if (Options.Values.JesterSpawnRate > 0) generator.AddNumber((byte)RoleType.Jester, Options.Values.JesterSpawnRate);
 
             for (int i = 0; i < maxCrewmateRoles; i++)
@@ -218,6 +219,9 @@ namespace AmongUsRevamped.Mod
                     break;
                 case RoleType.Sheriff:
                     new Sheriff(player).AddToReverseIndex();
+                    break;
+                case RoleType.TimeLord:
+                    new TimeLord(player).AddToReverseIndex();
                     break;
                 case RoleType.Impostor:
                     new Impostor(player).AddToReverseIndex();
@@ -324,6 +328,12 @@ namespace AmongUsRevamped.Mod
         private static void OnPlayerMurderedPlayer(Player killer, Player victim)
         {
             victim.OnMurdered(killer);
+        }
+
+        public static void RevivePlayer(Player revived)
+        {
+            if (revived == null) return;
+            ReviveRpc.Instance.Send(revived.Id);
         }
 
         private static bool OnPlayerCallMeeting(Player player)

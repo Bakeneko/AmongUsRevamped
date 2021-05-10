@@ -25,6 +25,12 @@ namespace AmongUsRevamped.Mod
         public static CustomNumberOption SheriffSpawnRate;
         public static CustomNumberOption SheriffKillCooldown;
 
+        // Time Lord
+        public static CustomHeaderOption TimeLordSettings;
+        public static CustomNumberOption TimeLordSpawnRate;
+        public static CustomNumberOption TimeLordRewindCooldown;
+        public static CustomNumberOption TimeLordRewindDuration;
+
         #endregion Crewmates
 
         #region Impostors
@@ -80,11 +86,17 @@ namespace AmongUsRevamped.Mod
             SheriffSettings = new CustomHeaderOption("sheriffSettings", Color.RoleSheriff.ToColorTag("Sheriff"));
             SheriffSpawnRate = new CustomNumberOption("sheriffSpawnRate", "Spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
             SheriffKillCooldown = new CustomNumberOption("sheriffKillCooldown", "Kill cooldown", true, 30f, 10f, 60f, 2.5f, true, CustomNumberOption.SecondsStringFormat);
-            
+
+            // Time Lord
+            TimeLordSettings = new CustomHeaderOption("timeLordSettings", Color.RoleTimeLord.ToColorTag("Time Lord"));
+            TimeLordSpawnRate = new CustomNumberOption("timeLordSpawnRate", "Spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
+            TimeLordRewindCooldown = new CustomNumberOption("timeLordRewindCooldown", "Rewind cooldown", true, 25f, 10f, 40f, 2.5f, true, CustomNumberOption.SecondsStringFormat);
+            TimeLordRewindDuration = new CustomNumberOption("timeLordRewindDuration", "Rewind duration", true, 3f, 3f, 15f, 0.5f, true, CustomNumberOption.SecondsStringFormat);
+
             #endregion Crewmates
 
             #region Impostors
-            
+
             // Swooper
             SwooperSettings = new CustomHeaderOption("swooperSettings", Color.RoleImpostor.ToColorTag("Swooper"));
             SwooperSpawnRate = new CustomNumberOption("swooperSpawnRate", "Spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
@@ -130,6 +142,11 @@ namespace AmongUsRevamped.Mod
             // Sheriff
             public static float SheriffSpawnRate => Options.SheriffSpawnRate.GetValue();
             public static float SheriffKillCooldown => Options.SheriffKillCooldown.GetValue();
+
+            // Time Lord
+            public static float TimeLordSpawnRate => Options.TimeLordSpawnRate.GetValue();
+            public static float TimeLordRewindCooldown => Options.TimeLordRewindCooldown.GetValue();
+            public static float TimeLordRewindDuration => Options.TimeLordRewindDuration.GetValue();
 
             #endregion Crewmates
 

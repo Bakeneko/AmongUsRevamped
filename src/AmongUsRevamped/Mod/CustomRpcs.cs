@@ -1,4 +1,4 @@
-﻿namespace AmongUsRevamped.Mod
+namespace AmongUsRevamped.Mod
 {
     public enum CustomRpcCalls : uint
     {
@@ -9,7 +9,9 @@
         ModifierAssignation,
 
         Murder,
+        Revive,
         Swoop,
+        Rewind,
 
         EndGame,
     }
