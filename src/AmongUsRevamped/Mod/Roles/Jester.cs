@@ -22,17 +22,5 @@ namespace AmongUsRevamped.Mod.Roles
         {
             return false;
         }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (Disposed) return;
-
-            if (disposing)
-            {
-                Exiled = false;
-            }
-            base.Dispose(disposing);
-            Disposed = true;
-        }
     }
 }

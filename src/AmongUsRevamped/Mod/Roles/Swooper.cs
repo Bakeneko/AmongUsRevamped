@@ -27,7 +27,7 @@ namespace AmongUsRevamped.Mod.Roles
             ExileDescription = () => $"{Player.Name} was The {Name}";
         }
 
-        public override void Init()
+        protected override void Init()
         {
             base.Init();
             if (Player.IsCurrentPlayer)
@@ -57,7 +57,7 @@ namespace AmongUsRevamped.Mod.Roles
         public override void CurrentPlayerHudUpdate(HudManager hudManager)
         {
             base.CurrentPlayerHudUpdate(hudManager);
-            if (Player.IsDead)
+            if (Player.Dead)
             {
                 if (SwoopButton != null) SwoopButton.Visible = false;
             }
@@ -90,7 +90,7 @@ namespace AmongUsRevamped.Mod.Roles
                 var color = Color.clear;
                 var bodyColor = Color.white;
 
-                if (Player.IsCurrentPlayer || currentPlayer.IsDead || currentPlayer.Role?.Faction == Faction.Impostors)
+                if (Player.IsCurrentPlayer || currentPlayer.Dead || currentPlayer.Role?.Faction == Faction.Impostors)
                 {
                     bodyColor.a = 0.1f;
                 }
@@ -136,7 +136,7 @@ namespace AmongUsRevamped.Mod.Roles
                 var color = Color.clear;
                 var bodyColor = Color.white;
 
-                if (Player.IsCurrentPlayer || currentPlayer.IsDead || currentPlayer.Role?.Faction == Faction.Impostors)
+                if (Player.IsCurrentPlayer || currentPlayer.Dead || currentPlayer.Role?.Faction == Faction.Impostors)
                 {
                     bodyColor.a = 0.2f;
                 }

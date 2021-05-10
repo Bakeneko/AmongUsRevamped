@@ -94,7 +94,7 @@ namespace AmongUsRevamped.Mod
             int total = 0, impostors = 0;
             foreach (Player p in Player.AllPlayers)
             {
-                if (p.IsDisconnected || p.IsDead) continue;
+                if (p.Disconnected || p.Dead) continue;
                 total++;
                 if (p.IsImpostor) impostors++;
             }
@@ -123,7 +123,7 @@ namespace AmongUsRevamped.Mod
             int impostors = 0;
             foreach (Player p in Player.AllPlayers)
             {
-                if (!p.IsDisconnected && !p.IsDead && p.IsImpostor) impostors++;
+                if (!p.Disconnected && !p.Dead && p.IsImpostor) impostors++;
             }
 
             if (impostors == 0)

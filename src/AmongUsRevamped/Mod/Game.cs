@@ -53,7 +53,7 @@ namespace AmongUsRevamped.Mod
 
             float light = switchSystem.Value / 255f;
 
-            if (player == null || player.IsDead) // Ghost
+            if (player == null || player.Dead) // Ghost
             {
                 visionRange = 1f;
                 light = 1f;

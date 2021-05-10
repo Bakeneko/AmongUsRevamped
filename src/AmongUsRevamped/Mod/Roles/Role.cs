@@ -201,6 +201,7 @@ namespace AmongUsRevamped.Mod.Roles
 
             try
             {
+                Exiled = false;
                 RemoveFromReverseIndex();
                 Roles.Remove(Player.Id);
                 Player.UpdateImportantTasks();

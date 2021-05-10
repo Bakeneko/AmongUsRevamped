@@ -33,7 +33,7 @@ namespace AmongUsRevamped.Mod.Roles
             Init();
         }
 
-        public void Init()
+        protected void Init()
         {
 
             if (Player.IsCurrentPlayer)
@@ -60,19 +60,19 @@ namespace AmongUsRevamped.Mod.Roles
 
         public override void CurrentPlayerHudUpdate(HudManager hudManager)
         {
-            if (Player.IsDead)
+            if (Player.Dead)
             {
                 if (RewindButton != null) RewindButton.Visible = false;
             }
         }
 
-        public void OnRewindButtonClicked(object sender, EventArgs e)
+        protected void OnRewindButtonClicked(object sender, EventArgs e)
         {
             RewindRpc.Instance.Send(0, true);
             StartRewind();
         }
 
-        public void StartRewind()
+        protected void StartRewind()
         {
             var speed = RewindSound.length / Options.Values.TimeLordRewindDuration * RewindSpeed * 1.5f;
             SoundManager.Instance.PlaySound(RewindSound, false, 0.6f).pitch = speed;
@@ -83,7 +83,7 @@ namespace AmongUsRevamped.Mod.Roles
             HudManager.Instance.FullScreen.enabled = true;
         }
 
-        public void EndRewind()
+        protected void EndRewind()
         {
             Rewinding = false;
             PlayerControl.LocalPlayer.moveable = true;
@@ -91,7 +91,7 @@ namespace AmongUsRevamped.Mod.Roles
             HudManager.Instance.FullScreen.enabled = false;
         }
 
-        public void Record()
+        protected void Record()
         {
             while (Records.Count > Mathf.Round(RecordLimit / Time.deltaTime))
             {
@@ -117,17 +117,17 @@ namespace AmongUsRevamped.Mod.Roles
 
             Records.Insert(0, new Tuple<Vector3, Vector2, float>(position, velocity, Time.time));
 
-            if (DeathTime > 0 && !player.IsDead)
+            if (DeathTime > 0 && !player.Dead)
             {
                 DeathTime = -1;
             }
-            else if (DeathTime < 0 && player.IsDead)
+            else if (DeathTime < 0 && player.Dead)
             {
                 DeathTime = Time.time;
             }
         }
 
-        public void Rewind()
+        protected void Rewind()
         {
             if (Minigame.Instance)
             {
@@ -187,7 +187,7 @@ namespace AmongUsRevamped.Mod.Roles
             player.Control.transform.position = rec.Item1;
             player.Control.MyPhysics.body.velocity = rec.Item2 * RewindSpeed;
 
-            if (rec.Item3 < DeathTime && player.IsDead)
+            if (rec.Item3 < DeathTime && player.Dead)
             {
                 DeathTime = -1;
                 player.Revive();

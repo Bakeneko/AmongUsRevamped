@@ -34,13 +34,13 @@ namespace AmongUsRevamped.Mod
         public byte Id => Control.PlayerId;
         public GameData.PlayerInfo Data => Control.Data;
         public string Name => Data?.PlayerName;
-        public bool IsDisconnected => Data.Disconnected;
-        public bool IsDead => Data.IsDead;
+        public bool Disconnected => Data.Disconnected;
+        public bool Dead => Data.IsDead;
         public bool IsImpostor => Data.IsImpostor;
         public bool Visible { get => Control.Visible; set => Control.Visible = value; }
         public bool CanMove => Control.CanMove;
 
-        public float MoveSpeed => IsDead ? 1f : (Role?.MoveSpeed ?? 1f) * (Modifier?.MoveSpeedModifier ?? 1f);
+        public float MoveSpeed => Dead ? 1f : (Role?.MoveSpeed ?? 1f) * (Modifier?.MoveSpeedModifier ?? 1f);
         public float VisionRange => (Role?.VisionRange ?? PlayerControl.GameOptions.CrewLightMod) * (Modifier?.VisionRangeModifier ?? 1f);
         public bool HasNightVision => Role?.HasNightVision == true || Modifier?.HasNightVision == true;
         public bool FakesTasks => Role?.FakesTasks == true;
@@ -52,12 +52,12 @@ namespace AmongUsRevamped.Mod
 
         public bool CanSeeRole(Player other)
         {
-            return (IsDead && Options.Values.GhostsSeeRoles) || (Role?.CanSeeRole(other) ?? false);
+            return (Dead && Options.Values.GhostsSeeRoles) || (Role?.CanSeeRole(other) ?? false);
         }
 
         public bool CanUseVent(Vent vent)
         {
-            return !IsDead && (Control.inVent || (Control.CanMove && (Role?.CanUseVent(vent) ?? false)));
+            return !Dead && (Control.inVent || (Control.CanMove && (Role?.CanUseVent(vent) ?? false)));
         }
 
         public virtual void OnUpdate()
@@ -74,7 +74,7 @@ namespace AmongUsRevamped.Mod
             {
                 UpdatePlayerTextInfo(this, true, Options.Values.DisplayTasks);
             }
-            else if (CurrentPlayer.IsDead)
+            else if (CurrentPlayer.Dead)
             {
                 UpdatePlayerTextInfo(this, Options.Values.GhostsSeeRoles, Options.Values.GhostsSeeTasks);
             }
@@ -123,7 +123,7 @@ namespace AmongUsRevamped.Mod
 
             var delete = new List<PlayerTask>();
 
-            if (IsDead)
+            if (Dead)
             {
                 // Remove role and modifier tasks
                 foreach (PlayerTask t in Control.myTasks)
@@ -337,7 +337,7 @@ namespace AmongUsRevamped.Mod
                 {
                     UpdatePlayerTextInfo(player, true, Options.Values.DisplayTasks);
                 }
-                else if (CurrentPlayer.IsDead)
+                else if (CurrentPlayer.Dead)
                 {
                     UpdatePlayerTextInfo(player, Options.Values.GhostsSeeRoles, Options.Values.GhostsSeeTasks);
                 }

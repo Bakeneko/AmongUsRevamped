@@ -23,7 +23,7 @@ namespace AmongUsRevamped.Mod.Roles
             Init();
         }
 
-        public void Init()
+        protected void Init()
         {
             CurrentTarget = null;
             if (Player.IsCurrentPlayer)
@@ -41,7 +41,7 @@ namespace AmongUsRevamped.Mod.Roles
 
         public override void CurrentPlayerHudUpdate(HudManager hudManager)
         {
-            if (Player.IsDead)
+            if (Player.Dead)
             {
                 if (KillButton != null) KillButton.Visible = false;
                 return;
@@ -58,10 +58,10 @@ namespace AmongUsRevamped.Mod.Roles
             CurrentTarget.SetOutline(Color);
         }
 
-        private Player SearchTarget()
+        protected Player SearchTarget()
         {
             // Abort!
-            if (!ShipStatus.Instance || Player.IsDead || !Player.Control.CanMove) return null;
+            if (!ShipStatus.Instance || Player.Dead || !Player.Control.CanMove) return null;
             PlayerControl target = null;
 
             float distance = GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)];
@@ -85,7 +85,7 @@ namespace AmongUsRevamped.Mod.Roles
             return target;
         }
 
-        public void OnKillButtonClicked(object sender, EventArgs e)
+        protected void OnKillButtonClicked(object sender, EventArgs e)
         {
             if (CurrentTarget == null) return;
 

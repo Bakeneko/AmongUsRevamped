@@ -54,7 +54,7 @@ namespace AmongUsRevamped.Mod.Roles
 
         public override void CurrentPlayerHudUpdate(HudManager hudManager)
         {
-            if (Player.IsDead)
+            if (Player.Dead)
             {
                 if (KillButton != null) KillButton.Visible = false;
                 return;
@@ -74,7 +74,7 @@ namespace AmongUsRevamped.Mod.Roles
         protected Player SearchTarget()
         {
             // Abort!
-            if (!ShipStatus.Instance || Player.IsDead || !Player.Control.CanMove) return null;
+            if (!ShipStatus.Instance || Player.Dead || !Player.Control.CanMove) return null;
             PlayerControl target = null;
 
             float distance = GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)];

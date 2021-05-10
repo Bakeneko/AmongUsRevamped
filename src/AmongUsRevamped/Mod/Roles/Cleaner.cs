@@ -49,7 +49,7 @@ namespace AmongUsRevamped.Mod.Roles
         public override void CurrentPlayerHudUpdate(HudManager hudManager)
         {
             base.CurrentPlayerHudUpdate(hudManager);
-            if (Player.IsDead)
+            if (Player.Dead)
             {
                 if (CleanButton != null) CleanButton.Visible = false;
             }
@@ -72,7 +72,7 @@ namespace AmongUsRevamped.Mod.Roles
         protected DeadBody SearchBodyTarget()
         {
             // Abort!
-            if (!ShipStatus.Instance || Player.IsDead || !Player.Control.CanMove) return null;
+            if (!ShipStatus.Instance || Player.Dead || !Player.Control.CanMove) return null;
             DeadBody target = null;
 
             Vector2 position = Player.Control.GetTruePosition();
