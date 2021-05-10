@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using AmongUsRevamped.Mod.Modifiers;
@@ -106,6 +106,30 @@ namespace AmongUsRevamped.Mod
             {
                 var player = Player.GetPlayer(revived);
                 player?.OnRevived();
+            }
+        }
+
+        [RegisterCustomRpc((uint)CustomRpcCalls.OpenDoor)]
+        private protected class OpenDoorRpc : PlayerCustomRpc<byte>
+        {
+            public static OpenDoorRpc Instance { get { return Rpc<OpenDoorRpc>.Instance; } }
+
+            public OpenDoorRpc(uint id) : base(id) { }
+
+            public override void Write(MessageWriter writer, byte doorId)
+            {
+                writer.Write(doorId);
+            }
+
+            public override byte Read(MessageReader reader)
+            {
+                return reader.ReadByte();
+            }
+
+            public override void Handle(PlayerControl sender, byte doorId)
+            {
+                var door = ShipStatus.Instance.AllDoors.FirstOrDefault(d => d.Id == doorId);
+                door?.SetDoorway(true);
             }
         }
 

@@ -171,7 +171,7 @@ namespace AmongUsRevamped.Mod
         /// </summary>
         [HarmonyPrefix]
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CanMove), MethodType.Getter)]
-        public static bool PlayerControlCanMovePatch(PlayerControl __instance, ref bool __result)
+        private static bool PlayerControlCanMovePatch(PlayerControl __instance, ref bool __result)
         {
             __result = __instance.moveable &&
                 !IntroCutscene.Instance &&
@@ -183,6 +183,19 @@ namespace AmongUsRevamped.Mod
                 (!MapBehaviour.Instance || !MapBehaviour.Instance.IsOpenStopped);
 
             return false;
+        }
+
+        /// <summary>
+        /// Fix airship toilet door bug
+        /// </summary>
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(OpenDoorConsole), nameof(OpenDoorConsole.Use))]
+        private static void OpenDoorConsoleUsePatch(OpenDoorConsole __instance)
+        {
+            if (__instance.MyDoor is PlainDoor door && door.Room == SystemTypes.Lounge)
+            {
+                OpenDoorRpc.Instance.Send((byte)door.Id, false);
+            }
         }
 
         [HarmonyPostfix]

@@ -1,4 +1,4 @@
-namespace AmongUsRevamped.Mod
+﻿namespace AmongUsRevamped.Mod
 {
     public enum CustomRpcCalls : uint
     {
@@ -10,6 +10,7 @@ namespace AmongUsRevamped.Mod
 
         Murder,
         Revive,
+        OpenDoor,
         Swoop,
         Rewind,
 
