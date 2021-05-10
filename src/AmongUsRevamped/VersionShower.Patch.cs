@@ -42,7 +42,7 @@ namespace AmongUsRevamped
 
                 var text = gameObject.AddComponent<TextMeshPro>();
                 text.fontSize = 2f;
-                text.text = ColorPalette.Color.Revamped.ToColorTag($"{AmongUsRevamped.Name} v{AmongUsRevamped.Version}");
+                text.text = ColorPalette.Color.Revamped.ToColorTag($"{AmongUsRevamped.Name} v{AmongUsRevamped.VersionString}");
                 text.text += $"\nBepInEx: v{Paths.BepInExVersion}";
             }));
         }

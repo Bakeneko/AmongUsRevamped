@@ -5,14 +5,14 @@ using HarmonyLib;
 using Hazel;
 using UnityEngine;
 
-using Color = AmongUsRevamped.Colors.ColorPalette.Color;
+using ColorPalette = AmongUsRevamped.Colors.ColorPalette;
 
 namespace AmongUsRevamped.Mod
 {
     [HarmonyPatch]
     public static class VersionChecker
     {
-        public static Dictionary<int, Tuple<byte, byte, byte>> playerVersions = new();
+        public static Dictionary<int, Version> playerVersions = new();
         private static bool VersionSent = false;
 
         [HarmonyPostfix]
@@ -31,12 +31,12 @@ namespace AmongUsRevamped.Mod
             if (PlayerControl.LocalPlayer != null && !VersionSent)
             {
                 VersionSent = true;
-                playerVersions[AmongUsClient.Instance.ClientId] = new Tuple<byte, byte, byte>(AmongUsRevamped.Major, AmongUsRevamped.Minor, AmongUsRevamped.Patch);
+                playerVersions[AmongUsClient.Instance.ClientId] = (Version)AmongUsRevamped.Version.Clone();
                 Rpc.Instance.Send(new Rpc.VersionHandshake(AmongUsClient.Instance.ClientId, playerVersions[AmongUsClient.Instance.ClientId], true));
             }
 
             // Retrieve host version
-            if (!playerVersions.TryGetValue(AmongUsClient.Instance.HostId, out Tuple<byte, byte, byte> hostVersion)) return;
+            if (!playerVersions.TryGetValue(AmongUsClient.Instance.HostId, out Version hostVersion)) return;
 
             // Update infos with handshakes
             bool blockStart = false;
@@ -50,17 +50,33 @@ namespace AmongUsRevamped.Mod
                 var player = client.Character.Data;
                 var prefix = PlayerControl.LocalPlayer.PlayerId == player.PlayerId ? "You have" : $"{player?.PlayerName ?? player.PlayerId.ToString()} has";
                 
-                if (!playerVersions.TryGetValue(client.Id, out Tuple<byte, byte, byte> version))  // Block no mod
+                if (!playerVersions.TryGetValue(client.Id, out Version version))  // Block no mod
                 {
                     blockStart = true;
-                    message += Color.Error.ToColorTag($"{prefix} no version of Revamped\n");
+                    message += ColorPalette.Color.Error.ToColorTag($"{prefix} no version of Revamped\n");
                 }
-                else if (version.Item1 != hostVersion.Item1 || version.Item2 != hostVersion.Item2) // Block minor version difference
+                else
                 {
-                    blockStart = true;
-                    message += Color.Error.ToColorTag($"{prefix} a different version v{version.Item1}.{version.Item2}.{version.Item3} of Revamped\n");
-                } else if (version.Item3 != hostVersion.Item3) { // Warn patch version difference
-                    message += Color.Warning.ToColorTag($"{prefix} a different version v{version.Item1}.{version.Item2}.{version.Item3} of Revamped\n");
+                    int comparison = hostVersion.CompareTo(version);
+                    if (comparison != 0)
+                    {
+                        Color messageColor = ColorPalette.Color.Warning; // Warn patch version difference
+                        if (version.Major != hostVersion.Major || version.Minor != hostVersion.Minor) // Block minor version difference
+                        {
+                            blockStart = true;
+                            messageColor = ColorPalette.Color.Error;
+                        }
+
+                        if (comparison > 0)
+                        {
+                            message += messageColor.ToColorTag($"{prefix} an older version v{version.Major}.{version.Minor}.{version.Build} of Revamped\n");
+                        }
+                        else
+                        {
+                            message += messageColor.ToColorTag($"{prefix} a newer version v{version.Major}.{version.Minor}.{version.Build} of Revamped\n");
+                        }
+
+                    }
                 }
             }
 
@@ -98,11 +114,11 @@ namespace AmongUsRevamped.Mod
                     var dummyComponent = client.Character.GetComponent<DummyBehaviour>();
                     if (dummyComponent != null && dummyComponent.enabled) continue;
 
-                    if (!playerVersions.TryGetValue(client.Id, out Tuple<byte, byte, byte> version)) // Block no mod
+                    if (!playerVersions.TryGetValue(client.Id, out Version version)) // Block no mod
                     {
                         canBegin = false;
                     }
-                    else if (version.Item1 != AmongUsRevamped.Major || version.Item2 != AmongUsRevamped.Minor) // Block minor version difference
+                    else if (version.Major != AmongUsRevamped.Version.Major || version.Minor != AmongUsRevamped.Version.Minor) // Block minor version difference
                     {
                         canBegin = false;
                     }
@@ -124,10 +140,10 @@ namespace AmongUsRevamped.Mod
             public readonly struct VersionHandshake
             {
                 public readonly int ClientId; 
-                public readonly Tuple<byte, byte, byte> Version;
+                public readonly Version Version;
                 public readonly bool Ping;
 
-                public VersionHandshake(int clientId, Tuple<byte, byte, byte> version, bool ping)
+                public VersionHandshake(int clientId, Version version, bool ping)
                 {
                     ClientId = clientId;
                     Version = version;
@@ -138,9 +154,9 @@ namespace AmongUsRevamped.Mod
             public override void Write(MessageWriter writer, VersionHandshake handshake)
             {
                 writer.WritePacked(handshake.ClientId);
-                writer.Write(handshake.Version.Item1);
-                writer.Write(handshake.Version.Item2);
-                writer.Write(handshake.Version.Item3);
+                writer.Write((byte)handshake.Version.Major);
+                writer.Write((byte)handshake.Version.Minor);
+                writer.Write((byte)handshake.Version.Build);
                 writer.Write(handshake.Ping);
             }
 
@@ -148,14 +164,14 @@ namespace AmongUsRevamped.Mod
             {
                 return new VersionHandshake(
                     reader.ReadPackedInt32(),
-                    new Tuple<byte, byte, byte>(reader.ReadByte(), reader.ReadByte(), reader.ReadByte()),
+                    new Version(reader.ReadByte(), reader.ReadByte(), reader.ReadByte()),
                     reader.ReadBoolean());
             }
 
             public override void Handle(PlayerControl sender, VersionHandshake handshake)
             {
                 // Received a new version handshake, save it
-                if (!playerVersions.TryGetValue(handshake.ClientId, out Tuple<byte, byte, byte> version) || !handshake.Version.Equals(version))
+                if (!playerVersions.TryGetValue(handshake.ClientId, out Version version) || !handshake.Version.Equals(version))
                 {
                     playerVersions[handshake.ClientId] = handshake.Version;
                 }
@@ -163,9 +179,7 @@ namespace AmongUsRevamped.Mod
                 // Send version back
                 if (handshake.Ping)
                 {
-                    Instance.SendTo(handshake.ClientId, new Rpc.VersionHandshake(AmongUsClient.Instance.ClientId,
-                        new Tuple<byte, byte, byte>(AmongUsRevamped.Major, AmongUsRevamped.Minor, AmongUsRevamped.Patch),
-                        false));
+                    Instance.SendTo(handshake.ClientId, new Rpc.VersionHandshake(AmongUsClient.Instance.ClientId, AmongUsRevamped.Version, false));
                 }
             }
         }

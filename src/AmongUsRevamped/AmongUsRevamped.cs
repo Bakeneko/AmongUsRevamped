@@ -14,14 +14,15 @@ using UnityEngine.SceneManagement;
 
 namespace AmongUsRevamped
 {
-    [BepInPlugin(Id, Name, Version)]
+    [BepInPlugin(Id, Name, VersionString)]
     [BepInProcess("Among Us.exe")]
     public class AmongUsRevamped : BasePlugin
     {
         public const string Id = "app.bakeneko.revamped";
         public const string Name = "Revamped";
-        public const string Version = "0.1.0";
-        public const byte Major = 0, Minor = 1, Patch = 0;
+        public const string VersionString = "0.1.0";
+
+        public static Version Version = new(VersionString);
 
         private static AmongUsRevamped _instance;
         public static AmongUsRevamped Instance
@@ -57,7 +58,7 @@ namespace AmongUsRevamped
         {
             Instance = this;
 
-            LogInfo($"Loading {Name} {Version}...");
+            LogInfo($"Loading {Name} {VersionString}...");
 
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
             BepInEx.Logging.Logger.Listeners.Add(LogListener);
