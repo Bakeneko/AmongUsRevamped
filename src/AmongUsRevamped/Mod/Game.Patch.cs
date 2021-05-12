@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using HarmonyLib;
@@ -164,6 +164,13 @@ namespace AmongUsRevamped.Mod
         private static void IntroCutsceneMoveNextPatch(IntroCutscene.Nested_0 __instance)
         {
             OnIntroUpdate(__instance);
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.OnDestroy))]
+        private static void IntroCutsceneDestroyPatch(IntroCutscene __instance)
+        {
+            OnIntroEnd(__instance);
         }
 
         /// <summary>

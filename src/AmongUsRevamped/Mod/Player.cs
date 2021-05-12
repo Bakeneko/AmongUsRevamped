@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AmongUsRevamped.Colors;
@@ -252,10 +252,10 @@ namespace AmongUsRevamped.Mod
             Modifier?.HudUpdate(hudManager);
         }
 
-        public virtual void CurrentPlayerHudUpdate(HudManager hudManager)
+        public void OnIntroEnd(IntroCutscene introCutScene)
         {
-            Role?.CurrentPlayerHudUpdate(hudManager);
-            Modifier?.CurrentPlayerHudUpdate(hudManager);
+            Role?.OnIntroEnd(introCutScene);
+            Modifier?.OnIntroEnd(introCutScene);
         }
 
         public virtual void MurderPlayer(Player victim)
@@ -318,15 +318,25 @@ namespace AmongUsRevamped.Mod
         public static void OnIntroStart(IntroCutscene introCutScene, ref Il2CppSystem.Collections.Generic.List<PlayerControl> team)
         {
             Player player = CurrentPlayer;
-            player?.Role?.OnIntroStart(introCutScene, ref team);
-            player?.Modifier?.OnIntroStart(introCutScene);
+            if (player == null) return;
+            player.Role?.OnIntroStart(introCutScene, ref team);
+            player.Modifier?.OnIntroStart(introCutScene);
         }
 
         public static void OnIntroUpdate(IntroCutscene.Nested_0 introCutScene)
         {
             Player player = CurrentPlayer;
-            player?.Role?.OnIntroUpdate(introCutScene);
-            player?.Modifier?.OnIntroUpdate(introCutScene);
+            if (player == null) return;
+            player.Role?.OnIntroUpdate(introCutScene);
+            player.Modifier?.OnIntroUpdate(introCutScene);
+        }
+
+        public static void CurrentPlayerHudUpdate(HudManager hudManager)
+        {
+            Player player = CurrentPlayer;
+            if (player == null) return;
+            player.Role?.CurrentPlayerHudUpdate(hudManager);
+            player.Modifier?.CurrentPlayerHudUpdate(hudManager);
         }
 
         public static void UpdatePlayerTextInfos()

@@ -17,6 +17,7 @@ namespace AmongUsRevamped.Mod.Roles
         private readonly float RecordLimit = Options.Values.TimeLordRewindDuration;
         private readonly int RewindSpeed = 3;
         private readonly List<Tuple<Vector3, Vector2, float>> Records = new();
+        private bool RecordEnabled = false;
         private bool Rewinding = false;
 
         private float DeathTime = -1;
@@ -35,7 +36,6 @@ namespace AmongUsRevamped.Mod.Roles
 
         protected void Init()
         {
-
             if (Player.IsCurrentPlayer)
             {
                 RewindButton = new CooldownButton("AmongUsRevamped.Resources.Sprites.button_timelord_rewind.png", new HudPosition(GameButton.ButtonSize, 0f, HudAlignment.BottomRight), 
@@ -50,6 +50,12 @@ namespace AmongUsRevamped.Mod.Roles
             }
 
             RewindSound = AssetUtils.LoadAudioClipFromResource("AmongUsRevamped.Resources.Sounds.effect_timelord_rewind.wav");
+        }
+
+        public override void OnIntroEnd(IntroCutscene introCutScene)
+        {
+            base.OnIntroEnd(introCutScene);
+            RecordEnabled = true;
         }
 
         public override void HudUpdate(HudManager hudManager)
@@ -74,7 +80,7 @@ namespace AmongUsRevamped.Mod.Roles
 
         protected void StartRewind()
         {
-            var speed = RewindSound.length / Options.Values.TimeLordRewindDuration * RewindSpeed * 1.5f;
+            var speed = RewindSound.length / (Math.Max(Records.Count, 1) / RewindSpeed * Time.deltaTime);
             SoundManager.Instance.PlaySound(RewindSound, false, 0.6f).pitch = speed;
             Rewinding = true;
             PlayerControl.LocalPlayer.moveable = false;
@@ -93,19 +99,31 @@ namespace AmongUsRevamped.Mod.Roles
 
         protected void Record()
         {
-            while (Records.Count > Mathf.Round(RecordLimit / Time.deltaTime))
-            {
-                Records.RemoveAt(Records.Count - 1);
-            }
-
+            if (!RecordEnabled) return;
+            
             var player = Player.CurrentPlayer;
 
             if (player == null) return;
 
+            var limit = (int)Mathf.Round(RecordLimit / Time.deltaTime);
+            if (Records.Count > limit)
+            {
+                Records.RemoveRange(limit, Records.Count - limit);
+            }
+
             Vector3 position = player.Control.transform.position;
             Vector2 velocity = player.Control.MyPhysics.body.velocity;
 
-            if (!player.CanMove || velocity == Vector2.zero)
+            if (DeathTime > 0 && !player.Dead)
+            {
+                DeathTime = -1;
+            }
+            else if (DeathTime < 0 && player.Dead)
+            {
+                DeathTime = Time.time;
+            }
+
+            if (!player.CanMove)
             {
                 if (Records.Count > 0)
                 {
@@ -116,15 +134,6 @@ namespace AmongUsRevamped.Mod.Roles
             }
 
             Records.Insert(0, new Tuple<Vector3, Vector2, float>(position, velocity, Time.time));
-
-            if (DeathTime > 0 && !player.Dead)
-            {
-                DeathTime = -1;
-            }
-            else if (DeathTime < 0 && player.Dead)
-            {
-                DeathTime = Time.time;
-            }
         }
 
         protected void Rewind()
@@ -187,10 +196,10 @@ namespace AmongUsRevamped.Mod.Roles
             player.Control.transform.position = rec.Item1;
             player.Control.MyPhysics.body.velocity = rec.Item2 * RewindSpeed;
 
-            if (rec.Item3 < DeathTime && player.Dead)
+            if (rec.Item3 <= DeathTime && player.Dead)
             {
-                DeathTime = -1;
                 player.Revive();
+                DeathTime = -1;
             }
 
             Records.RemoveAt(0);

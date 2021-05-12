@@ -92,6 +92,11 @@ namespace AmongUsRevamped.Mod.Roles
             introCutScene.__this.BackgroundBar.material.color = Color;
         }
 
+        public virtual void OnIntroEnd(IntroCutscene introCutScene)
+        {
+
+        }
+
         public virtual void HudUpdate(HudManager hudManager)
         {
 
@@ -117,8 +122,20 @@ namespace AmongUsRevamped.Mod.Roles
 
         }
 
+        public virtual void OnTasksCreated()
+        {
+
+        }
+
+        public virtual void OnCompletedTask(GameData.TaskInfo task)
+        {
+
+        }
+
         public virtual void OnEnd(Game.GameOverData gameOver)
         {
+            if (gameOver == null) return;
+
             switch (gameOver.Reason)
             {
                 case Game.CustomGameOverReason.JesterVotedOut:
@@ -128,6 +145,9 @@ namespace AmongUsRevamped.Mod.Roles
             }
 
             TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+
+            if (gameOver.Winners == null) return;
+
             foreach (Player player in gameOver.Winners)
             {
                 TempData.winners.Add(new WinningPlayerData(player.Data));
@@ -205,6 +225,7 @@ namespace AmongUsRevamped.Mod.Roles
                 RemoveFromReverseIndex();
                 Roles.Remove(Player.Id);
                 Player.UpdateImportantTasks();
+                Player = null;
             }
             catch
             {
@@ -237,6 +258,7 @@ namespace AmongUsRevamped.Mod.Roles
         // Crew
         Crewmate,
         Sheriff,
+        Snitch,
         TimeLord,
         // Impostor
         Cleaner,

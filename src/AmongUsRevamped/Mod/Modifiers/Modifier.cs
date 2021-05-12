@@ -68,6 +68,11 @@ namespace AmongUsRevamped.Mod.Modifiers
             }
         }
 
+        public virtual void OnIntroEnd(IntroCutscene introCutScene)
+        {
+
+        }
+
         public virtual void HudUpdate(HudManager hudManager)
         {
 
@@ -133,6 +138,7 @@ namespace AmongUsRevamped.Mod.Modifiers
                 RemoveFromReverseIndex();
                 Modifiers.Remove(Player.Id);
                 Player.UpdateImportantTasks();
+                Player = null;
             }
             catch
             {

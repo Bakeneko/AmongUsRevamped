@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AmongUsRevamped.Colors;
@@ -122,7 +122,7 @@ namespace AmongUsRevamped.Mod
         private static void OnHudUpdate(HudManager hudManager)
         {
             foreach(Player p in Player.AllPlayers) { p.HudUpdate(hudManager); };
-            Player.CurrentPlayer?.CurrentPlayerHudUpdate(hudManager);
+            Player.CurrentPlayerHudUpdate(hudManager);
         }
 
         private static void OnDistributeRoles()
@@ -269,6 +269,11 @@ namespace AmongUsRevamped.Mod
         private static void OnIntroUpdate(IntroCutscene.Nested_0 introCutScene)
         {
             Player.OnIntroUpdate(introCutScene);
+        }
+
+        private static void OnIntroEnd(IntroCutscene introCutScene)
+        {
+            foreach (Player p in Player.AllPlayers) { p.OnIntroEnd(introCutScene); };
         }
 
         private static void OnExileBegin(Player exiled, bool tie)
