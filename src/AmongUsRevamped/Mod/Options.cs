@@ -25,6 +25,11 @@ namespace AmongUsRevamped.Mod
         public static CustomNumberOption SheriffSpawnRate;
         public static CustomNumberOption SheriffKillCooldown;
 
+        // Snitch
+        public static CustomHeaderOption SnitchSettings;
+        public static CustomNumberOption SnitchSpawnRate;
+        public static CustomNumberOption SnitchTasksLeftBeforeBusted;
+
         // Time Lord
         public static CustomHeaderOption TimeLordSettings;
         public static CustomNumberOption TimeLordSpawnRate;
@@ -91,6 +96,11 @@ namespace AmongUsRevamped.Mod
             SheriffSpawnRate = new CustomNumberOption("sheriffSpawnRate", "Spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
             SheriffKillCooldown = new CustomNumberOption("sheriffKillCooldown", "Kill cooldown", true, 30f, 10f, 60f, 2.5f, true, CustomNumberOption.SecondsStringFormat);
 
+            // Snitch
+            SnitchSettings = new CustomHeaderOption("snitchSettings", Color.RoleSnitch.ToColorTag("Snitch"));
+            SnitchSpawnRate = new CustomNumberOption("snitchSpawnRate", "Spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
+            SnitchTasksLeftBeforeBusted = new CustomNumberOption("snitchTasksLeftBeforeBusted", "Tasks left before being busted", true, 1f, 0f, 5f, 1f, true);
+
             // Time Lord
             TimeLordSettings = new CustomHeaderOption("timeLordSettings", Color.RoleTimeLord.ToColorTag("Time Lord"));
             TimeLordSpawnRate = new CustomNumberOption("timeLordSpawnRate", "Spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
@@ -151,6 +161,10 @@ namespace AmongUsRevamped.Mod
             // Sheriff
             public static float SheriffSpawnRate => Options.SheriffSpawnRate.GetValue();
             public static float SheriffKillCooldown => Options.SheriffKillCooldown.GetValue();
+
+            // Snitch
+            public static float SnitchSpawnRate => Options.SnitchSpawnRate.GetValue();
+            public static float SnitchTasksLeftBeforeBusted => Options.SnitchTasksLeftBeforeBusted.GetValue();
 
             // Time Lord
             public static float TimeLordSpawnRate => Options.TimeLordSpawnRate.GetValue();

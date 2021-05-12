@@ -130,6 +130,7 @@ namespace AmongUsRevamped.Colors
 
             public static Color32 RoleCrewmate = new(139, 253, 253, 255);
             public static Color32 RoleSheriff = new(255, 204, 0, 255);
+            public static Color32 RoleSnitch = new(252, 96, 29, 255);
             public static Color32 RoleTimeLord = new(20, 20, 255, 255);
             public static Color32 RoleImpostor = new(255, 25, 25, 255);
             public static Color32 RoleJester = new(255, 191, 204, 255);
@@ -139,6 +140,7 @@ namespace AmongUsRevamped.Colors
             public static Color32 ModifierTorch = new(255, 200, 122, 255);
 
             public static Color32 RewindHudColor = new(20, 20, 255, 20);
+            public static Color32 SnitchArrow = new(252, 96, 29, 255);
         }
     }
 }

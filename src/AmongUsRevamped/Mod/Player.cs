@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using AmongUsRevamped.Colors;
@@ -80,6 +80,12 @@ namespace AmongUsRevamped.Mod
             }
         }
 
+        public virtual void OnTasksCreated()
+        {
+            Role?.OnTasksCreated();
+            if (IsCurrentPlayer) UpdateImportantTasks();
+        }
+
         public virtual void OnExiled()
         {
             Role?.OnExiled();
@@ -110,6 +116,11 @@ namespace AmongUsRevamped.Mod
                 Control.myTasks.RemoveAt(0);
                 UpdateImportantTasks();
             }
+        }
+
+        public virtual void OnCompletedTask(GameData.TaskInfo task)
+        {
+            Role?.OnCompletedTask(task);
         }
 
         public virtual void OnEnd(Game.GameOverData gameOver)

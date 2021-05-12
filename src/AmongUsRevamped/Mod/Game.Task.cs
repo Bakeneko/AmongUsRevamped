@@ -6,7 +6,7 @@ namespace AmongUsRevamped.Mod
     {
         private static void OnPlayerTasksCreated(Player player)
         {
-            if (player.IsCurrentPlayer) player.UpdateImportantTasks();
+            player?.OnTasksCreated();
         }
 
         /// <summary>

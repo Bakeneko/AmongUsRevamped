@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using AmongUsRevamped.Colors;
@@ -139,6 +139,7 @@ namespace AmongUsRevamped.Mod
             int maxCrewmateRoles = Mathf.Min(crewmates.Count, Options.Values.MaxCrewmateRoles);
             var generator = new DistributedRandomNumberGenerator<byte>();
             if (Options.Values.SheriffSpawnRate > 0) generator.AddNumber((byte)RoleType.Sheriff, Options.Values.SheriffSpawnRate);
+            if (Options.Values.SnitchSpawnRate > 0) generator.AddNumber((byte)RoleType.Snitch, Options.Values.SnitchSpawnRate);
             if (Options.Values.TimeLordSpawnRate > 0) generator.AddNumber((byte)RoleType.TimeLord, Options.Values.TimeLordSpawnRate);
             if (Options.Values.JesterSpawnRate > 0) generator.AddNumber((byte)RoleType.Jester, Options.Values.JesterSpawnRate);
 
@@ -220,6 +221,9 @@ namespace AmongUsRevamped.Mod
                     break;
                 case RoleType.Sheriff:
                     new Sheriff(player).AddToReverseIndex();
+                    break;
+                case RoleType.Snitch:
+                    new Snitch(player).AddToReverseIndex();
                     break;
                 case RoleType.TimeLord:
                     new TimeLord(player).AddToReverseIndex();
@@ -380,7 +384,7 @@ namespace AmongUsRevamped.Mod
 
         private static void OnPlayerCompletedTask(Player player, GameData.TaskInfo task)
         {
-
+            player?.OnCompletedTask(task);
         }
 
         private static bool OnPlayerExile(Player player)
