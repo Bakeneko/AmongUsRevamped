@@ -23,6 +23,7 @@ namespace AmongUsRevamped.Mod
                 gameData.TotalTasks += playerTotal;
                 gameData.CompletedTasks += playerCompleted;
             }
+            if (TestMode.DisableGameEnd) gameData.TotalTasks++; // Prevent crewmate victory
         }
     }
 }
