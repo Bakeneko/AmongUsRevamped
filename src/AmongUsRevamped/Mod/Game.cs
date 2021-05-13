@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using AmongUsRevamped.Colors;
 using AmongUsRevamped.Extensions;
 using AmongUsRevamped.Mod.Modifiers;
@@ -172,6 +173,7 @@ namespace AmongUsRevamped.Mod
             generator = new DistributedRandomNumberGenerator<byte>();
             if (Options.Values.DrunkSpawnRate > 0) generator.AddNumber((byte)ModifierType.Drunk, Options.Values.DrunkSpawnRate);
             if (Options.Values.FlashSpawnRate > 0) generator.AddNumber((byte)ModifierType.Flash, Options.Values.FlashSpawnRate);
+            if (Options.Values.GiantSpawnRate > 0) generator.AddNumber((byte)ModifierType.Giant, Options.Values.GiantSpawnRate);
             if (Options.Values.TorchSpawnRate > 0) generator.AddNumber((byte)ModifierType.Torch, Options.Values.TorchSpawnRate);
 
             for (int i = 0; i < maxModifiers; i++)
@@ -256,6 +258,9 @@ namespace AmongUsRevamped.Mod
                 case ModifierType.Flash:
                     new Flash(player).AddToReverseIndex();
                     break;
+                case ModifierType.Giant:
+                    new Giant(player).AddToReverseIndex();
+                    break;
                 case ModifierType.Torch:
                     new Torch(player).AddToReverseIndex();
                     break;
@@ -301,6 +306,45 @@ namespace AmongUsRevamped.Mod
             emButton.ClosedLid.gameObject.SetActive(true);
             emButton.OpenLid.gameObject.SetActive(false);
             emButton.ButtonActive = false;
+        }
+
+        /// <summary>
+        /// Update med scan info
+        /// </summary>
+        private static void OnMedScanMinigameBegin(MedScanMinigame medScan)
+        {
+            var player = Player.CurrentPlayer;
+            var size = player.Size;
+            var data = medScan.completeString;
+
+            string sizePattern = @":( ?\d)'(( ?\d)"")?";
+            Match sizeMatch = Regex.Match(data, sizePattern, RegexOptions.Multiline);
+            var feet = 0f;
+            var inches = 0f;
+            if (sizeMatch.Groups.Count > 1)
+            {
+                feet = float.Parse(sizeMatch.Groups[1].Value);
+            }
+            if (sizeMatch.Groups.Count > 3)
+            {
+                inches = float.Parse(sizeMatch.Groups[3].Value);
+            }
+            feet = (feet + inches * 0.083333f) * size;
+            inches = Mathf.Round(feet % 1 / 0.083333f);
+            feet = Mathf.Floor(feet);
+            data = Regex.Replace(data, sizePattern, $":{feet}'{(inches > 0 ? $" {inches}\"" : "")}");
+
+            string weightPattern = @":( ?\d+)lb";
+            Match weightMatch = Regex.Match(data, weightPattern, RegexOptions.Multiline);
+            var weight = 0f;
+            if (weightMatch.Groups.Count > 1)
+            {
+                weight = float.Parse(weightMatch.Groups[1].Value);
+            }
+            weight = Mathf.Round(weight * size);
+
+            data = Regex.Replace(data, weightPattern, $":{weight.ToString("0")}lb");
+            medScan.completeString = data;
         }
 
         private static bool OnPlayerCanUseConsole(Player player, Console console, ref float distance, out bool canUse, out bool couldUse)

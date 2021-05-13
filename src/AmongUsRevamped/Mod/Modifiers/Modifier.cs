@@ -22,6 +22,7 @@ namespace AmongUsRevamped.Mod.Modifiers
         protected internal ModifierType ModifierType { get; set; }
         protected internal Player Player { get; set; }
         protected internal float MoveSpeedModifier { get; set; } = 1f;
+        protected internal float SizeModifier { get; set; } = 1f;
         protected internal float VisionRangeModifier { get; set; } = 1f;
         protected internal bool HasNightVision { get; set; } = false;
 
@@ -163,6 +164,7 @@ namespace AmongUsRevamped.Mod.Modifiers
         None,
         Drunk,
         Flash,
+        Giant,
         Torch,
     }
 }

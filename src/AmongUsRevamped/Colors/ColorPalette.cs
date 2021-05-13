@@ -137,6 +137,7 @@ namespace AmongUsRevamped.Colors
 
             public static Color32 ModifierDrunk = new(117, 127, 0, 255);
             public static Color32 ModifierFlash = new(255, 56, 56, 255);
+            public static Color32 ModifierGiant = new(255, 127, 127, 255);
             public static Color32 ModifierTorch = new(255, 200, 122, 255);
 
             public static Color32 RewindHudColor = new(20, 20, 255, 20);

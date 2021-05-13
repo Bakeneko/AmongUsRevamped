@@ -12,6 +12,8 @@ namespace AmongUsRevamped.Mod
 {
     public class Player
     {
+        public const float DefaultColliderRadius = 0.2233912f;
+        public const float DefaultColliderOffset = 0.3636057f;
 
         public static IEnumerable<Player> AllPlayers => PlayerControl.AllPlayerControls.ToArray().Select(p => new Player(p));
 
@@ -41,6 +43,7 @@ namespace AmongUsRevamped.Mod
         public bool CanMove => Control.CanMove;
 
         public float MoveSpeed => Dead ? 1f : (Role?.MoveSpeed ?? 1f) * (Modifier?.MoveSpeedModifier ?? 1f);
+        public float Size => Dead ? 1f : (Role?.Size ?? 1f) * (Modifier?.SizeModifier ?? 1f);
         public float VisionRange => (Role?.VisionRange ?? PlayerControl.GameOptions.CrewLightMod) * (Modifier?.VisionRangeModifier ?? 1f);
         public bool HasNightVision => Role?.HasNightVision == true || Modifier?.HasNightVision == true;
         public bool FakesTasks => Role?.FakesTasks == true;
@@ -78,6 +81,17 @@ namespace AmongUsRevamped.Mod
             {
                 UpdatePlayerTextInfo(this, Options.Values.GhostsSeeRoles, Options.Values.GhostsSeeTasks);
             }
+
+            UpdateSize();
+        }
+
+        public virtual void UpdateSize()
+        {
+            float scale = 0.7f * Size;
+            CircleCollider2D collider = Control.Collider?.TryCast<CircleCollider2D>();
+            Control.transform.localScale = new Vector3(scale, scale, 1f);
+            collider.radius = DefaultColliderRadius * Size;
+            collider.offset = DefaultColliderOffset * Vector2.down;
         }
 
         public virtual void OnTasksCreated()

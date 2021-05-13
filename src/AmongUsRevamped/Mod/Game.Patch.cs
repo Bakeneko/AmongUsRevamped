@@ -257,6 +257,13 @@ namespace AmongUsRevamped.Mod
             OnEmergencyButtonUpdate(__instance);
         }
 
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(MedScanMinigame), nameof(MedScanMinigame.Begin))]
+        private static void MedScanMinigameBeginPatch(MedScanMinigame __instance)
+        {
+            OnMedScanMinigameBegin(__instance);
+        }
+
         [HarmonyPrefix]
         [HarmonyPatch(typeof(Console), nameof(Console.CanUse))]
         private static bool ConsoleCanUsePatch(ref float __result, Console __instance, [HarmonyArgument(0)] GameData.PlayerInfo player,
