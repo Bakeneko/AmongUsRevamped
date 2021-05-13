@@ -4,6 +4,7 @@ using System.Linq;
 using HarmonyLib;
 using InnerNet;
 using UnhollowerBaseLib;
+using UnityEngine;
 
 namespace AmongUsRevamped.Mod
 {
@@ -202,6 +203,19 @@ namespace AmongUsRevamped.Mod
             if (__instance.MyDoor is PlainDoor door && door.Room == SystemTypes.Lounge)
             {
                 OpenDoorRpc.Instance.Send((byte)door.Id, false);
+            }
+        }
+
+        /// <summary>
+        /// Fix notification position
+        /// </summary>
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(NotificationPopper), nameof(NotificationPopper.Update))]
+        public static void NotificationPopperUpdatePatch(NotificationPopper __instance)
+        {
+            if (__instance.alphaTimer > 0f) // Displaying notification
+            {
+                __instance.transform.localPosition += new Vector3(0.4f, 0f, 0f);
             }
         }
 
