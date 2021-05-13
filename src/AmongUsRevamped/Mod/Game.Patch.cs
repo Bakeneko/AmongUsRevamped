@@ -160,10 +160,10 @@ namespace AmongUsRevamped.Mod
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(IntroCutscene.Nested_0), nameof(IntroCutscene.Nested_0.MoveNext))]
-        private static void IntroCutsceneMoveNextPatch(IntroCutscene.Nested_0 __instance)
+        [HarmonyPatch(typeof(IntroCutscene._CoBegin_d__11), nameof(IntroCutscene._CoBegin_d__11.MoveNext))]
+        private static void IntroCutsceneMoveNextPatch(IntroCutscene._CoBegin_d__11 __instance)
         {
-            OnIntroUpdate(__instance);
+            OnIntroUpdate(__instance.__4__this);
         }
 
         [HarmonyPrefix]
@@ -224,8 +224,8 @@ namespace AmongUsRevamped.Mod
         [HarmonyPatch(typeof(PlayerControl._CoSetTasks_d__78), nameof(PlayerControl._CoSetTasks_d__78.MoveNext))]
         private static void PlayerControlSetTasksMoveNextPatch(PlayerControl._CoSetTasks_d__78 __instance)
         {
-            if (__instance?.__this == null) return;
-            OnPlayerTasksCreated(__instance?.__this);
+            if (__instance?.__4__this == null) return;
+            OnPlayerTasksCreated(__instance?.__4__this);
         }
 
         [HarmonyPrefix]

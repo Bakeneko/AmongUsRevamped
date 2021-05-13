@@ -6,12 +6,11 @@ namespace AmongUsRevamped.UI
     public partial class CooldownButton : GameButton
     {
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(HudManager.Nested_5), nameof(HudManager.Nested_5.MoveNext))]
+        [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.OnDestroy))]
         private static void HudManagerShownIntroPatch() // Intro is fading
         {
             // Setup buttons initial cooldowns
-            const float fadeTime = 0.2F;
-            foreach (CooldownButton button in CooldownButtons) button.ApplyCooldown(button.InitialCooldownDuration - fadeTime);
+            foreach (CooldownButton button in CooldownButtons) button.ApplyCooldown(button.InitialCooldownDuration);
         }
 
         [HarmonyPostfix]

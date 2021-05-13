@@ -6,11 +6,10 @@
         <GamePlatform>Steam</GamePlatform>
         <LangVersion>9.0</LangVersion>
         <TargetFramework>netstandard2.1</TargetFramework>
-        <Mappings>NuclearPowered/Mappings:0.4.0</Mappings>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(GamePlatform)' == 'Steam'">
-        <GameVersion>2021.4.14s</GameVersion>
+        <GameVersion>2021.5.10s</GameVersion>
         <DefineConstants>$(DefineConstants);STEAM</DefineConstants>
     </PropertyGroup>
 
@@ -21,14 +20,15 @@
 
     <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-      <PackageReference Include="Reactor.OxygenFilter.MSBuild" Version="0.3.0" />
+      <Reference Include="$(AmongUs)/BepInEx/core/*.dll" />
+      <Reference Include="$(AmongUs)/BepInEx/unhollowed/*.dll" />
     </ItemGroup>
 
     <ItemGroup>
         <EmbeddedResource Include="Resources\**\*" />
     </ItemGroup>
-  
-    <Target Name="Copy" AfterTargets="Reobfuscate">
-        <Copy SourceFiles="$(OutputPath)reobfuscated/$(AssemblyName)-$(GameVersion).dll" DestinationFolder="$(AmongUs)/BepInEx/plugins/" Condition="'$(Configuration)' == 'Debug'" />
+
+    <Target Name="Copy" AfterTargets="AfterBuild">
+        <Copy SourceFiles="$(OutputPath)/$(AssemblyName).dll" DestinationFiles="$(AmongUs)/BepInEx/plugins/$(AssemblyName)-$(GameVersion).dll" Condition="'$(Configuration)' == 'Debug'" />
     </Target>
 </Project>

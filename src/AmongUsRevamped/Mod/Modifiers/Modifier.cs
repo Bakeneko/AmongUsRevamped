@@ -54,16 +54,16 @@ namespace AmongUsRevamped.Mod.Modifiers
             }
         }
 
-        public virtual void OnIntroUpdate(IntroCutscene.Nested_0 introCutScene)
+        public virtual void OnIntroUpdate(IntroCutscene introCutScene)
         {
             // Retrieve modifier text
-            Transform modifierTextTransform = introCutScene.__this.Title.transform.parent.transform?.FindChild("ModifierText");
+            Transform modifierTextTransform = introCutScene.Title.transform.parent.transform?.FindChild("ModifierText");
             TMPro.TextMeshPro modifierText = modifierTextTransform?.GetComponent<TMPro.TextMeshPro>();
 
             if (modifierText != null)
             {
                 modifierText.text = IntroDescription();
-                modifierText.transform.position = introCutScene.__this.transform.position - new Vector3(0f, 1.8f, 0f);
+                modifierText.transform.position = introCutScene.transform.position - new Vector3(0f, 1.8f, 0f);
                 modifierText.gameObject.SetActive(true);
             }
         }

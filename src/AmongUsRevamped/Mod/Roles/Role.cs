@@ -84,12 +84,12 @@ namespace AmongUsRevamped.Mod.Roles
             introCutScene.Title.fontSizeMax = 14;
         }
 
-        public virtual void OnIntroUpdate(IntroCutscene.Nested_0 introCutScene)
+        public virtual void OnIntroUpdate(IntroCutscene introCutScene)
         {
-            introCutScene.__this.Title.text = Color.ToColorTag(Name);
-            introCutScene.__this.ImpostorText.text = IntroDescription();
-            introCutScene.__this.ImpostorText.gameObject.SetActive(true);
-            introCutScene.__this.BackgroundBar.material.color = Color;
+            introCutScene.Title.text = Color.ToColorTag(Name);
+            introCutScene.ImpostorText.text = IntroDescription();
+            introCutScene.ImpostorText.gameObject.SetActive(true);
+            introCutScene.BackgroundBar.material.color = Color;
         }
 
         public virtual void OnIntroEnd(IntroCutscene introCutScene)

@@ -270,7 +270,7 @@ namespace AmongUsRevamped.Mod
             Player.OnIntroStart(introCutScene, ref team);
         }
 
-        private static void OnIntroUpdate(IntroCutscene.Nested_0 introCutScene)
+        private static void OnIntroUpdate(IntroCutscene introCutScene)
         {
             Player.OnIntroUpdate(introCutScene);
         }

@@ -334,7 +334,7 @@ namespace AmongUsRevamped.Mod
             player.Modifier?.OnIntroStart(introCutScene);
         }
 
-        public static void OnIntroUpdate(IntroCutscene.Nested_0 introCutScene)
+        public static void OnIntroUpdate(IntroCutscene introCutScene)
         {
             Player player = CurrentPlayer;
             if (player == null) return;
