@@ -16,6 +16,7 @@ namespace AmongUsRevamped.Mod
         // Roles
         public static CustomHeaderOption RolesSettings;
         public static CustomNumberOption MaxCrewmateRoles;
+        public static CustomNumberOption MaxNeutralRoles;
         public static CustomNumberOption MaxImpostorRoles;
 
         #region Crewmates
@@ -95,6 +96,7 @@ namespace AmongUsRevamped.Mod
             // Roles
             RolesSettings = new CustomHeaderOption("rolesSettings", "Roles Settings");
             MaxCrewmateRoles = new CustomNumberOption("maxCrewmateRoles", "Max crewmate roles", true, 0f, 0f, 9f, 1f, true);
+            MaxNeutralRoles = new CustomNumberOption("maxNeutralRoles", "Max neutral roles", true, 0f, 0f, 3f, 1f, true);
             MaxImpostorRoles = new CustomNumberOption("maxImpostorRoles", "Max impostor roles", true, 0f, 0f, 3f, 1f, true);
 
             #region Crewmates
@@ -170,6 +172,7 @@ namespace AmongUsRevamped.Mod
 
             // Roles
             public static int MaxCrewmateRoles => (int)Options.MaxCrewmateRoles.GetValue();
+            public static int MaxNeutralRoles => (int)Options.MaxNeutralRoles.GetValue();
             public static int MaxImpostorRoles => (int)Options.MaxImpostorRoles.GetValue();
 
             #region Crewmates

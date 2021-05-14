@@ -137,24 +137,41 @@ namespace AmongUsRevamped.Mod
                 else crewmates.Add(p);
             }
 
+            // Distribute crewmates roles
             int maxCrewmateRoles = Mathf.Min(crewmates.Count, Options.Values.MaxCrewmateRoles);
             var generator = new DistributedRandomNumberGenerator<byte>();
             if (Options.Values.SheriffSpawnRate > 0) generator.AddNumber((byte)RoleType.Sheriff, Options.Values.SheriffSpawnRate);
             if (Options.Values.SnitchSpawnRate > 0) generator.AddNumber((byte)RoleType.Snitch, Options.Values.SnitchSpawnRate);
-            if (Options.Values.SpySpawnRate > 0) generator.AddNumber((byte)RoleType.Spy, Options.Values.SpySpawnRate);
+            if (Options.Values.SpySpawnRate > 0 && impostors.Count > 1) generator.AddNumber((byte)RoleType.Spy, Options.Values.SpySpawnRate);
             if (Options.Values.TimeLordSpawnRate > 0) generator.AddNumber((byte)RoleType.TimeLord, Options.Values.TimeLordSpawnRate);
-            if (Options.Values.JesterSpawnRate > 0) generator.AddNumber((byte)RoleType.Jester, Options.Values.JesterSpawnRate);
 
             for (int i = 0; i < maxCrewmateRoles; i++)
             {
-                if (generator.GetNumberCount() == 0) break; // No more special roles, assign base crewmate role
+                if (generator.GetNumberCount() == 0) break; // No more special roles
 
                 var role = generator.GetDistributedRandomNumber();
                 generator.RemoveNumber(role);
                 AssignRoleRandomly((RoleType)role, crewmates);
             }
+
+            // Distribute neutral roles
+            int maxNeutralRoles = Mathf.Min(crewmates.Count, Options.Values.MaxNeutralRoles);
+            generator = new DistributedRandomNumberGenerator<byte>();
+            if (Options.Values.JesterSpawnRate > 0) generator.AddNumber((byte)RoleType.Jester, Options.Values.JesterSpawnRate);
+
+            for (int i = 0; i < maxNeutralRoles; i++)
+            {
+                if (generator.GetNumberCount() == 0) break; // No more special roles
+
+                var role = generator.GetDistributedRandomNumber();
+                generator.RemoveNumber(role);
+                AssignRoleRandomly((RoleType)role, crewmates);
+            }
+
+            // Distribute base crewmate role
             crewmates.ForEach(p => AssignPlayerRole(p, RoleType.Crewmate));
 
+            // Distribute impostor roles
             int maxImpostorRoles = Mathf.Min(impostors.Count, Options.Values.MaxImpostorRoles);
             generator = new DistributedRandomNumberGenerator<byte>();
             if (Options.Values.CleanerSpawnRate > 0) generator.AddNumber((byte)RoleType.Cleaner, Options.Values.CleanerSpawnRate);
@@ -162,12 +179,14 @@ namespace AmongUsRevamped.Mod
 
             for (int i = 0; i < maxImpostorRoles; i++)
             {
-                if (generator.GetNumberCount() == 0) break; // No more special roles, assign base impostor role
+                if (generator.GetNumberCount() == 0) break; // No more special roles
 
                 var role = generator.GetDistributedRandomNumber();
                 generator.RemoveNumber(role);
                 AssignRoleRandomly((RoleType)role, impostors);
             }
+
+            // Distribute base impostor role
             impostors.ForEach(p => AssignPlayerRole(p, RoleType.Impostor));
 
             int maxModifiers = Mathf.Min(players.Count, Options.Values.MaxModifiers);
