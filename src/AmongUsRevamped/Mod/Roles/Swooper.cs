@@ -33,7 +33,7 @@ namespace AmongUsRevamped.Mod.Roles
             if (Player.IsCurrentPlayer)
             {
                 SwoopButton = new CooldownButton("AmongUsRevamped.Resources.Sprites.button_swooper_swoop.png", new HudPosition(GameButton.ButtonSize, GameButton.ButtonSize, HudAlignment.BottomRight),
-                    Options.Values.SwooperSwoopCooldown, Options.Values.SwooperSwoopDuration, 0f)
+                    Options.Values.SwooperSwoopCooldown, Options.Values.SwooperSwoopDuration, 10f)
                 {
                     HotKey = KeyCode.F,
                     Clickable = true,
