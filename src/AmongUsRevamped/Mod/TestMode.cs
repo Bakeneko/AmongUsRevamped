@@ -16,12 +16,12 @@ namespace AmongUsRevamped.Mod
         private static GameObject GameObject;
         private static TestModeComponent Component;
 
-        private static int DefaultMinPlayers;
-        private static float DefaultCountDownTimer;
+        private static int DefaultMinPlayers = -1;
+        private static float DefaultCountDownTimer = -1;
 
         private static int[] DefaultMinPlayersValues;
         private static int[] DefaultRecommendedImpostorsValues;
-        private static int[] MDefaultaxImpostorsValues;
+        private static int[] DefaultMaxImpostorsValues;
 
         public static bool DisableGameEnd => Options.Values.TestMode && (Component?.DisableGameEnd ?? false);
 
@@ -36,11 +36,11 @@ namespace AmongUsRevamped.Mod
             Component ??= GameObject.AddComponent<TestModeComponent>();
 
             DefaultMinPlayersValues = GameOptionsData.MinPlayers;
-            MDefaultaxImpostorsValues = GameOptionsData.MaxImpostors;
+            DefaultMaxImpostorsValues = GameOptionsData.MaxImpostors;
             DefaultRecommendedImpostorsValues = GameOptionsData.RecommendedImpostors;
 
-            GameOptionsData.MaxImpostors = GameOptionsData.RecommendedImpostors = Enumerable.Repeat(1, 4).ToArray();
-            GameOptionsData.MinPlayers = Enumerable.Repeat(1, 4).ToArray();
+            GameOptionsData.MaxImpostors = GameOptionsData.RecommendedImpostors = Enumerable.Repeat(3, 16).ToArray();
+            GameOptionsData.MinPlayers = Enumerable.Repeat(1, 15).ToArray();
 
             var gameStartManager = GameStartManager.Instance;
             if (gameStartManager != null)
@@ -48,6 +48,7 @@ namespace AmongUsRevamped.Mod
                 DefaultMinPlayers = gameStartManager.MinPlayers;
                 DefaultCountDownTimer = gameStartManager.countDownTimer;
                 gameStartManager.MinPlayers = 1;
+                gameStartManager.countDownTimer = 0;
             }
         }
 
@@ -61,11 +62,7 @@ namespace AmongUsRevamped.Mod
             }
 
             DefaultMinPlayersValues = GameOptionsData.MinPlayers;
-            MDefaultaxImpostorsValues = GameOptionsData.MaxImpostors;
-            DefaultRecommendedImpostorsValues = GameOptionsData.RecommendedImpostors;
 
-            GameOptionsData.MaxImpostors = MDefaultaxImpostorsValues;
-            GameOptionsData.RecommendedImpostors = DefaultRecommendedImpostorsValues;
             GameOptionsData.MinPlayers = DefaultMinPlayersValues;
 
             Component?.Destroy();
@@ -76,12 +73,13 @@ namespace AmongUsRevamped.Mod
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
-        private static bool GameStartManagerUpdatePatch(GameStartManager __instance)
+        private static void GameStartManagerUpdatePatch(GameStartManager __instance)
         {
-            if (!Options.Values.TestMode) return true;
-            __instance.MinPlayers = 1;
-            __instance.countDownTimer = 0;
-            return true;
+            if (Options.Values.TestMode && DefaultMinPlayers != -1)
+            {
+                __instance.MinPlayers = 1;
+                __instance.countDownTimer = 0;
+            }
         }
 
         [HarmonyPostfix]
