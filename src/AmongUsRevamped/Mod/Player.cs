@@ -487,9 +487,20 @@ namespace AmongUsRevamped.Mod
 
             string info = $"{roleInfo} {tasksInfo}".Trim();
 
+            if (meetingInfo != null) meetingInfo.text = MeetingHud.Instance.state == MeetingHud.VoteStates.Results ? "" : info;
+
+            if (player.IsCurrentPlayer)
+            {
+                if (DestroyableSingleton<TaskPanelBehaviour>.InstanceExists)
+                {
+                    var taskTabText = DestroyableSingleton<TaskPanelBehaviour>.Instance.tab.transform.GetComponentInChildren<TMPro.TextMeshPro>();
+                    if (taskTabText) taskTabText.text = $"Tasks {tasksInfo}".Trim();
+                }
+                info = roleInfo;
+            }
+
             playerInfo.text = info;
             playerInfo.gameObject.SetActive(player.Visible);
-            if (meetingInfo != null) meetingInfo.text = MeetingHud.Instance.state == MeetingHud.VoteStates.Results ? "" : info;
         }
     }
 }
