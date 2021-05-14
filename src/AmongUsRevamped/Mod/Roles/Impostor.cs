@@ -77,13 +77,15 @@ namespace AmongUsRevamped.Mod.Roles
             if (!ShipStatus.Instance || Player.Dead || !Player.Control.CanMove) return null;
             PlayerControl target = null;
 
+            bool spyAmongUs = GetRoles(RoleType.Spy).Count > 0; // Are other impostors sus?
+
             float distance = GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)];
             Vector2 truePosition = Player.Control.GetTruePosition();
             var players = PlayerControl.AllPlayerControls;
             foreach (PlayerControl p in players)
             {
                 // Don't want to target those
-                if (p.Data.Disconnected || p.Data.IsDead || p.PlayerId == Player.Id || p.Data.IsImpostor || p.inVent) continue;
+                if (p.Data.Disconnected || p.Data.IsDead || p.PlayerId == Player.Id || (p.Data.IsImpostor && !spyAmongUs) || p.inVent) continue;
 
                 Vector2 vector = p.GetTruePosition() - truePosition;
                 float magnitude = vector.magnitude;

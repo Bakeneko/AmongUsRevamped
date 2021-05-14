@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AmongUsRevamped.Colors;
@@ -58,7 +58,7 @@ namespace AmongUsRevamped.Mod.Roles
             switch (Faction)
             {
                 case Faction.Impostors:
-                    PlayerControl.AllPlayerControls.ToArray().Where(p => p.Data.IsImpostor).ToList().ForEach(p => newTeam.Add(p));
+                    AllRoles.Where(r => r.Faction == Faction.Impostors || r.RoleType == RoleType.Spy).ToList().ForEach(r => newTeam.Add(r.Player.Control));
                     break;
                 case Faction.Crewmates:
                     PlayerControl.AllPlayerControls.ToArray().ToList().ForEach(p => newTeam.Add(p));
@@ -260,6 +260,7 @@ namespace AmongUsRevamped.Mod.Roles
         Crewmate,
         Sheriff,
         Snitch,
+        Spy,
         TimeLord,
         // Impostor
         Cleaner,

@@ -90,9 +90,15 @@ namespace AmongUsRevamped.Mod.Roles
             if (CurrentTarget == null) return;
 
             var guiltyRoles = new List<RoleType> {
+                // Impostor
+                RoleType.Cleaner,
                 RoleType.Impostor,
-                RoleType.Jester
+                RoleType.Swooper,
+                // Neutral
+                RoleType.Jester,
             };
+
+            if (Options.Values.SheriffCanKillSpy) guiltyRoles.Add(RoleType.Spy);
 
             Player.MurderPlayer(CurrentTarget);
             // Check whether the target is guilty or not
@@ -120,7 +126,6 @@ namespace AmongUsRevamped.Mod.Roles
                 }
             }
             base.Dispose(disposing);
-            Disposed = true;
         }
     }
 }

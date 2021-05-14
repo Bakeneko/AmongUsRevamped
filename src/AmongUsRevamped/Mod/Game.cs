@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -141,6 +141,7 @@ namespace AmongUsRevamped.Mod
             var generator = new DistributedRandomNumberGenerator<byte>();
             if (Options.Values.SheriffSpawnRate > 0) generator.AddNumber((byte)RoleType.Sheriff, Options.Values.SheriffSpawnRate);
             if (Options.Values.SnitchSpawnRate > 0) generator.AddNumber((byte)RoleType.Snitch, Options.Values.SnitchSpawnRate);
+            if (Options.Values.SpySpawnRate > 0) generator.AddNumber((byte)RoleType.Spy, Options.Values.SpySpawnRate);
             if (Options.Values.TimeLordSpawnRate > 0) generator.AddNumber((byte)RoleType.TimeLord, Options.Values.TimeLordSpawnRate);
             if (Options.Values.JesterSpawnRate > 0) generator.AddNumber((byte)RoleType.Jester, Options.Values.JesterSpawnRate);
 
@@ -226,6 +227,9 @@ namespace AmongUsRevamped.Mod
                     break;
                 case RoleType.Snitch:
                     new Snitch(player).AddToReverseIndex();
+                    break;
+                case RoleType.Spy:
+                    new Spy(player).AddToReverseIndex();
                     break;
                 case RoleType.TimeLord:
                     new TimeLord(player).AddToReverseIndex();
@@ -343,8 +347,128 @@ namespace AmongUsRevamped.Mod
             }
             weight = Mathf.Round(weight * size);
 
-            data = Regex.Replace(data, weightPattern, $":{weight.ToString("0")}lb");
+            data = Regex.Replace(data, weightPattern, $":{weight:0}lb");
             medScan.completeString = data;
+        }
+
+        private static bool OnAdminPanelUpdate(MapCountOverlay overlay, ref Dictionary<SystemTypes, List<Color>> telemetry)
+        {
+            if (Role.GetPlayerRole<Spy>(Player.CurrentPlayer.Id) == null) return true;
+
+            overlay.timer += Time.deltaTime;
+
+            if (overlay.timer < 0.1f) return false;
+
+            overlay.timer = 0f;
+            telemetry = new Dictionary<SystemTypes, List<Color>>();
+
+            var comms = ShipStatus.Instance.Systems.ContainsKey(SystemTypes.Comms) ? ShipStatus.Instance.Systems[SystemTypes.Comms]?.TryCast<HudOverrideSystemType>() : null;
+            var commsActive = comms?.IsActive != true;
+
+            if (!overlay.isSab && !commsActive)
+            {
+                overlay.isSab = true;
+                overlay.BackgroundColor.SetColor(Palette.DisabledGrey);
+                overlay.SabotageText.gameObject.SetActive(true);
+                return false;
+            }
+            else if (overlay.isSab && commsActive)
+            {
+                overlay.isSab = false;
+                overlay.BackgroundColor.SetColor(Color.green);
+                overlay.SabotageText.gameObject.SetActive(false);
+            }
+
+            for (int i = 0; i < overlay.CountAreas.Length; i++)
+            {
+                CounterArea counterArea = overlay.CountAreas[i];
+                List<Color> roomColors = new();
+                telemetry.Add(counterArea.RoomType, roomColors);
+
+                if (!commsActive)
+                {
+                    counterArea.UpdateCount(0);
+                    continue;
+                }
+
+                PlainShipRoom plainShipRoom = ShipStatus.Instance.FastRooms[counterArea.RoomType];
+
+                if (plainShipRoom?.roomArea == null) continue;
+
+                int resCount = plainShipRoom.roomArea.OverlapCollider(overlay.filter, overlay.buffer);
+                int count = resCount;
+                for (int j = 0; j < resCount; j++)
+                {
+                    Collider2D obj = overlay.buffer[j];
+                    if (obj.tag != "DeadBody")
+                    {
+                        PlayerControl player = obj.GetComponent<PlayerControl>();
+                        if (!player || player.Data == null || player.Data.Disconnected || player.Data.IsDead)
+                        {
+                            count--;
+                        }
+                        else if (player?.myRend?.material != null)
+                        {
+                            roomColors.Add(player.myRend.material.GetColor("_BodyColor"));
+                        }
+                    }
+                    else
+                    {
+                        DeadBody body = obj.GetComponent<DeadBody>();
+                        if (body == null) continue;
+
+                        GameData.PlayerInfo playerInfo = GameData.Instance.GetPlayerById(body.ParentId);
+                        if (playerInfo != null)
+                        {
+                            roomColors.Add(Palette.PlayerColors[playerInfo.ColorId]);
+                        }
+                    }
+                }
+                counterArea.UpdateCount(count);
+            }
+
+            return false;
+        }
+
+        private static void OnAdminPanelUpdateCount(CounterArea counterArea, Dictionary<SystemTypes, List<Color>> telemetry, ref Material defaultMat, ref Material colorMat)
+        {
+            if (!telemetry.ContainsKey(counterArea.RoomType)) return;
+
+            var spy = Role.GetPlayerRole<Spy>(Player.CurrentPlayer.Id);
+
+            List<Color> colors = telemetry[counterArea.RoomType];
+
+            for (int i = 0; i < counterArea.myIcons.Count; i++)
+            {
+                PoolableBehavior icon = counterArea.myIcons[i];
+                SpriteRenderer rend = icon.GetComponent<SpriteRenderer>();
+
+                if (rend == null) continue;
+
+                if (defaultMat == null) defaultMat = rend.material;
+                if (colorMat == null) colorMat = UnityEngine.Object.Instantiate(defaultMat);
+
+                if (colors.Count > i && spy?.GadgetActive == true)
+                {
+                    rend.material = colorMat;
+                    var color = colors[i];
+                    rend.material.SetColor("_BodyColor", color);
+                    var id = Palette.PlayerColors.IndexOf(color);
+                    if (id < 0)
+                    {
+                        rend.material.SetColor("_BackColor", color);
+                    }
+                    else
+                    {
+                        rend.material.SetColor("_BackColor", Palette.ShadowColors[id]);
+                    }
+                    rend.material.SetColor("_VisorColor", Palette.VisorColor);
+                }
+                else
+                {
+                    rend.material = defaultMat;
+                }
+            }
         }
 
         private static bool OnPlayerCanUseConsole(Player player, Console console, ref float distance, out bool canUse, out bool couldUse)

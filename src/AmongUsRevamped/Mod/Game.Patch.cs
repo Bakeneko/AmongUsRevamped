@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using HarmonyLib;
@@ -21,10 +22,10 @@ namespace AmongUsRevamped.Mod
             const string content = "945360";
             try
             {
-                if(!File.Exists(file) || !content.Equals(File.ReadAllText(file)))
+                if (!File.Exists(file) || !content.Equals(File.ReadAllText(file)))
                     File.WriteAllText(file, content);
             }
-            catch {}
+            catch { }
             return __result = false;
         }
 #endif
@@ -318,7 +319,7 @@ namespace AmongUsRevamped.Mod
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CmdReportDeadBody))]
         private static class PlayerControlCmdReportDeadBodyPatch
         {
-            private static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)]GameData.PlayerInfo victim)
+            private static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] GameData.PlayerInfo victim)
             {
                 if (victim == null)
                 {
@@ -373,7 +374,7 @@ namespace AmongUsRevamped.Mod
                 __result = GetTextForExile(ExileController.Instance.exiled, id) ?? __result;
             }
         }
-        
+
         [HarmonyPostfix]
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CompleteTask))]
         private static void PlayerControlCompleteTaskPatch(PlayerControl __instance, [HarmonyArgument(0)] uint taskIndex)
@@ -426,6 +427,29 @@ namespace AmongUsRevamped.Mod
         private static void ShipStatusIsGameOverDueToDeathPatch(ref bool __result)
         {
             __result = IsGameOverDueToDeath();
+        }
+
+        [HarmonyPatch]
+        private static class AdminPanelPatch
+        {
+            private static Dictionary<SystemTypes, List<Color>> telemetry = new ();
+
+            private static Material defaultMat;
+            private static Material colorMat;
+
+            [HarmonyPrefix]
+            [HarmonyPatch(typeof(MapCountOverlay), nameof(MapCountOverlay.Update))]
+            private static bool MapCountOverlayUpdatePatch(MapCountOverlay __instance)
+            {
+                return OnAdminPanelUpdate(__instance, ref telemetry);
+            }
+
+            [HarmonyPostfix]
+            [HarmonyPatch(typeof(CounterArea), nameof(CounterArea.UpdateCount))]
+            private static void MapCountOverlayUpdatePatch(CounterArea __instance)
+            {
+                OnAdminPanelUpdateCount(__instance, telemetry, ref defaultMat, ref colorMat);
+            }
         }
     }
 }

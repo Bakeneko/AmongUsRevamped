@@ -24,11 +24,18 @@ namespace AmongUsRevamped.Mod
         public static CustomHeaderOption SheriffSettings;
         public static CustomNumberOption SheriffSpawnRate;
         public static CustomNumberOption SheriffKillCooldown;
+        public static CustomToggleOption SheriffCanKillSpy;
 
         // Snitch
         public static CustomHeaderOption SnitchSettings;
         public static CustomNumberOption SnitchSpawnRate;
         public static CustomNumberOption SnitchTasksLeftBeforeBusted;
+
+        // Spy
+        public static CustomHeaderOption SpySettings;
+        public static CustomNumberOption SpySpawnRate;
+        public static CustomNumberOption SpyGadgetCooldown;
+        public static CustomNumberOption SpyGadgetDuration;
 
         // Time Lord
         public static CustomHeaderOption TimeLordSettings;
@@ -96,11 +103,18 @@ namespace AmongUsRevamped.Mod
             SheriffSettings = new CustomHeaderOption("sheriffSettings", Color.RoleSheriff.ToColorTag("Sheriff"));
             SheriffSpawnRate = new CustomNumberOption("sheriffSpawnRate", "Spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
             SheriffKillCooldown = new CustomNumberOption("sheriffKillCooldown", "Kill cooldown", true, 30f, 10f, 60f, 2.5f, true, CustomNumberOption.SecondsStringFormat);
+            SheriffCanKillSpy = new CustomToggleOption("sheriffCanKillSpy", "Can kill Spy", true, true, true);
 
             // Snitch
             SnitchSettings = new CustomHeaderOption("snitchSettings", Color.RoleSnitch.ToColorTag("Snitch"));
             SnitchSpawnRate = new CustomNumberOption("snitchSpawnRate", "Spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
             SnitchTasksLeftBeforeBusted = new CustomNumberOption("snitchTasksLeftBeforeBusted", "Tasks left before being busted", true, 1f, 0f, 5f, 1f, true);
+
+            // Spy
+            SpySettings = new CustomHeaderOption("spySettings", Color.RoleImpostor.ToColorTag("Spy"));
+            SpySpawnRate = new CustomNumberOption("spySpawnRate", "Spawn rate (2+ Impostors)", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
+            SpyGadgetCooldown = new CustomNumberOption("spyGadgetCooldown", "Gadget cooldown", true, 30f, 0f, 60f, 5f, true, CustomNumberOption.SecondsStringFormat);
+            SpyGadgetDuration = new CustomNumberOption("spyGadgetDuration", "Gadget duration", true, 10f, 2.5f, 30f, 2.5f, true, CustomNumberOption.SecondsStringFormat);
 
             // Time Lord
             TimeLordSettings = new CustomHeaderOption("timeLordSettings", Color.RoleTimeLord.ToColorTag("Time Lord"));
@@ -163,10 +177,16 @@ namespace AmongUsRevamped.Mod
             // Sheriff
             public static float SheriffSpawnRate => Options.SheriffSpawnRate.GetValue();
             public static float SheriffKillCooldown => Options.SheriffKillCooldown.GetValue();
+            public static bool SheriffCanKillSpy => Options.SheriffCanKillSpy.GetValue();
 
             // Snitch
             public static float SnitchSpawnRate => Options.SnitchSpawnRate.GetValue();
             public static float SnitchTasksLeftBeforeBusted => Options.SnitchTasksLeftBeforeBusted.GetValue();
+
+            // Spy
+            public static float SpySpawnRate => Options.SpySpawnRate.GetValue();
+            public static float SpyGadgetCooldown => Options.SpyGadgetCooldown.GetValue();
+            public static float SpyGadgetDuration => Options.SpyGadgetDuration.GetValue();
 
             // Time Lord
             public static float TimeLordSpawnRate => Options.TimeLordSpawnRate.GetValue();

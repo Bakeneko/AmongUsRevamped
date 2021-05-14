@@ -70,6 +70,8 @@ namespace AmongUsRevamped.Mod
 
         public virtual void OnFixedUpdate()
         {
+            UpdatePlayerName(this, IsCurrentPlayer || (CurrentPlayer?.Dead == true && Options.Values.GhostsSeeRoles));
+
             // Not playing
             if (AmongUsClient.Instance.GameState != InnerNetClient.GameStates.Started) return;
 
@@ -144,26 +146,30 @@ namespace AmongUsRevamped.Mod
 
         public void UpdateImportantTasks()
         {
-            if (!IsCurrentPlayer) return;
+            if (!IsCurrentPlayer || Control?.myTasks == null) return;
 
             var delete = new List<PlayerTask>();
 
             if (Dead)
             {
-                // Remove role and modifier tasks
-                foreach (PlayerTask t in Control.myTasks)
+                try
                 {
-                    if (t.name.Equals("RoleTask") || t.name.Equals("ModifierTask"))
+                    // Remove role and modifier tasks
+                    foreach (PlayerTask t in Control.myTasks)
                     {
-                        delete.Add(t);
+                        if (t.name.Equals("RoleTask") || t.name.Equals("ModifierTask"))
+                        {
+                            delete.Add(t);
+                        }
+                    }
+                    foreach (PlayerTask t in delete)
+                    {
+                        t.OnRemove();
+                        Control.myTasks.Remove(t);
+                        t.gameObject?.Destroy();
                     }
                 }
-                foreach (PlayerTask t in delete)
-                {
-                    t.OnRemove();
-                    Control.myTasks.Remove(t);
-                    UnityEngine.Object.Destroy(t.gameObject);
-                }
+                catch {}
 
                 return;
             }
@@ -171,55 +177,74 @@ namespace AmongUsRevamped.Mod
             var modifierText = Modifier?.TaskDescription();
             var roleText = Role?.TaskDescription();
 
-            // Remove unwanted tasks
-            foreach (PlayerTask t in Control.myTasks)
+            try
             {
-                var task = t.gameObject.GetComponent<ImportantTextTask>();
-                if (task != null)
+                // Remove unwanted tasks
+                delete = new List<PlayerTask>();
+                foreach (PlayerTask t in Control.myTasks)
                 {
-                    if (t.name.Equals("RoleTask") && task.Text.Equals(roleText)) roleText = null;
-                    else if (t.name.Equals("ModifierTask") && task.Text.Equals(modifierText)) modifierText = null;
-                    else delete.Add(t);
+                    var task = t?.gameObject?.GetComponent<ImportantTextTask>();
+                    if (task != null)
+                    {
+                        if (t.name.Equals("RoleTask") && task.Text.Equals(roleText)) roleText = null;
+                        else if (t.name.Equals("ModifierTask") && task.Text.Equals(modifierText)) modifierText = null;
+                        else delete.Add(t);
+                    }
+                }
+                foreach (PlayerTask t in delete)
+                {
+                    t.OnRemove();
+                    Control.myTasks.Remove(t);
+                    t.gameObject?.Destroy();
                 }
             }
-            foreach (PlayerTask t in delete)
-            {
-                t.OnRemove();
-                Control.myTasks.Remove(t);
-                UnityEngine.Object.Destroy(t.gameObject);
-            }
+            catch {}
+
+            
 
             // Add role task if needed
             if (roleText != null)
             {
-                var task = new GameObject("RoleTask").AddComponent<ImportantTextTask>();
-                Control.myTasks.Insert(0, task);
-                task.transform.SetParent(Control.transform, false);
-                task.Text = roleText;
+                try
+                {
+                    var task = new GameObject("RoleTask").AddComponent<ImportantTextTask>();
+                    Control.myTasks.Insert(0, task);
+                    task.transform.SetParent(Control.transform, false);
+                    task.Text = roleText;
+                }
+                catch { }
             }
 
             // Add modifier task if needed
             if (modifierText != null)
             {
-                var task = new GameObject("ModifierTask").AddComponent<ImportantTextTask>();
-                Control.myTasks.Insert(1, task);
-                task.transform.SetParent(Control.transform, false);
-                task.Text = modifierText;
+                try
+                {
+                    var task = new GameObject("ModifierTask").AddComponent<ImportantTextTask>();
+                    Control.myTasks.Insert(1, task);
+                    task.transform.SetParent(Control.transform, false);
+                    task.Text = modifierText;
+                }
+                catch { }
             }
         }
 
         public void ClearTasks()
         {
-            for (int i = 0; i < Control.myTasks.Count; i++)
+            try
             {
-                PlayerTask playerTask = Control.myTasks[i];
-                playerTask.OnRemove();
-                UnityEngine.Object.Destroy(playerTask.gameObject);
-            }
-            Control.myTasks.Clear();
+                for (int i = 0; i < Control.myTasks.Count; i++)
+                {
+                    PlayerTask playerTask = Control.myTasks[i];
+                    playerTask.OnRemove();
+                    UnityEngine.Object.Destroy(playerTask.gameObject);
+                }
+                Control.myTasks.Clear();
 
-            if (Control.Data != null && Control.Data.Tasks != null)
-                Control.Data.Tasks.Clear();
+                if (Control.Data != null && Control.Data.Tasks != null)
+                    Control.Data.Tasks.Clear();
+            }
+            catch { }
         }
 
         /// <summary>
@@ -362,6 +387,43 @@ namespace AmongUsRevamped.Mod
             if (player == null) return;
             player.Role?.CurrentPlayerHudUpdate(hudManager);
             player.Modifier?.CurrentPlayerHudUpdate(hudManager);
+        }
+
+        public static void UpdatePlayerNames()
+        {
+            foreach (Player player in AllPlayers)
+            {
+                UpdatePlayerName(player, player.IsCurrentPlayer || (CurrentPlayer.Dead && Options.Values.GhostsSeeRoles));
+            }
+        }
+
+        public static void UpdatePlayerName(Player player, bool showRole)
+        {
+            if (showRole)
+            {
+                UpdatePlayerNameColor(player, player.Role?.Color ?? Color.white);
+                return;
+            }
+
+            Color color = Color.white;
+
+            if ((player.Role?.Faction == Faction.Impostors || player.Role?.RoleType == RoleType.Spy) && CurrentPlayer.Role?.Faction == Faction.Impostors)
+            {
+                color = ColorPalette.Color.RoleImpostor;
+            }
+
+            UpdatePlayerNameColor(player, color);
+        }
+
+        public static void UpdatePlayerNameColor(Player player, Color color)
+        {
+            try
+            {
+                if (player.Control.nameText != null) player.Control.nameText.color = color;
+                PlayerVoteArea playerVoteArea = MeetingHud.Instance?.playerStates?.FirstOrDefault(x => x.TargetPlayerId == player.Id);
+                if (playerVoteArea?.NameText != null) playerVoteArea.NameText.color = color;
+            }
+            catch (Exception) { }
         }
 
         public static void UpdatePlayerTextInfos()
