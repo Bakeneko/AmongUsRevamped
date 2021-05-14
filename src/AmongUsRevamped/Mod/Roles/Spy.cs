@@ -56,6 +56,15 @@ namespace AmongUsRevamped.Mod.Roles
             }
         }
 
+        public override void CurrentPlayerHudUpdate(HudManager hudManager)
+        {
+            base.CurrentPlayerHudUpdate(hudManager);
+            if (Player.Dead)
+            {
+                if (GadgetButton != null) GadgetButton.Visible = false;
+            }
+        }
+
         public void OnGadgetStarted(object sender, EventArgs e)
         {
             SoundManager.Instance.PlaySound(GadgetSound, false, 1.0f);
