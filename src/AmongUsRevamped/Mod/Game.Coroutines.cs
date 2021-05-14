@@ -6,9 +6,47 @@ namespace AmongUsRevamped.Mod
 {
     public partial class Game
     {
+        private static IEnumerator NameScrambler = null;
+
+        private static IEnumerator StartNameScrambler(float update = 0.1f)
+        {
+            StopNameScrambler();
+            NameScrambler = Coroutines.Start(NameScramblerCoroutine(update));
+            return NameScrambler;
+        }
+
+        private static void StopNameScrambler()
+        {
+            if (NameScrambler != null) Coroutines.Stop(NameScrambler);
+        }
+
+        protected internal static IEnumerator NameScramblerCoroutine(float update = 0.1f)
+        {
+            while (true)
+            {
+                yield return new WaitForSeconds(update);
+
+                foreach (Player p in Player.AllPlayers)
+                {
+                    if (p.IsCurrentPlayer || Player.CurrentPlayer?.Dead == true)
+                    {
+                        p?.Control?.nameText?.SetText(p?.Control.Data.PlayerName);
+                    }
+                    else
+                    {
+                        var bits = "";
+                        for (var i = 0; i < 8; i++)
+                        {
+                            bits += AmongUsRevamped.Rand.Next(0, 2);
+                        }
+                        p?.Control?.nameText?.SetText(bits);
+                    }
+                }
+            }
+        }
+
         protected internal static IEnumerator RemoveBodyCoroutine(byte bodyId)
         {
-
             DeadBody body = null;
             var bodies = Object.FindObjectsOfType<DeadBody>();
             for (int i = 0; i < bodies.Length; i++)

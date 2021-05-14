@@ -20,6 +20,8 @@ namespace AmongUsRevamped.Mod
 
         private static GameOverData GameOver = null;
 
+        private static bool Anonymized = false;
+
         private static void OnExit()
         {
             Reset();
@@ -32,6 +34,8 @@ namespace AmongUsRevamped.Mod
 
         private static void Reset()
         {
+            Anonymized = false;
+            StopNameScrambler();
             BasePlayerSpeed = AmongUsClient.Instance?.PlayerPrefab?.MyPhysics?.Speed ?? 2.5f;
             GameOver = null;
             Role.AllRoles.ForEach(r => r.Dispose());
@@ -124,10 +128,70 @@ namespace AmongUsRevamped.Mod
         {
             foreach(Player p in Player.AllPlayers) { p.HudUpdate(hudManager); };
             Player.CurrentPlayerHudUpdate(hudManager);
+
+            var anonymize = (Options.Values.AnonOnCommsSabotage && !AreCommsActive()) || Role.GetRoles<Camouflager>(RoleType.Camouflager).FirstOrDefault(c => c.CamouflageActive) != null;
+
+            if (anonymize && !Anonymized)
+            {
+                Anonymized = true;
+                StartNameScrambler();
+            }
+            else if (anonymize)
+            {
+                foreach (Player p in Player.AllPlayers)
+                {
+                    var control = p?.Control;
+                    if (control == null) continue;
+
+                    var color = Color.clear;
+
+                    if (control.myRend != null) PlayerControl.SetPlayerMaterialColors(Color.grey, control.myRend);
+
+                    if (control.HatRenderer != null)
+                    {
+                        control.HatRenderer.FrontLayer.color = color;
+                        control.HatRenderer.BackLayer.color = color;
+                    }
+                    if (control.MyPhysics.Skin != null) control.MyPhysics.Skin.layer.color = color;
+                    if (control.CurrentPet != null)
+                    {
+                        control.CurrentPet.rend.color = color;
+                        control.CurrentPet.shadowRend.color = color;
+                    }
+                }
+            }
+            else if (!anonymize && Anonymized)
+            {
+                Anonymized = false;
+                StopNameScrambler();
+                foreach (Player p in Player.AllPlayers)
+                {
+                    var control = p?.Control;
+                    if (control == null) continue;
+
+                    var color = Color.white;
+
+                    control.nameText.text = control.Data.PlayerName;
+                    control.SetColor(control.Data.ColorId);
+
+                    if (control.HatRenderer != null)
+                    {
+                        control.HatRenderer.FrontLayer.color = color;
+                        control.HatRenderer.BackLayer.color = color;
+                    }
+                    if (control.MyPhysics.Skin != null) control.MyPhysics.Skin.layer.color = color;
+                    if (control.CurrentPet != null)
+                    {
+                        control.CurrentPet.rend.color = color;
+                        control.CurrentPet.shadowRend.color = color;
+                    }
+                }
+            }
         }
 
         private static void OnDistributeRoles()
         {
+            AmongUsRevamped.Log("OnDistributeRoles");
             if (!AmongUsClient.Instance.AmHost || DestroyableSingleton<TutorialManager>.InstanceExists) return;
 
             List<Player> crewmates = new(), impostors = new(), players = Player.AllPlayers.ToList();
@@ -142,7 +206,7 @@ namespace AmongUsRevamped.Mod
             var generator = new DistributedRandomNumberGenerator<byte>();
             if (Options.Values.SheriffSpawnRate > 0) generator.AddNumber((byte)RoleType.Sheriff, Options.Values.SheriffSpawnRate);
             if (Options.Values.SnitchSpawnRate > 0) generator.AddNumber((byte)RoleType.Snitch, Options.Values.SnitchSpawnRate);
-            if (Options.Values.SpySpawnRate > 0 && impostors.Count > 1) generator.AddNumber((byte)RoleType.Spy, Options.Values.SpySpawnRate);
+            if (Options.Values.SpySpawnRate > 0) generator.AddNumber((byte)RoleType.Spy, Options.Values.SpySpawnRate);
             if (Options.Values.TimeLordSpawnRate > 0) generator.AddNumber((byte)RoleType.TimeLord, Options.Values.TimeLordSpawnRate);
 
             for (int i = 0; i < maxCrewmateRoles; i++)
@@ -174,6 +238,7 @@ namespace AmongUsRevamped.Mod
             // Distribute impostor roles
             int maxImpostorRoles = Mathf.Min(impostors.Count, Options.Values.MaxImpostorRoles);
             generator = new DistributedRandomNumberGenerator<byte>();
+            if (Options.Values.CamouflagerSpawnRate > 0) generator.AddNumber((byte)RoleType.Camouflager, Options.Values.CamouflagerSpawnRate);
             if (Options.Values.CleanerSpawnRate > 0) generator.AddNumber((byte)RoleType.Cleaner, Options.Values.CleanerSpawnRate);
             if (Options.Values.SwooperSpawnRate > 0) generator.AddNumber((byte)RoleType.Swooper, Options.Values.SwooperSpawnRate);
 
@@ -252,6 +317,9 @@ namespace AmongUsRevamped.Mod
                     break;
                 case RoleType.TimeLord:
                     new TimeLord(player).AddToReverseIndex();
+                    break;
+                case RoleType.Camouflager:
+                    new Camouflager(player).AddToReverseIndex();
                     break;
                 case RoleType.Cleaner:
                     new Cleaner(player).AddToReverseIndex();
@@ -370,6 +438,23 @@ namespace AmongUsRevamped.Mod
             medScan.completeString = data;
         }
 
+        public static bool AreCommsActive()
+        {
+            if (ShipStatus.Instance == null) return true;
+
+            var commsSys = ShipStatus.Instance.Systems.ContainsKey(SystemTypes.Comms) ? ShipStatus.Instance.Systems[SystemTypes.Comms] : null;
+            if (PlayerControl.GameOptions.MapId == 1)
+            {
+                var comms = commsSys.TryCast<HqHudSystemType>();
+                return comms?.IsActive != true; // IsActive means sabotaged
+            }
+            else
+            {
+                var comms = commsSys.TryCast<HudOverrideSystemType>();
+                return comms?.IsActive != true; // IsActive means sabotaged
+            }
+        }
+
         private static bool OnAdminPanelUpdate(MapCountOverlay overlay, ref Dictionary<SystemTypes, List<Color>> telemetry)
         {
             if (Role.GetPlayerRole<Spy>(Player.CurrentPlayer.Id) == null) return true;
@@ -381,8 +466,7 @@ namespace AmongUsRevamped.Mod
             overlay.timer = 0f;
             telemetry = new Dictionary<SystemTypes, List<Color>>();
 
-            var comms = ShipStatus.Instance.Systems.ContainsKey(SystemTypes.Comms) ? ShipStatus.Instance.Systems[SystemTypes.Comms]?.TryCast<HudOverrideSystemType>() : null;
-            var commsActive = comms?.IsActive != true;
+            var commsActive = AreCommsActive();
 
             if (!overlay.isSab && !commsActive)
             {

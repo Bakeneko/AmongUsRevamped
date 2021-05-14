@@ -12,6 +12,7 @@
         Revive,
         RemoveBody,
         OpenDoor,
+        Camouflage,
         Swoop,
         Rewind,
 

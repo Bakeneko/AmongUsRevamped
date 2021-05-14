@@ -263,6 +263,7 @@ namespace AmongUsRevamped.Mod.Roles
         Spy,
         TimeLord,
         // Impostor
+        Camouflager,
         Cleaner,
         Impostor,
         Swooper,

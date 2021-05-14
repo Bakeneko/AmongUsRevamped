@@ -1,4 +1,5 @@
-﻿using AmongUsRevamped.Extensions;
+﻿using System.Linq;
+using AmongUsRevamped.Extensions;
 using AmongUsRevamped.Options;
 using Color = AmongUsRevamped.Colors.ColorPalette.Color;
 
@@ -12,6 +13,7 @@ namespace AmongUsRevamped.Mod
         public static CustomToggleOption DisplayTasks;
         public static CustomToggleOption GhostsSeeRoles;
         public static CustomToggleOption GhostsSeeTasks;
+        public static CustomToggleOption AnonOnCommsSabotage;
 
         // Roles
         public static CustomHeaderOption RolesSettings;
@@ -48,6 +50,12 @@ namespace AmongUsRevamped.Mod
 
         #region Impostors
 
+        // Camouflager
+        public static CustomHeaderOption CamouflagerSettings;
+        public static CustomNumberOption CamouflagerSpawnRate;
+        public static CustomNumberOption CamouflagerCamouflageCooldown;
+        public static CustomNumberOption CamouflagerCamouflageDuration;
+
         // Cleaner
         public static CustomHeaderOption CleanerSettings;
         public static CustomNumberOption CleanerSpawnRate;
@@ -82,6 +90,8 @@ namespace AmongUsRevamped.Mod
 
         public static void Load()
         {
+            GameOptionsData.MinPlayers = Enumerable.Repeat(4, 15).ToArray();
+            GameOptionsData.MaxImpostors = GameOptionsData.RecommendedImpostors = Enumerable.Repeat(3, 16).ToArray();
             CustomSettings.Load();
             CustomOption.CreateExporter();
             CustomOption.CreateImporter();
@@ -92,6 +102,7 @@ namespace AmongUsRevamped.Mod
             DisplayTasks = new CustomToggleOption("displayTasks", "Display remaining tasks", true, true, true);
             GhostsSeeRoles = new CustomToggleOption("ghostsSeeRoles", "Ghosts see roles", true, true, true);
             GhostsSeeTasks = new CustomToggleOption("ghostsSeeTasks", "Ghosts see remaining tasks", true, true, true);
+            AnonOnCommsSabotage = new CustomToggleOption("anonOnCommsSabotage", "Anonymize during comms sabotage", true, false, true);
 
             // Roles
             RolesSettings = new CustomHeaderOption("rolesSettings", "Roles Settings");
@@ -128,8 +139,13 @@ namespace AmongUsRevamped.Mod
 
             #region Impostors
 
-            // Cleaner
+            // Camouflager
+            CamouflagerSettings = new CustomHeaderOption("camouflagerSettings", Color.RoleImpostor.ToColorTag("Camouflager"));
+            CamouflagerSpawnRate = new CustomNumberOption("camouflagerSpawnRate", "Spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
+            CamouflagerCamouflageCooldown = new CustomNumberOption("camouflagerCamouflageCooldown", "Camouflage cooldown", true, 30f, 10f, 60f, 2.5f, true, CustomNumberOption.SecondsStringFormat);
+            CamouflagerCamouflageDuration = new CustomNumberOption("camouflagerCamouflageDuration", "Camouflage duration", true, 10f, 1f, 20f, 0.5f, true, CustomNumberOption.SecondsStringFormat);
 
+            // Cleaner
             CleanerSettings = new CustomHeaderOption("cleanerSettings", Color.RoleImpostor.ToColorTag("Cleaner"));
             CleanerSpawnRate = new CustomNumberOption("cleanerSpawnRate", "Spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
 
@@ -169,6 +185,7 @@ namespace AmongUsRevamped.Mod
             public static bool DisplayTasks => Options.DisplayTasks.GetValue();
             public static bool GhostsSeeRoles => Options.GhostsSeeRoles.GetValue();
             public static bool GhostsSeeTasks => Options.GhostsSeeTasks.GetValue();
+            public static bool AnonOnCommsSabotage => Options.AnonOnCommsSabotage.GetValue();
 
             // Roles
             public static int MaxCrewmateRoles => (int)Options.MaxCrewmateRoles.GetValue();
@@ -199,6 +216,11 @@ namespace AmongUsRevamped.Mod
             #endregion Crewmates
 
             #region Impostors
+
+            // Camouflager
+            public static float CamouflagerSpawnRate => Options.CamouflagerSpawnRate.GetValue();
+            public static float CamouflagerCamouflageCooldown => Options.CamouflagerCamouflageCooldown.GetValue();
+            public static float CamouflagerCamouflageDuration => Options.CamouflagerCamouflageDuration.GetValue();
 
             // Cleaner
             public static float CleanerSpawnRate => Options.CleanerSpawnRate.GetValue();

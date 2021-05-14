@@ -63,11 +63,6 @@ namespace AmongUsRevamped.Mod
             return !Dead && (Control.inVent || (Control.CanMove && (Role?.CanUseVent(vent) ?? false)));
         }
 
-        public virtual void OnUpdate()
-        {
-
-        }
-
         public virtual void OnFixedUpdate()
         {
             UpdatePlayerName(this, IsCurrentPlayer || (CurrentPlayer?.Dead == true && Options.Values.GhostsSeeRoles));
@@ -298,14 +293,14 @@ namespace AmongUsRevamped.Mod
         {
             // Reset outline
             SetOutline(null);
-            Role?.HudUpdate(hudManager);
             Modifier?.HudUpdate(hudManager);
+            Role?.HudUpdate(hudManager);
         }
 
         public void OnIntroEnd(IntroCutscene introCutScene)
         {
-            Role?.OnIntroEnd(introCutScene);
             Modifier?.OnIntroEnd(introCutScene);
+            Role?.OnIntroEnd(introCutScene);
         }
 
         public virtual void MurderPlayer(Player victim)
@@ -369,24 +364,24 @@ namespace AmongUsRevamped.Mod
         {
             Player player = CurrentPlayer;
             if (player == null) return;
-            player.Role?.OnIntroStart(introCutScene, ref team);
             player.Modifier?.OnIntroStart(introCutScene);
+            player.Role?.OnIntroStart(introCutScene, ref team);
         }
 
         public static void OnIntroUpdate(IntroCutscene introCutScene)
         {
             Player player = CurrentPlayer;
             if (player == null) return;
-            player.Role?.OnIntroUpdate(introCutScene);
             player.Modifier?.OnIntroUpdate(introCutScene);
+            player.Role?.OnIntroUpdate(introCutScene);
         }
 
         public static void CurrentPlayerHudUpdate(HudManager hudManager)
         {
             Player player = CurrentPlayer;
             if (player == null) return;
-            player.Role?.CurrentPlayerHudUpdate(hudManager);
             player.Modifier?.CurrentPlayerHudUpdate(hudManager);
+            player.Role?.CurrentPlayerHudUpdate(hudManager);
         }
 
         public static void UpdatePlayerNames()
