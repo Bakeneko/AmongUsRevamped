@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using AmongUsRevamped.Colors;
@@ -225,7 +225,7 @@ namespace AmongUsRevamped.Mod.Roles
                 Exiled = false;
                 RemoveFromReverseIndex();
                 Roles.Remove(Player.Id);
-                Player.UpdateImportantTasks();
+                Player?.UpdateImportantTasks();
                 Player = null;
             }
             catch

@@ -125,7 +125,6 @@ namespace AmongUsRevamped.Mod.Roles
                 }
             }
             base.Dispose(disposing);
-            Disposed = true;
         }
     }
 }

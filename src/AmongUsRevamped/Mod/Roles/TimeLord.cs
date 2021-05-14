@@ -224,7 +224,6 @@ namespace AmongUsRevamped.Mod.Roles
                 }
             }
             base.Dispose(disposing);
-            Disposed = true;
         }
 
         [RegisterCustomRpc((uint)CustomRpcCalls.Rewind)]
