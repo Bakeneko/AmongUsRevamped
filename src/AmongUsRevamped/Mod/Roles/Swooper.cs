@@ -14,7 +14,7 @@ namespace AmongUsRevamped.Mod.Roles
         public AudioClip SwoopSound = null;
         public AudioClip UnswoopSound = null;
 
-        public bool Swooped = false;
+        public bool Swooping => SwoopTime > 0f;
         public float SwoopTime = 0f;
 
         public Swooper(Player player) : base(player)
@@ -82,7 +82,6 @@ namespace AmongUsRevamped.Mod.Roles
             try
             {
                 SwoopTime = Options.Values.SwooperSwoopDuration;
-                Swooped = true;
                 var control = Player?.Control;
                 if (control == null) return;
 
@@ -120,11 +119,11 @@ namespace AmongUsRevamped.Mod.Roles
         {
             try
             {
-                if (!Swooped) return;
+                if (!Swooping) return;
 
                 SwoopTime -= Time.deltaTime;
                 
-                if (SwoopTime <= 0) {
+                if (!Swooping) {
                     Unswoop();
                     return;
                 }
@@ -166,7 +165,6 @@ namespace AmongUsRevamped.Mod.Roles
         {
             try
             {
-                Swooped = false;
                 SwoopTime = 0f;
                 var control = Player?.Control;
                 if (control == null) return;
