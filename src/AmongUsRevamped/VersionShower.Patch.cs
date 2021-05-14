@@ -1,6 +1,7 @@
 ﻿using System;
 using AmongUsRevamped.Colors;
 using AmongUsRevamped.Extensions;
+using AmongUsRevamped.Utils;
 using BepInEx;
 using HarmonyLib;
 using TMPro;
@@ -44,6 +45,21 @@ namespace AmongUsRevamped
                 text.fontSize = 2f;
                 text.text = ColorPalette.Color.Revamped.ToColorTag($"{AmongUsRevamped.Name} v{AmongUsRevamped.VersionString}");
                 text.text += $"\nBepInEx: v{Paths.BepInExVersion}";
+            }));
+
+            // Handle main menu banner
+            SceneManager.add_sceneLoaded((Action<Scene, LoadSceneMode>)((scene, loadMode) =>
+            {
+                if (scene.name != "MainMenu") return;
+
+                var officialBanner = GameObject.Find("bannerLogo_AmongUs");
+                if (officialBanner == null) return;
+
+                var banner = new GameObject("bannerLogo_Revamped");
+                banner.transform.parent = officialBanner.transform.parent;
+                banner.transform.position = Vector3.up * 0.6f;
+                var renderer = banner.AddComponent<SpriteRenderer>();
+                renderer.sprite = AssetUtils.LoadSpriteFromResource("AmongUsRevamped.Resources.Sprites.revamped_banner.png");
             }));
         }
     }
