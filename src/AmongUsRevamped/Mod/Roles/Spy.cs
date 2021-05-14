@@ -38,7 +38,8 @@ namespace AmongUsRevamped.Mod.Roles
                     Clickable = true,
                     Visible = true
                 };
-                GadgetButton.EffectStarted += OnGadgetStarted; 
+                GadgetButton.EffectStarted += OnGadgetStarted;
+                GadgetButton.EffectEnded += OnGadgetEnded;
                 GadgetButton.ApplyCooldown(GadgetButton.InitialCooldownDuration);
 
                 GadgetSound = AssetUtils.LoadAudioClipFromResource("AmongUsRevamped.Resources.Sounds.effect_spy_gadget.wav");
@@ -66,6 +67,11 @@ namespace AmongUsRevamped.Mod.Roles
         }
 
         public void OnGadgetStarted(object sender, EventArgs e)
+        {
+            SoundManager.Instance.PlaySound(GadgetSound, false, 1.0f);
+        }
+
+        public void OnGadgetEnded(object sender, EventArgs e)
         {
             SoundManager.Instance.PlaySound(GadgetSound, false, 1.0f);
         }
