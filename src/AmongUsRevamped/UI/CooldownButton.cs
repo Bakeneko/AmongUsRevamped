@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using AmongUsRevamped.Extensions;
 using UnityEngine;
@@ -194,7 +194,17 @@ namespace AmongUsRevamped.UI
         /// Ends the effect duration and raises the <see cref="EffectEnd"/> event.
         /// </summary>
         /// <param name="startCooldown">Whether or not to start the cooldown</param>
-        public virtual void EndEffect(bool wasActive, bool startCooldown = true)
+        public virtual void EndEffect(bool startCooldown)
+        {
+            EndEffect(IsEffectActive, startCooldown);
+        }
+
+        /// <summary>
+        /// Ends the effect duration and raises the <see cref="EffectEnd"/> event.
+        /// </summary>
+        /// <param name="wasActive">Whether or not to raise the <see cref="EffectEnd"/> event</param>
+        /// <param name="startCooldown">Whether or not to start the cooldown</param>
+        public virtual void EndEffect(bool wasActive, bool startCooldown)
         {
             EffectTime = 0;
             ButtonManager.TimerText.color = Palette.EnabledColor;
@@ -217,7 +227,7 @@ namespace AmongUsRevamped.UI
             CooldownTime -= Time.deltaTime;
             EffectTime -= Time.deltaTime;
 
-            if (effectActive && !IsEffectActive) EndEffect(true);
+            if (effectActive && !IsEffectActive) EndEffect(true, true);
 
             if (!IsCoolingDown) RaiseCooldownEnded();
         }

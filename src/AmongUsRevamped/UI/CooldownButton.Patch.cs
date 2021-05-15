@@ -18,7 +18,7 @@ namespace AmongUsRevamped.UI
         private static void MeetingHudStartPatch() // Meeting started
         {
             // End buttons effects if needed
-            foreach (CooldownButton button in CooldownButtons) if (button.MeetingsEndEffect) button.EndEffect(true, false);
+            foreach (CooldownButton button in CooldownButtons) if (button.MeetingsEndEffect) button.EndEffect(false);
         }
 
         [HarmonyPostfix]
