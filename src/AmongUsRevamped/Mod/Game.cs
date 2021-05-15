@@ -136,7 +136,8 @@ namespace AmongUsRevamped.Mod
                 Anonymized = true;
                 StartNameScrambler();
             }
-            else if (anonymize)
+            
+            if (Anonymized)
             {
                 foreach (Player p in Player.AllPlayers)
                 {
@@ -158,9 +159,16 @@ namespace AmongUsRevamped.Mod
                         control.CurrentPet.rend.color = color;
                         control.CurrentPet.shadowRend.color = color;
                     }
+
+                    float scale = 0.7f;
+                    CircleCollider2D collider = control.Collider?.TryCast<CircleCollider2D>();
+                    control.transform.localScale = new Vector3(scale, scale, 1f);
+                    collider.radius = Player.DefaultColliderRadius;
+                    collider.offset = Player.DefaultColliderOffset * Vector2.down;
                 }
             }
-            else if (!anonymize && Anonymized)
+            
+            if (!anonymize && Anonymized)
             {
                 Anonymized = false;
                 StopNameScrambler();
