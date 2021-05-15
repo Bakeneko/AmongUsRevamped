@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AmongUsRevamped.UI;
 using HarmonyLib;
 using InnerNet;
 using UnhollowerBaseLib;
@@ -216,7 +217,7 @@ namespace AmongUsRevamped.Mod
         {
             if (__instance.alphaTimer > 0f) // Displaying notification
             {
-                __instance.transform.localPosition += new Vector3(0.4f, 0f, 0f);
+                __instance.transform.localPosition = new HudPosition(0.5f, 0, HudAlignment.Left).GetVector3(-9f);
             }
         }
 
