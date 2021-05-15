@@ -47,7 +47,7 @@ namespace AmongUsRevamped.UI
 
         static GameButton()
         {
-            HudEvents.HudStateChanged += (sender, e) => HudVisible = e.Active;
+            HudEvents.HudUpdated += (sender, e) => HudVisible = ((HudManager)sender).isActiveAndEnabled;
         }
 
         public const float EdgeOffsetX = 0.8F;
