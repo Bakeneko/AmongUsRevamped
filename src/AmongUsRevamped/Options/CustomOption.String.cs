@@ -34,7 +34,7 @@ namespace AmongUsRevamped.Options
         /// <param name="name">Name/title of the option</param>
         /// <param name="persist">Persist option's value (only applies for the lobby host)</param>
         /// <param name="values">String values that may be displayed, default value is index 0</param>
-        public CustomStringOption(string id, string name, bool persist, string[] values) : base(id, name, persist, CustomOptionType.String, 0)
+        public CustomStringOption(string id, string name, bool persist, string[] values, int value = 0, bool indent = false) : base(id, name, persist, CustomOptionType.String, value)
         {
             _values = values;
 
@@ -47,6 +47,7 @@ namespace AmongUsRevamped.Options
             SetValue(ConfigEntry?.Value ?? GetDefaultValue(), false);
 
             ValueStringFormat = (sender, value) => _values[(int)value];
+            Indent = indent;
         }
 
         protected override OptionOnValueChangedEventArgs OnValueChangedEventArgs(object newValue, object oldValue)
@@ -129,10 +130,12 @@ namespace AmongUsRevamped.Options
         /// <param name="id">Id of the option, used to persist value when <paramref name="persist"/> is true and to sync the value between players</param>
         /// <param name="name">Name/title of the option</param>
         /// <param name="persist">Persist option's value (only applies for the lobby host)</param>
-        /// <param name="values">String values that may be displayed, default value is index 0</param>
-        public static CustomStringOption AddString(string id, string name, bool persist, params string[] values)
+        /// <param name="value">Default value</param>
+        /// <param name="indent">Option indented in the Hud</param>
+        /// /// <param name="values">String values that may be displayed, default value is index 0</param>
+        public static CustomStringOption AddString(string id, string name, bool persist, int value = 0, bool indent = false, params string[] values)
         {
-            return new CustomStringOption(id, name, persist, values);
+            return new CustomStringOption(id, name, persist, values, value, indent);
         }
 
         /// <summary>
@@ -140,10 +143,12 @@ namespace AmongUsRevamped.Options
         /// </summary>
         /// <param name="id">Id of the option, used to persist value when <paramref name="persist"/> is true and to sync the value between players</param>
         /// <param name="name">Name/title of the option</param>
+        /// <param name="value">Default value</param>
+        /// <param name="indent">Option indented in the Hud</param>
         /// <param name="values">String values that may be displayed, default value is index 0</param>
-        public static CustomStringOption AddString(string id, string name, params string[] values)
+        public static CustomStringOption AddString(string id, string name, int value = 0, bool indent = false, params string[] values)
         {
-            return AddString(id, name, true, values);
+            return AddString(id, name, true, value, indent, values);
         }
 
         /// <summary>
@@ -151,20 +156,24 @@ namespace AmongUsRevamped.Options
         /// </summary>
         /// <param name="name">Name/title of the option</param>
         /// <param name="persist">Persist option's value (only applies for the lobby host)</param>
+        /// <param name="value">Default value</param>
+        /// <param name="indent">Option indented in the Hud</param>
         /// <param name="values">String values that may be displayed, default value is index 0</param>
-        public static CustomStringOption AddString(string name, bool persist, params string[] values)
+        public static CustomStringOption AddString(string name, bool persist, int value = 0, bool indent = false, params string[] values)
         {
-            return AddString(name, name, persist, values);
+            return AddString(name, name, persist, value, indent, values);
         }
 
         /// <summary>
         /// Adds a string option.
         /// </summary>
         /// <param name="name">Name/title of the option</param>
+        /// <param name="value">Default value</param>
+        /// <param name="indent">Option indented in the Hud</param>
         /// <param name="values">String values that may be displayed, default value is index 0</param>
-        public static CustomStringOption AddString(string name, params string[] values)
+        public static CustomStringOption AddString(string name, int value = 0, bool indent = false, params string[] values)
         {
-            return AddString(name, name, values);
+            return AddString(name, name, value, indent, values);
         }
     }
 }

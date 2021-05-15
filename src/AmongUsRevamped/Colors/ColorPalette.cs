@@ -129,6 +129,7 @@ namespace AmongUsRevamped.Colors
             public static Color32 TasksComplete = new(0, 221, 0, 255);
 
             public static Color32 RoleCrewmate = new(139, 253, 253, 255);
+            public static Color32 RoleEngineer = new(255, 166, 10, 255);
             public static Color32 RoleSheriff = new(255, 204, 0, 255);
             public static Color32 RoleSnitch = new(252, 96, 29, 255);
             public static Color32 RoleTimeLord = new(20, 20, 255, 255);

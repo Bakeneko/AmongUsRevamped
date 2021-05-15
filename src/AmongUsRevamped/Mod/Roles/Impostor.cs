@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using AmongUsRevamped.Colors;
 using AmongUsRevamped.Extensions;
 using AmongUsRevamped.UI;
@@ -80,7 +80,7 @@ namespace AmongUsRevamped.Mod.Roles
             foreach (PlayerControl p in players)
             {
                 // Don't want to target those
-                if (p.Data.Disconnected || p.Data.IsDead || p.PlayerId == Player.Id || (p.Data.IsImpostor && !spyAmongUs) || p.inVent) continue;
+                if (p.Data.Disconnected || p.Data.IsDead || p.PlayerId == Player.Id || (p.Data.IsImpostor && !spyAmongUs)) continue;
 
                 Vector2 vector = p.GetTruePosition() - truePosition;
                 float magnitude = vector.magnitude;

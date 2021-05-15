@@ -103,6 +103,11 @@ namespace AmongUsRevamped.Mod
             if (IsCurrentPlayer && FakesTasks) ClearTasks();
         }
 
+        public virtual void OnExileEnd(ExileController exileController)
+        {
+            Role?.OnExileEnd(exileController);
+        }
+
         public virtual void OnMurdered(Player killer)
         {
             Role?.OnMurdered(killer);

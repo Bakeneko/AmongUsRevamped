@@ -23,6 +23,11 @@ namespace AmongUsRevamped.Mod
 
         #region Crewmates
 
+        // Engineer
+        public static CustomHeaderOption EngineerSettings;
+        public static CustomNumberOption EngineerSpawnRate;
+        public static CustomStringOption EngineerRepairs;
+
         // Sheriff
         public static CustomHeaderOption SheriffSettings;
         public static CustomNumberOption SheriffSpawnRate;
@@ -112,6 +117,11 @@ namespace AmongUsRevamped.Mod
 
             #region Crewmates
 
+            // Engineer
+            EngineerSettings = new CustomHeaderOption("engineerSettings", Color.RoleEngineer.ToColorTag("Engineer"));
+            EngineerSpawnRate = new CustomNumberOption("engineerSpawnRate", "Spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
+            EngineerRepairs = new CustomStringOption("engineerRepairs", "Repairs", true, new string[] { "1 per game", "2 per game", "3 per game", "1 per round" }, 0, true);
+
             // Sheriff
             SheriffSettings = new CustomHeaderOption("sheriffSettings", Color.RoleSheriff.ToColorTag("Sheriff"));
             SheriffSpawnRate = new CustomNumberOption("sheriffSpawnRate", "Spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
@@ -193,6 +203,10 @@ namespace AmongUsRevamped.Mod
             public static int MaxImpostorRoles => (int)Options.MaxImpostorRoles.GetValue();
 
             #region Crewmates
+
+            // Engineer
+            public static float EngineerSpawnRate => Options.EngineerSpawnRate.GetValue();
+            public static int EngineerRepairs => Options.EngineerRepairs.GetValue();
 
             // Sheriff
             public static float SheriffSpawnRate => Options.SheriffSpawnRate.GetValue();

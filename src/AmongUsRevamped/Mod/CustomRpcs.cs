@@ -13,6 +13,7 @@
         RemoveBody,
         OpenDoor,
         Camouflage,
+        EngineerRepair,
         Swoop,
         Rewind,
 

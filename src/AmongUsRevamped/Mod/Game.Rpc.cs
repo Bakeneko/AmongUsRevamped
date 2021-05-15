@@ -81,7 +81,13 @@ namespace AmongUsRevamped.Mod
             {
                 var killer = Player.GetPlayer(murder.Item1);
                 var victim = Player.GetPlayer(murder.Item2);
-                if (killer != null && victim != null) killer.Control.MurderPlayer(victim.Control);
+                if (killer == null || victim == null) return;
+
+                if (victim.IsCurrentPlayer && victim.Control.inVent)
+                {
+                    victim.Control.MyPhysics.ExitAllVents();
+                }
+                killer.Control.MurderPlayer(victim.Control);
             }
         }
 

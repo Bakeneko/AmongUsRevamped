@@ -204,6 +204,7 @@ namespace AmongUsRevamped.Mod
             // Distribute crewmates roles
             int maxCrewmateRoles = Mathf.Min(crewmates.Count, Options.Values.MaxCrewmateRoles);
             var generator = new DistributedRandomNumberGenerator<byte>();
+            if (Options.Values.EngineerSpawnRate > 0) generator.AddNumber((byte)RoleType.Engineer, Options.Values.EngineerSpawnRate);
             if (Options.Values.SheriffSpawnRate > 0) generator.AddNumber((byte)RoleType.Sheriff, Options.Values.SheriffSpawnRate);
             if (Options.Values.SnitchSpawnRate > 0) generator.AddNumber((byte)RoleType.Snitch, Options.Values.SnitchSpawnRate);
             if (Options.Values.SpySpawnRate > 0) generator.AddNumber((byte)RoleType.Spy, Options.Values.SpySpawnRate);
@@ -306,6 +307,9 @@ namespace AmongUsRevamped.Mod
                 case RoleType.Crewmate:
                     new Crewmate(player).AddToReverseIndex();
                     break;
+                case RoleType.Engineer:
+                    new Engineer(player).AddToReverseIndex();
+                    break;
                 case RoleType.Sheriff:
                     new Sheriff(player).AddToReverseIndex();
                     break;
@@ -383,7 +387,7 @@ namespace AmongUsRevamped.Mod
 
         private static void OnExileEnd(ExileController exileController)
         {
-
+            foreach (Player p in Player.AllPlayers) { p.OnExileEnd(exileController); };
         }
 
         private static void OnEmergencyButtonUpdate(EmergencyMinigame emButton)

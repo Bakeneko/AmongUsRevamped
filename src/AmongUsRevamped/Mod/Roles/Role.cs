@@ -47,6 +47,7 @@ namespace AmongUsRevamped.Mod.Roles
             TaskDescription = () => Color.ToColorTag($"{Name}");
             ExileDescription = () => $"{Player.Name} was The {Name}";
             Roles[player.Id] = this;
+            UpdateVentOutlines();
         }
 
         public virtual void OnIntroStart(IntroCutscene introCutScene, ref Il2CppSystem.Collections.Generic.List<PlayerControl> team)
@@ -95,7 +96,7 @@ namespace AmongUsRevamped.Mod.Roles
 
         public virtual void OnIntroEnd(IntroCutscene introCutScene)
         {
-
+            UpdateVentOutlines();
         }
 
         public virtual void HudUpdate(HudManager hudManager)
@@ -108,9 +109,28 @@ namespace AmongUsRevamped.Mod.Roles
 
         }
 
+        protected virtual void UpdateVentOutlines()
+        {
+            if (!Player.IsCurrentPlayer || ShipStatus.Instance?.AllVents == null) return;
+
+            try
+            {
+                foreach (Vent vent in ShipStatus.Instance.AllVents)
+                {
+                    vent.myRend.SetOutline(Player.CanUseVent(vent) ? Color : null);
+                }
+            }
+            catch { }
+        }
+
         public virtual void OnExiled()
         {
             Exiled = true;
+        }
+
+        public virtual void OnExileEnd(ExileController exileController)
+        {
+
         }
 
         public virtual void OnMurdered(Player killer)
@@ -258,6 +278,7 @@ namespace AmongUsRevamped.Mod.Roles
         None,
         // Crew
         Crewmate,
+        Engineer,
         Sheriff,
         Snitch,
         Spy,
