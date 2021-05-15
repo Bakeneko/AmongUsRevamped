@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using AmongUsRevamped.Extensions;
 using UnityEngine;
@@ -172,7 +172,7 @@ namespace AmongUsRevamped.UI
 
             if (Disposed) return;
 
-            SetClickable(Clickable);
+            SetClickable(PlayerCanClick && Clickable);
             SetVisible(HudVisible && Visible);
 
             if (HotKey != KeyCode.None && Input.GetKeyDown(HotKey)) PerformClick();

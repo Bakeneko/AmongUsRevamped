@@ -34,6 +34,17 @@ namespace AmongUsRevamped.UI
             }
         }
 
+        /// <summary>
+        /// Get whether the player can click
+        /// </summary>
+        protected static bool PlayerCanClick
+        {
+            get
+            {
+                return PlayerControl.LocalPlayer?.CanMove == true;
+            }
+        }
+
         static GameButton()
         {
             HudEvents.HudStateChanged += (sender, e) => HudVisible = e.Active;
@@ -185,7 +196,7 @@ namespace AmongUsRevamped.UI
 
             if (Disposed) return;
 
-            SetClickable(Clickable);
+            SetClickable(PlayerCanClick && Clickable);
             SetVisible(HudVisible && Visible);
 
             if (HotKey != KeyCode.None && Input.GetKeyDown(HotKey)) PerformClick();
