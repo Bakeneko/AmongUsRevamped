@@ -83,7 +83,7 @@ namespace AmongUsRevamped.Mod
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.ExitGame))]
-        public static bool AmongUsClientExitGamePatch()
+        private static bool AmongUsClientExitGamePatch()
         {
             OnExit();
             return true;

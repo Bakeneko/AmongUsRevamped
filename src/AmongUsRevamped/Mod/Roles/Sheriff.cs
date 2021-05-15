@@ -110,10 +110,7 @@ namespace AmongUsRevamped.Mod.Roles
                 try
                 {
                     CurrentTarget = null;
-                    if (KillButton != null)
-                    {
-                        KillButton.Dispose();
-                    }
+                    KillButton?.Dispose();
                     KillButton = null;
                 }
                 catch
