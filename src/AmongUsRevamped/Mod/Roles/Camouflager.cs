@@ -35,7 +35,7 @@ namespace AmongUsRevamped.Mod.Roles
                     Options.Values.CamouflagerCamouflageCooldown, Options.Values.CamouflagerCamouflageDuration, 10f)
                 {
                     HotKey = KeyCode.F,
-                    Clickable = true,
+                    Clickable = false,
                     Visible = true
                 };
                 CamouflageButton.EffectStarted += OnCamouflageStarted;
@@ -55,9 +55,11 @@ namespace AmongUsRevamped.Mod.Roles
         public override void CurrentPlayerHudUpdate(HudManager hudManager)
         {
             base.CurrentPlayerHudUpdate(hudManager);
-            if (Player.Dead)
+
+            if (CamouflageButton != null)
             {
-                if (CamouflageButton != null) CamouflageButton.Visible = false;
+                CamouflageButton.Visible = !Player.Dead;
+                CamouflageButton.Clickable = Player.CanMove;
             }
         }
         

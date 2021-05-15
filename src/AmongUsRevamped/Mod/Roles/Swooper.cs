@@ -36,7 +36,7 @@ namespace AmongUsRevamped.Mod.Roles
                     Options.Values.SwooperSwoopCooldown, Options.Values.SwooperSwoopDuration, 10f)
                 {
                     HotKey = KeyCode.F,
-                    Clickable = true,
+                    Clickable = false,
                     Visible = true
                 };
                 SwoopButton.EffectStarted += OnSwoopStarted;
@@ -57,9 +57,11 @@ namespace AmongUsRevamped.Mod.Roles
         public override void CurrentPlayerHudUpdate(HudManager hudManager)
         {
             base.CurrentPlayerHudUpdate(hudManager);
-            if (Player.Dead)
+
+            if (SwoopButton != null)
             {
-                if (SwoopButton != null) SwoopButton.Visible = false;
+                SwoopButton.Visible = !Player.Dead;
+                SwoopButton.Clickable = Player.CanMove;
             }
         }
         

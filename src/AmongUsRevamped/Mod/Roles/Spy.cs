@@ -35,7 +35,7 @@ namespace AmongUsRevamped.Mod.Roles
                     Options.Values.SpyGadgetCooldown, Options.Values.SpyGadgetDuration, 0f)
                 {
                     HotKey = KeyCode.Q,
-                    Clickable = true,
+                    Clickable = false,
                     Visible = true
                 };
                 GadgetButton.EffectStarted += OnGadgetStarted;
@@ -60,9 +60,11 @@ namespace AmongUsRevamped.Mod.Roles
         public override void CurrentPlayerHudUpdate(HudManager hudManager)
         {
             base.CurrentPlayerHudUpdate(hudManager);
-            if (Player.Dead)
+
+            if (GadgetButton != null)
             {
-                if (GadgetButton != null) GadgetButton.Visible = false;
+                GadgetButton.Visible = !Player.Dead;
+                GadgetButton.Clickable = Player.CanMove;
             }
         }
 

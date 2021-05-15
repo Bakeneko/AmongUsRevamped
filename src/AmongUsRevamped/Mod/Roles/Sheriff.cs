@@ -41,21 +41,16 @@ namespace AmongUsRevamped.Mod.Roles
 
         public override void CurrentPlayerHudUpdate(HudManager hudManager)
         {
-            if (Player.Dead)
-            {
-                if (KillButton != null) KillButton.Visible = false;
-                return;
-            }
-
+            base.CurrentPlayerHudUpdate(hudManager);
             CurrentTarget = SearchTarget();
-            if (CurrentTarget == null)
+
+            if (KillButton != null)
             {
-                if (KillButton != null) KillButton.Clickable = false;
-                return;
+                KillButton.Visible = !Player.Dead;
+                KillButton.Clickable = CurrentTarget != null && Player.CanMove;
             }
 
-            if (KillButton != null) KillButton.Clickable = true;
-            CurrentTarget.SetOutline(Color);
+            CurrentTarget?.SetOutline(Color);
         }
 
         protected Player SearchTarget()

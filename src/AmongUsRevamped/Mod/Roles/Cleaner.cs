@@ -31,7 +31,7 @@ namespace AmongUsRevamped.Mod.Roles
                 CleanButton = new CooldownButton("AmongUsRevamped.Resources.Sprites.button_cleaner_clean.png", new HudPosition(GameButton.ButtonSize, GameButton.ButtonSize, HudAlignment.BottomRight), PlayerControl.GameOptions.KillCooldown, 0f, 10f)
                 {
                     HotKey = KeyCode.F,
-                    Clickable = true,
+                    Clickable = false,
                     Visible = true
                 };
                 CleanButton.Clicked += OnCleanButtonClicked;
@@ -49,22 +49,17 @@ namespace AmongUsRevamped.Mod.Roles
         public override void CurrentPlayerHudUpdate(HudManager hudManager)
         {
             base.CurrentPlayerHudUpdate(hudManager);
-            if (Player.Dead)
-            {
-                if (CleanButton != null) CleanButton.Visible = false;
-            }
 
             // Reset body outline
             CurrentBodyTarget?.GetComponent<SpriteRenderer>()?.SetOutline(null);
 
             CurrentBodyTarget = SearchBodyTarget();
-            if (CurrentBodyTarget == null)
-            {
-                if (CleanButton != null) CleanButton.Clickable = false;
-                return;
-            }
 
-            if (CleanButton != null) CleanButton.Clickable = true;
+            if (CleanButton != null)
+            {
+                CleanButton.Visible = !Player.Dead;
+                CleanButton.Clickable = CurrentBodyTarget != null && Player.CanMove;
+            }
 
             CurrentBodyTarget.GetComponent<SpriteRenderer>()?.SetOutline(Color);
         }

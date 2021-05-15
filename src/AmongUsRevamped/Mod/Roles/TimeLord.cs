@@ -42,7 +42,7 @@ namespace AmongUsRevamped.Mod.Roles
                     Options.Values.TimeLordRewindCooldown, Options.Values.TimeLordRewindDuration / RewindSpeed, Options.Values.TimeLordRewindDuration)
                 {
                     HotKey = KeyCode.Q,
-                    Clickable = true,
+                    Clickable = false,
                     Visible = true
                 };
                 RewindButton.Clicked += OnRewindButtonClicked;
@@ -66,9 +66,12 @@ namespace AmongUsRevamped.Mod.Roles
 
         public override void CurrentPlayerHudUpdate(HudManager hudManager)
         {
-            if (Player.Dead)
+            base.CurrentPlayerHudUpdate(hudManager);
+
+            if (RewindButton != null)
             {
-                if (RewindButton != null) RewindButton.Visible = false;
+                RewindButton.Visible = !Player.Dead;
+                RewindButton.Clickable = Player.CanMove;
             }
         }
 
