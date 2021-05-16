@@ -12,10 +12,9 @@ namespace AmongUsRevamped.Mod.Roles
         public CooldownButton KillButton = null;
         public Player CurrentTarget { get; set; }
 
-        public Sheriff(Player player) : base(player)
+        public Sheriff(Player player) : base(player, RoleType.Sheriff)
         {
             Name = "Sheriff";
-            RoleType = RoleType.Sheriff;
             Color = ColorPalette.Color.RoleSheriff;
             IntroDescription = () => $"Shoot the {ColorPalette.Color.RoleImpostor.ToColorTag("Impostors")}";
             TaskDescription = () => Color.ToColorTag($"{Name}: Shoot the Impostors");

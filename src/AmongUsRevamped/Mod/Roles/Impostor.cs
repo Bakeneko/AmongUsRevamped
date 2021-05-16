@@ -11,7 +11,7 @@ namespace AmongUsRevamped.Mod.Roles
         public CooldownButton KillButton = null;
         public Player CurrentTarget { get; set; }
 
-        public Impostor(Player player) : base(player)
+        public Impostor(Player player, RoleType roleType = RoleType.Impostor) : base(player, roleType)
         {
             Name = "Impostor";
             Faction = Faction.Impostors;
@@ -23,6 +23,7 @@ namespace AmongUsRevamped.Mod.Roles
             IntroDescription = () => "Sabotage and kill everyone";
             TaskDescription = () => Color.ToColorTag($"{Name}: Sabotage and kill everyone");
             ExileDescription = () => $"{Player.Name} was an {Name}";
+            Player.Data.IsImpostor = true;
             Init();
         }
 

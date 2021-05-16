@@ -22,10 +22,9 @@ namespace AmongUsRevamped.Mod.Roles
         public bool Morphing => MorphTime > 0f;
         public float MorphTime = 0f;
 
-        public Morphling(Player player) : base(player)
+        public Morphling(Player player) : base(player, RoleType.Morphling)
         {
             Name = "Morphling";
-            RoleType = RoleType.Morphling;
             Color = ColorPalette.Color.RoleImpostor;
             IntroDescription = () => "Transform into crewmates";
             TaskDescription = () => Color.ToColorTag($"{Name}: Transform into crewmates");
@@ -186,8 +185,6 @@ namespace AmongUsRevamped.Mod.Roles
             {
                 try
                 {
-                    Unmorph();
-
                     SampleTarget = null;
                     MorphTarget = null;
                     MorphButton?.Dispose();
@@ -199,6 +196,8 @@ namespace AmongUsRevamped.Mod.Roles
                     MorphSound = null;
                     UnmorphSound?.Destroy();
                     UnmorphSound = null;
+
+                    Unmorph();
                 }
                 catch
                 {

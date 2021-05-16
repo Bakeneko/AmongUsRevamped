@@ -19,10 +19,9 @@ namespace AmongUsRevamped.Mod.Roles
         private bool BustWarningDisplayed;
         private bool UncoverWarningDisplayed;
 
-        public Snitch(Player player) : base(player)
+        public Snitch(Player player) : base(player, RoleType.Snitch)
         {
             Name = "Snitch";
-            RoleType = RoleType.Snitch;
             Color = ColorPalette.Color.RoleSnitch;
             IntroDescription = () => $"Complete your tasks to uncover the {ColorPalette.Color.RoleImpostor.ToColorTag("Impostors")}";
             TaskDescription = () => Color.ToColorTag(RemainingTasks > 0 ? $"{Name}: Complete your tasks to uncover the Impostors" : $"{Name}: Uncover the impostors before they get you!");

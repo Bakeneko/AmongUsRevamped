@@ -16,10 +16,9 @@ namespace AmongUsRevamped.Mod.Roles
         public bool CamouflageActive => CamouflageTime > 0f;
         public float CamouflageTime = 0f;
 
-        public Camouflager(Player player) : base(player)
+        public Camouflager(Player player) : base(player, RoleType.Camouflager)
         {
             Name = "Camouflager";
-            RoleType = RoleType.Camouflager;
             Color = ColorPalette.Color.RoleImpostor;
             IntroDescription = () => "Camouflage and turn everyone grey";
             TaskDescription = () => Color.ToColorTag($"{Name}: Camouflage for some sneaky kills");
@@ -120,13 +119,14 @@ namespace AmongUsRevamped.Mod.Roles
             {
                 try
                 {
-                    UnCamouflage();
 
                     CamouflageButton?.Dispose();
                     CamouflageButton = null;
 
                     CamouflageSound?.Destroy();
                     CamouflageSound = null;
+
+                    UnCamouflage();
                 }
                 catch
                 {

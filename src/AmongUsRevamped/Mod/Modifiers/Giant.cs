@@ -6,10 +6,9 @@ namespace AmongUsRevamped.Mod.Modifiers
 {
     public class Giant : Modifier
     {
-        public Giant(Player player) : base(player)
+        public Giant(Player player) : base(player, ModifierType.Giant)
         {
             Name = "Giant";
-            ModifierType = ModifierType.Giant;
             Color = ColorPalette.Color.ModifierGiant;
             MoveSpeedModifier = 0.75f;
             SizeModifier = 1.3f;

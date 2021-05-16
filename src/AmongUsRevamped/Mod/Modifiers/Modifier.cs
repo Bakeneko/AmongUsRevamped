@@ -31,13 +31,15 @@ namespace AmongUsRevamped.Mod.Modifiers
 
         protected bool Disposed;
 
-        protected Modifier(Player player)
+        protected Modifier(Player player, ModifierType modifierType)
         {
             GetPlayerModifier(player.Id)?.Dispose();
             Player = player;
+            ModifierType = modifierType;
             IntroDescription = () => Color.ToColorTag($"{Name}");
             TaskDescription = () => Color.ToColorTag($"{Name}");
             Modifiers[player.Id] = this;
+            AddToReverseIndex();
         }
 
         public virtual void OnIntroStart(IntroCutscene introCutScene)

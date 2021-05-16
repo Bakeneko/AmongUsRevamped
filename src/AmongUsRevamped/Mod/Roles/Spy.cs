@@ -9,17 +9,15 @@ namespace AmongUsRevamped.Mod.Roles
 {
     public class Spy : Crewmate
     {
+        private Message CurrentMessage;
         public CooldownButton GadgetButton = null;
         public AudioClip GadgetSound = null;
 
         public bool GadgetActive => GadgetButton?.IsEffectActive == true;
 
-        private Message WarningMessage;
-
-        public Spy(Player player) : base(player)
+        public Spy(Player player) : base(player, RoleType.Spy)
         {
             Name = "Spy";
-            RoleType = RoleType.Spy;
             Color = ColorPalette.Color.RoleImpostor;
             IntroDescription = () => $"Confuse the {ColorPalette.Color.RoleImpostor.ToColorTag("Impostors")}";
             TaskDescription = () => Color.ToColorTag($"{Name}: Confuse the Impostors");
@@ -44,6 +42,14 @@ namespace AmongUsRevamped.Mod.Roles
 
                 GadgetSound = AssetUtils.LoadAudioClipFromResource("AmongUsRevamped.Resources.Sounds.effect_spy_gadget.wav");
             }
+            else
+            {
+                var currentPlayer = Player.CurrentPlayer;
+                if (currentPlayer.Role?.Faction == Faction.Impostors && !currentPlayer.Dead && !currentPlayer.Disconnected)
+                {
+                    DisplayMessage(6f, $"Beware, there is a {ColorPalette.Color.RoleImpostor.ToColorTag("Spy")} among us !");
+                }
+            }
         }
 
         public override void OnIntroEnd(IntroCutscene introCutScene)
@@ -53,7 +59,7 @@ namespace AmongUsRevamped.Mod.Roles
             var currentPlayer = Player.CurrentPlayer;
             if (currentPlayer.Role?.Faction == Faction.Impostors && !currentPlayer.Dead && !currentPlayer.Disconnected)
             {
-                new Message(6f, $"Beware, there is a {ColorPalette.Color.RoleImpostor.ToColorTag("Spy")} among us !");
+                DisplayMessage(6f, $"Beware, there is a {ColorPalette.Color.RoleImpostor.ToColorTag("Spy")} among us !");
             }
         }
 
@@ -78,6 +84,12 @@ namespace AmongUsRevamped.Mod.Roles
             SoundManager.Instance.PlaySound(GadgetSound, false, 1.0f);
         }
 
+        private void DisplayMessage(float duration, string message)
+        {
+            CurrentMessage?.Dispose();
+            CurrentMessage = new Message(duration, message);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (Disposed) return;
@@ -92,8 +104,8 @@ namespace AmongUsRevamped.Mod.Roles
                     GadgetSound?.Destroy();
                     GadgetSound = null;
 
-                    WarningMessage?.Dispose();
-                    WarningMessage = null;
+                    CurrentMessage?.Dispose();
+                    CurrentMessage = null;
                 }
                 catch
                 {

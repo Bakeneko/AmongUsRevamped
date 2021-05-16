@@ -296,45 +296,46 @@ namespace AmongUsRevamped.Mod
             switch (type)
             {
                 case RoleType.Crewmate:
-                    new Crewmate(player).AddToReverseIndex();
+                    new Crewmate(player);
                     break;
                 case RoleType.Engineer:
-                    new Engineer(player).AddToReverseIndex();
+                    new Engineer(player);
                     break;
                 case RoleType.Sheriff:
-                    new Sheriff(player).AddToReverseIndex();
+                    new Sheriff(player);
                     break;
                 case RoleType.Snitch:
-                    new Snitch(player).AddToReverseIndex();
+                    new Snitch(player);
                     break;
                 case RoleType.Spy:
-                    new Spy(player).AddToReverseIndex();
+                    new Spy(player);
                     break;
                 case RoleType.TimeLord:
-                    new TimeLord(player).AddToReverseIndex();
+                    new TimeLord(player);
                     break;
                 case RoleType.Camouflager:
-                    new Camouflager(player).AddToReverseIndex();
+                    new Camouflager(player);
                     break;
                 case RoleType.Cleaner:
-                    new Cleaner(player).AddToReverseIndex();
+                    new Cleaner(player);
                     break;
                 case RoleType.Impostor:
-                    new Impostor(player).AddToReverseIndex();
+                    new Impostor(player);
                     break;
                 case RoleType.Morphling:
-                    new Morphling(player).AddToReverseIndex();
+                    new Morphling(player);
                     break;
                 case RoleType.Swooper:
-                    new Swooper(player).AddToReverseIndex();
+                    new Swooper(player);
                     break;
                 case RoleType.Jester:
-                    new Jester(player).AddToReverseIndex();
+                    new Jester(player);
                     break;
                 default:
                     AmongUsRevamped.LogWarning($"Player {player} was assigned unhandled role {type}");
                     break;
             }
+            player.UpdateImportantTasks();
         }
 
         private static void OnPlayerModifierAssigned(Player player, ModifierType type)
@@ -342,21 +343,22 @@ namespace AmongUsRevamped.Mod
             switch (type)
             {
                 case ModifierType.Drunk:
-                    new Drunk(player).AddToReverseIndex();
+                    new Drunk(player);
                     break;
                 case ModifierType.Flash:
-                    new Flash(player).AddToReverseIndex();
+                    new Flash(player);
                     break;
                 case ModifierType.Giant:
-                    new Giant(player).AddToReverseIndex();
+                    new Giant(player);
                     break;
                 case ModifierType.Torch:
-                    new Torch(player).AddToReverseIndex();
+                    new Torch(player);
                     break;
                 default:
                     AmongUsRevamped.LogWarning($"Player {player} was assigned unhandled modifier {type}");
                     break;
             }
+            player.UpdateImportantTasks();
         }
 
         private static void OnIntroStart(IntroCutscene introCutScene, ref Il2CppSystem.Collections.Generic.List<PlayerControl> team)

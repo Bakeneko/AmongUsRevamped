@@ -6,10 +6,9 @@ namespace AmongUsRevamped.Mod.Modifiers
 {
     public class Drunk : Modifier
     {
-        public Drunk(Player player) : base(player)
+        public Drunk(Player player) : base(player, ModifierType.Drunk)
         {
             Name = "Drunk";
-            ModifierType = ModifierType.Drunk;
             Color = ColorPalette.Color.ModifierDrunk;
             MoveSpeedModifier = -1f;
             IntroDescription = () => Color.ToColorTag($"{Name}: Go home, you're drunk!");

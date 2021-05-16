@@ -18,11 +18,9 @@ namespace AmongUsRevamped.Mod.Roles
 
         public readonly int RepairsOption = Options.Values.EngineerRepairs;
 
-
-        public Engineer(Player player) : base(player)
+        public Engineer(Player player) : base(player, RoleType.Engineer)
         {
             Name = "Engineer";
-            RoleType = RoleType.Engineer;
             Color = ColorPalette.Color.RoleEngineer;
             IntroDescription = () => "Maintain important systems on the ship";
             TaskDescription = () => Color.ToColorTag($"{Name}: Vent and fix a sabotage from anywhere!");

@@ -13,10 +13,9 @@ namespace AmongUsRevamped.Mod.Roles
         public AudioClip CleanSound = null;
         public DeadBody CurrentBodyTarget { get; set; }
 
-        public Cleaner(Player player) : base(player)
+        public Cleaner(Player player) : base(player, RoleType.Cleaner)
         {
             Name = "Cleaner";
-            RoleType = RoleType.Cleaner;
             Color = ColorPalette.Color.RoleImpostor;
             IntroDescription = () => "Clean up bodies";
             TaskDescription = () => Color.ToColorTag($"{Name}: Clean bodies before crewmates discover them");
@@ -61,7 +60,7 @@ namespace AmongUsRevamped.Mod.Roles
                 CleanButton.Clickable = CurrentBodyTarget != null && Player.CanMove;
             }
 
-            CurrentBodyTarget.GetComponent<SpriteRenderer>()?.SetOutline(Color);
+            CurrentBodyTarget?.GetComponent<SpriteRenderer>()?.SetOutline(Color);
         }
 
         protected DeadBody SearchBodyTarget()

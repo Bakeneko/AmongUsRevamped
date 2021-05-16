@@ -6,10 +6,9 @@ namespace AmongUsRevamped.Mod.Modifiers
 {
     public class Torch : Modifier
     {
-        public Torch(Player player) : base(player)
+        public Torch(Player player) : base(player, ModifierType.Torch)
         {
             Name = "Torch";
-            ModifierType = ModifierType.Torch;
             Color = ColorPalette.Color.ModifierTorch;
             VisionRangeModifier = 1.2f;
             HasNightVision = true;

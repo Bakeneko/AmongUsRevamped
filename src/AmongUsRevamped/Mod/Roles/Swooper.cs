@@ -17,10 +17,9 @@ namespace AmongUsRevamped.Mod.Roles
         public bool Swooping => SwoopTime > 0f;
         public float SwoopTime = 0f;
 
-        public Swooper(Player player) : base(player)
+        public Swooper(Player player) : base(player, RoleType.Swooper)
         {
             Name = "Swooper";
-            RoleType = RoleType.Swooper;
             Color = ColorPalette.Color.RoleImpostor;
             IntroDescription = () => "Turn invisible temporarily";
             TaskDescription = () => Color.ToColorTag($"{Name}: Turn invisible for some sneaky kills");
@@ -178,7 +177,6 @@ namespace AmongUsRevamped.Mod.Roles
             {
                 try
                 {
-                    Unswoop();
 
                     SwoopButton?.Dispose();
                     SwoopButton = null;
@@ -187,6 +185,8 @@ namespace AmongUsRevamped.Mod.Roles
                     SwoopSound = null;
                     UnswoopSound?.Destroy();
                     UnswoopSound = null;
+
+                    Unswoop();
                 }
                 catch
                 {

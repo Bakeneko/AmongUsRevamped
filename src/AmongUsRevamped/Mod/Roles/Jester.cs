@@ -4,13 +4,12 @@ using UnityEngine;
 
 namespace AmongUsRevamped.Mod.Roles
 {
-    public class Jester : Role
+    public class Jester : Crewmate
     {
-        public Jester(Player player) : base(player)
+        public Jester(Player player) : base(player, RoleType.Jester)
         {
             Name = "Jester";
             Faction = Faction.Neutral;
-            RoleType = RoleType.Jester;
             Color = ColorPalette.Color.RoleJester;
             FakesTasks = true;
             IntroDescription = () => "Get voted out!";

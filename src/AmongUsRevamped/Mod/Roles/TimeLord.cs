@@ -23,10 +23,9 @@ namespace AmongUsRevamped.Mod.Roles
         private float DeathTime = -1;
         private Color HudColor = Color.clear;
 
-        public TimeLord(Player player) : base(player)
+        public TimeLord(Player player) : base(player, RoleType.TimeLord)
         {
             Name = "Time Lord";
-            RoleType = RoleType.TimeLord;
             Color = ColorPalette.Color.RoleTimeLord;
             IntroDescription = () => $"Rewind!";
             TaskDescription = () => Color.ToColorTag($"{Name}: Save crewmates by rewinding time");

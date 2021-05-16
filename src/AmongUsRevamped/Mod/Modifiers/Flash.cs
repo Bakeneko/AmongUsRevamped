@@ -6,10 +6,9 @@ namespace AmongUsRevamped.Mod.Modifiers
 {
     public class Flash : Modifier
     {
-        public Flash(Player player) : base(player)
+        public Flash(Player player) : base(player, ModifierType.Flash)
         {
             Name = "Flash";
-            ModifierType = ModifierType.Flash;
             Color = ColorPalette.Color.ModifierFlash;
             MoveSpeedModifier = 1.5f;
             IntroDescription = () => Color.ToColorTag($"{Name}: Zooooom!");

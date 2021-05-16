@@ -40,14 +40,16 @@ namespace AmongUsRevamped.Mod.Roles
 
         protected bool Disposed;
 
-        protected Role(Player player)
+        protected Role(Player player, RoleType roleType)
         {
             GetPlayerRole(player.Id)?.Dispose();
             Player = player;
+            RoleType = roleType;
             IntroDescription = () => Color.ToColorTag($"{Name}");
             TaskDescription = () => Color.ToColorTag($"{Name}");
             ExileDescription = () => $"{Player.Name} was The {Name}";
             Roles[player.Id] = this;
+            AddToReverseIndex();
             UpdateVentOutlines();
         }
 
