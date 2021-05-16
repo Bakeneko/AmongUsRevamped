@@ -14,6 +14,7 @@
         OpenDoor,
         Camouflage,
         EngineerRepair,
+        Morph,
         Swoop,
         Rewind,
 

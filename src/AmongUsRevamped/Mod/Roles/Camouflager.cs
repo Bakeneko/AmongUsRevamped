@@ -77,26 +77,39 @@ namespace AmongUsRevamped.Mod.Roles
 
         public void Camouflage()
         {
-            SoundManager.Instance.PlaySound(CamouflageSound, false, 1.0f);
-            CamouflageTime = Options.Values.CamouflagerCamouflageDuration;
+            try
+            {
+                SoundManager.Instance.PlaySound(CamouflageSound, false, 1.0f);
+                CamouflageTime = Options.Values.CamouflagerCamouflageDuration;
+            }
+            catch (Exception) { }    
         }
 
         public void CamouflageUpdate()
         {
-            if (!CamouflageActive) return;
-
-            CamouflageTime -= Time.deltaTime;
-
-            if (!CamouflageActive)
+            try
             {
-                UnCamouflage();
+                if (!CamouflageActive) return;
+
+                CamouflageTime -= Time.deltaTime;
+
+                if (!CamouflageActive || Player.Dead || Player.Disconnected)
+                {
+                    UnCamouflage();
+                }
             }
+            catch (Exception) { }
         }
 
         public void UnCamouflage()
         {
-            SoundManager.Instance.PlaySound(CamouflageSound, false, 1.0f);
-            CamouflageTime = 0f;
+            try
+            {
+                SoundManager.Instance.PlaySound(CamouflageSound, false, 1.0f);
+                CamouflageTime = 0f;
+                if (CamouflageButton != null) CamouflageButton.EndEffect(false, true);
+            }
+            catch (Exception) { }
         }
 
         protected override void Dispose(bool disposing)

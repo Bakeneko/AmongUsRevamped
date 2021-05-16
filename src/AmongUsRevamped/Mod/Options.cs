@@ -65,6 +65,11 @@ namespace AmongUsRevamped.Mod
         public static CustomHeaderOption CleanerSettings;
         public static CustomNumberOption CleanerSpawnRate;
 
+        public static CustomHeaderOption MorphlingSettings;
+        public static CustomNumberOption MorphlingSpawnRate;
+        public static CustomNumberOption MorphlingMorphCooldown;
+        public static CustomNumberOption MorphlingMorphDuration;
+
         // Swooper
         public static CustomHeaderOption SwooperSettings;
         public static CustomNumberOption SwooperSpawnRate;
@@ -160,10 +165,16 @@ namespace AmongUsRevamped.Mod
             CleanerSpawnRate = new CustomNumberOption("cleanerSpawnRate", "Spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
 
             // Swooper
+            MorphlingSettings = new CustomHeaderOption("morphlingSettings", Color.RoleImpostor.ToColorTag("Morphling"));
+            MorphlingSpawnRate = new CustomNumberOption("morphlingSpawnRate", "Spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
+            MorphlingMorphCooldown = new CustomNumberOption("morphlingMorphCooldown", "Morph cooldown", true, 30f, 10f, 60f, 2.5f, true, CustomNumberOption.SecondsStringFormat);
+            MorphlingMorphDuration = new CustomNumberOption("morphlingMorphDuration", "Morph duration", true, 10f, 1f, 20f, 0.5f, true, CustomNumberOption.SecondsStringFormat);
+
+            // Swooper
             SwooperSettings = new CustomHeaderOption("swooperSettings", Color.RoleImpostor.ToColorTag("Swooper"));
             SwooperSpawnRate = new CustomNumberOption("swooperSpawnRate", "Spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
-            SwooperSwoopCooldown = new CustomNumberOption("swooperSwoopCooldown", "Swoop cooldown", true, 25f, 10f, 40f, 2.5f, true, CustomNumberOption.SecondsStringFormat);
-            SwooperSwoopDuration = new CustomNumberOption("swooperSwoopDuration", "Swoop duration", true, 10f, 5f, 15f, 1f, true, CustomNumberOption.SecondsStringFormat);
+            SwooperSwoopCooldown = new CustomNumberOption("swooperSwoopCooldown", "Swoop cooldown", true, 25f, 10f, 60f, 2.5f, true, CustomNumberOption.SecondsStringFormat);
+            SwooperSwoopDuration = new CustomNumberOption("swooperSwoopDuration", "Swoop duration", true, 10f, 5f, 15f, 0.5f, true, CustomNumberOption.SecondsStringFormat);
             
             #endregion Impostors
 
@@ -238,6 +249,11 @@ namespace AmongUsRevamped.Mod
 
             // Cleaner
             public static float CleanerSpawnRate => Options.CleanerSpawnRate.GetValue();
+
+            // Swooper
+            public static float MorphlingSpawnRate => Options.MorphlingSpawnRate.GetValue();
+            public static float MorphlingMorphCooldown => Options.MorphlingMorphCooldown.GetValue();
+            public static float MorphlingMorphDuration => Options.MorphlingMorphDuration.GetValue();
 
             // Swooper
             public static float SwooperSpawnRate => Options.SwooperSpawnRate.GetValue();

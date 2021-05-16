@@ -35,6 +35,7 @@ namespace AmongUsRevamped.Mod.Roles
         protected internal Func<string> TaskDescription;
         protected internal Func<string> ExileDescription;
 
+        public Disguise Disguise;
         public bool Exiled;
 
         protected bool Disposed;
@@ -126,6 +127,8 @@ namespace AmongUsRevamped.Mod.Roles
         public virtual void OnExiled()
         {
             Exiled = true;
+            Disguise = null;
+            ApplyDisguise();
         }
 
         public virtual void OnExileEnd(ExileController exileController)
@@ -135,7 +138,8 @@ namespace AmongUsRevamped.Mod.Roles
 
         public virtual void OnMurdered(Player killer)
         {
-
+            Disguise = null;
+            ApplyDisguise();
         }
 
         public virtual void OnRevived()
@@ -151,6 +155,100 @@ namespace AmongUsRevamped.Mod.Roles
         public virtual void OnCompletedTask(GameData.TaskInfo task)
         {
 
+        }
+
+        public virtual void ApplyDisguise()
+        {
+            var control = Player?.Control;
+            if (control == null) return;
+
+            if (Disguise != null) {
+
+                control.nameText.text = Disguise.Name;
+
+                if (control.myRend != null)
+                {
+                    if (Disguise.ColorId != -1) PlayerControl.SetPlayerMaterialColors(Disguise.ColorId, control.myRend);
+                    if (Disguise.Color != default) PlayerControl.SetPlayerMaterialColors(Disguise.Color, control.myRend);
+                    control.myRend.color = Disguise.BodyRenderColor;
+                }
+
+                if (control.HatRenderer != null)
+                {
+                    if (Disguise.ColorId != -1) control.HatRenderer.SetHat(Disguise.HatId, Disguise.ColorId);
+                    control.HatRenderer.FrontLayer.color = Disguise.OtherRenderColor;
+                    control.HatRenderer.BackLayer.color = Disguise.OtherRenderColor;
+                }
+
+                if (control.MyPhysics.Skin.skin.ProdId != DestroyableSingleton<HatManager>.Instance
+                .AllSkins.ToArray()[(int)Disguise.SkinId].ProdId)
+                {
+                    Player.SetSkin((int)Disguise.SkinId);
+                }
+                if (control.MyPhysics.Skin != null) control.MyPhysics.Skin.layer.color = Disguise.OtherRenderColor;
+
+                if (control.CurrentPet == null || control.CurrentPet.ProdId !=
+                DestroyableSingleton<HatManager>.Instance.AllPets.ToArray()[(int)Disguise.PetId].ProdId)
+                {
+                    if (control.CurrentPet != null) control.CurrentPet.gameObject.Destroy();
+
+                    control.CurrentPet = UnityEngine.Object.Instantiate(DestroyableSingleton<HatManager>.Instance.AllPets.ToArray()[(int)Disguise.PetId]);
+                    control.CurrentPet.transform.position = control.transform.position;
+                    control.CurrentPet.Source = control;
+                    control.CurrentPet.Visible = Player.Visible;
+                }
+                if (control.CurrentPet != null)
+                {
+                    control.CurrentPet.rend.color = Disguise.PetRenderColor;
+                    control.CurrentPet.shadowRend.color = Disguise.PetRenderColor;
+                }
+
+                Player.UpdateSize();
+            }
+            else
+            {
+                control.nameText.text = Player.Data.PlayerName;
+                var renderColor = Color.white;
+
+                var colorId = Player.Data.ColorId;
+                if (control.myRend != null)
+                {
+                    PlayerControl.SetPlayerMaterialColors(colorId, control.myRend);
+                    control.myRend.color = renderColor;
+                }
+
+                if (control.HatRenderer != null)
+                {
+                    control.HatRenderer.SetHat(Player.Data.HatId, colorId);
+                    control.HatRenderer.FrontLayer.color = renderColor;
+                    control.HatRenderer.BackLayer.color = renderColor;
+                }
+
+                if (control.MyPhysics.Skin.skin.ProdId != DestroyableSingleton<HatManager>.Instance
+                .AllSkins.ToArray()[(int)Player.Data.SkinId].ProdId)
+                {
+                    Player.SetSkin((int)Player.Data.SkinId);
+                }
+                if (control.MyPhysics.Skin != null) control.MyPhysics.Skin.layer.color = renderColor;
+
+                if (control.CurrentPet == null || control.CurrentPet.ProdId !=
+                DestroyableSingleton<HatManager>.Instance.AllPets.ToArray()[(int)Player.Data.PetId].ProdId)
+                {
+                    if (control.CurrentPet != null) control.CurrentPet.gameObject.Destroy();
+
+                    control.CurrentPet = UnityEngine.Object.Instantiate(DestroyableSingleton<HatManager>.Instance.AllPets.ToArray()[(int)Player.Data.PetId]);
+                    control.CurrentPet.transform.position = control.transform.position;
+                    control.CurrentPet.Source = control;
+                    control.CurrentPet.Visible = Player.Visible;
+                }
+                if (control.CurrentPet != null)
+                {
+                    control.CurrentPet.rend.color = renderColor;
+                    control.CurrentPet.shadowRend.color = renderColor;
+                }
+
+                Player.UpdateSize();
+            }
         }
 
         public virtual void OnEnd(Game.GameOverData gameOver)
@@ -265,6 +363,33 @@ namespace AmongUsRevamped.Mod.Roles
         }
     }
 
+    public class Disguise
+    {
+        public string Name = "";
+        public int ColorId = -1;
+        public Color Color = default;
+        public uint HatId;
+        public uint SkinId;
+        public uint PetId;
+        public float Size = 1f;
+        public float MoveSpeed = 1f;
+        public Color BodyRenderColor = Color.white;
+        public Color PetRenderColor = Color.white;
+        public Color OtherRenderColor = Color.white;
+
+        public Disguise(string name, int colorId, Color color, uint hatId, uint skinId, uint petId, float size = 1f, float moveSpeed = 1f)
+        {
+            Name = name;
+            ColorId = colorId;
+            Color = color;
+            HatId = hatId;
+            SkinId = skinId;
+            PetId = petId;
+            Size = size;
+            MoveSpeed = moveSpeed;
+        }
+    }
+
     public enum Faction
     {
         Neutral,
@@ -287,6 +412,7 @@ namespace AmongUsRevamped.Mod.Roles
         Camouflager,
         Cleaner,
         Impostor,
+        Morphling,
         Swooper,
         // Neutral
         Jester,

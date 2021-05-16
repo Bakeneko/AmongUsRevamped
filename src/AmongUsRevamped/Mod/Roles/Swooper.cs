@@ -67,14 +67,12 @@ namespace AmongUsRevamped.Mod.Roles
         
         public void OnSwoopStarted(object sender, EventArgs e)
         {
-            SoundManager.Instance.PlaySound(SwoopSound, false, 1.0f);
             SwoopRpc.Instance.Send(true, true);
             Swoop();
         }
 
         public void OnSwoopEnded(object sender, EventArgs e)
         {
-            SoundManager.Instance.PlaySound(UnswoopSound, false, 1.0f);
             SwoopRpc.Instance.Send(false, true);
             Unswoop();
         }
@@ -84,8 +82,8 @@ namespace AmongUsRevamped.Mod.Roles
             try
             {
                 SwoopTime = Options.Values.SwooperSwoopDuration;
-                var control = Player?.Control;
-                if (control == null) return;
+
+                if (Player.IsCurrentPlayer) SoundManager.Instance.PlaySound(SwoopSound, false, 1.0f);
 
                 var currentPlayer = Player.CurrentPlayer;
                 var color = Color.clear;
@@ -93,26 +91,26 @@ namespace AmongUsRevamped.Mod.Roles
 
                 if (Player.IsCurrentPlayer || currentPlayer.Dead || currentPlayer.Role?.Faction == Faction.Impostors)
                 {
-                    bodyColor.a = 0.1f;
+                    bodyColor.a = 0.2f;
+                    Disguise = new Disguise(Player.Data.PlayerName, Player.Data.ColorId, default, Player.Data.HatId, Player.Data.SkinId, Player.Data.PetId, Size * Player?.Modifier?.SizeModifier ?? 1f, MoveSpeed * Player?.Modifier?.MoveSpeedModifier ?? 1f)
+                    {
+                        BodyRenderColor = bodyColor,
+                        PetRenderColor = bodyColor,
+                        OtherRenderColor = color
+                    };
                 }
                 else
                 {
                     bodyColor.a = 0f;
-                    control.nameText.text = "";
+                    Disguise = new Disguise("", Player.Data.ColorId, default, Player.Data.HatId, Player.Data.SkinId, Player.Data.PetId, Size * Player?.Modifier?.SizeModifier ?? 1f, MoveSpeed * Player?.Modifier?.MoveSpeedModifier ?? 1f)
+                    {
+                        BodyRenderColor = bodyColor,
+                        PetRenderColor = bodyColor,
+                        OtherRenderColor = color
+                    };
                 }
 
-                if (control.myRend != null) control.myRend.color = bodyColor;
-                if (control.HatRenderer != null)
-                {
-                    control.HatRenderer.FrontLayer.color = color;
-                    control.HatRenderer.BackLayer.color = color;
-                }
-                if (control.MyPhysics.Skin != null) control.MyPhysics.Skin.layer.color = color;
-                if (control.CurrentPet != null)
-                {
-                    control.CurrentPet.rend.color = bodyColor;
-                    control.CurrentPet.shadowRend.color = bodyColor;
-                }
+                ApplyDisguise();
             }
             catch (Exception) { }
         }
@@ -125,40 +123,34 @@ namespace AmongUsRevamped.Mod.Roles
 
                 SwoopTime -= Time.deltaTime;
                 
-                if (!Swooping) {
+                if (!Swooping || Player.Dead || Player.Disconnected) {
                     Unswoop();
                     return;
                 }
 
-                var control = Player?.Control;
-                if (control == null) return;
-
                 var currentPlayer = Player.CurrentPlayer;
                 var color = Color.clear;
                 var bodyColor = Color.white;
+                var name = "";
 
                 if (Player.IsCurrentPlayer || currentPlayer.Dead || currentPlayer.Role?.Faction == Faction.Impostors)
                 {
                     bodyColor.a = 0.2f;
+                    name = Player.Data.PlayerName;
                 }
                 else
                 {
                     bodyColor.a = 0f;
-                    control.nameText.text = "";
                 }
 
-                if (control.myRend != null) control.myRend.color = bodyColor;
-                if (control.HatRenderer != null)
+                Disguise = new Disguise(name, Player.Data.ColorId, default, Player.Data.HatId, Player.Data.SkinId, Player.Data.PetId, Size * Player?.Modifier.SizeModifier ?? 1f, MoveSpeed * Player?.Modifier.MoveSpeedModifier ?? 1f)
                 {
-                    control.HatRenderer.FrontLayer.color = color;
-                    control.HatRenderer.BackLayer.color = color;
-                }
-                if (control.MyPhysics.Skin != null) control.MyPhysics.Skin.layer.color = color;
-                if (control.CurrentPet != null)
-                {
-                    control.CurrentPet.rend.color = bodyColor;
-                    control.CurrentPet.shadowRend.color = bodyColor;
-                }
+                    BodyRenderColor = bodyColor,
+                    PetRenderColor = bodyColor,
+                    OtherRenderColor = color
+                };
+
+                ApplyDisguise();
             }
             catch (Exception) { }
         }
@@ -168,25 +160,12 @@ namespace AmongUsRevamped.Mod.Roles
             try
             {
                 SwoopTime = 0f;
-                var control = Player?.Control;
-                if (control == null) return;
 
-                var color = Color.white;
+                Disguise = null;
+                ApplyDisguise();
 
-                control.nameText.text = control.Data.PlayerName;
-
-                if (control.myRend != null) control.myRend.color = color;
-                if (control.HatRenderer != null)
-                {
-                    control.HatRenderer.FrontLayer.color = color;
-                    control.HatRenderer.BackLayer.color = color;
-                }
-                if (control.MyPhysics.Skin != null) control.MyPhysics.Skin.layer.color = color;
-                if (control.CurrentPet != null)
-                {
-                    control.CurrentPet.rend.color = color;
-                    control.CurrentPet.shadowRend.color = color;
-                }
+                if (Player.IsCurrentPlayer) SoundManager.Instance.PlaySound(UnswoopSound, false, 1.0f);
+                if (SwoopButton != null) SwoopButton.EndEffect(false, true);
             }
             catch (Exception) { }
         }

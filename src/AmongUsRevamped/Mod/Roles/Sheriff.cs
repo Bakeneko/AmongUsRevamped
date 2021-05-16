@@ -86,8 +86,10 @@ namespace AmongUsRevamped.Mod.Roles
 
             var guiltyRoles = new List<RoleType> {
                 // Impostor
+                RoleType.Camouflager,
                 RoleType.Cleaner,
                 RoleType.Impostor,
+                RoleType.Morphling,
                 RoleType.Swooper,
                 // Neutral
                 RoleType.Jester,

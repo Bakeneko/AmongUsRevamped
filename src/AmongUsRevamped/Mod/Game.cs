@@ -36,6 +36,7 @@ namespace AmongUsRevamped.Mod
         {
             Anonymized = false;
             StopNameScrambler();
+            ScrambledNames.Clear();
             BasePlayerSpeed = AmongUsClient.Instance?.PlayerPrefab?.MyPhysics?.Speed ?? 2.5f;
             GameOver = null;
             Role.AllRoles.ForEach(r => r.Dispose());
@@ -139,32 +140,26 @@ namespace AmongUsRevamped.Mod
             
             if (Anonymized)
             {
-                foreach (Player p in Player.AllPlayers)
+                foreach (Role r in Role.AllRoles)
                 {
-                    var control = p?.Control;
-                    if (control == null) continue;
+                    if (!ScrambledNames.TryGetValue(r.Player.Id, out string name)) name = "";
 
-                    var color = Color.clear;
-
-                    if (control.myRend != null) PlayerControl.SetPlayerMaterialColors(Color.grey, control.myRend);
-
-                    if (control.HatRenderer != null)
+                    if (r.RoleType == RoleType.Swooper && (r as Swooper).Swooping)
                     {
-                        control.HatRenderer.FrontLayer.color = color;
-                        control.HatRenderer.BackLayer.color = color;
-                    }
-                    if (control.MyPhysics.Skin != null) control.MyPhysics.Skin.layer.color = color;
-                    if (control.CurrentPet != null)
-                    {
-                        control.CurrentPet.rend.color = color;
-                        control.CurrentPet.shadowRend.color = color;
+                        r.Disguise.Name = name;
+                        r.Disguise.Color = Color.grey;
+                        r.Disguise.PetRenderColor = Color.clear;
+                        r.Disguise.OtherRenderColor = Color.clear;
+                        r.ApplyDisguise();
+                        continue;
                     }
 
-                    float scale = 0.7f;
-                    CircleCollider2D collider = control.Collider?.TryCast<CircleCollider2D>();
-                    control.transform.localScale = new Vector3(scale, scale, 1f);
-                    collider.radius = Player.DefaultColliderRadius;
-                    collider.offset = Player.DefaultColliderOffset * Vector2.down;
+                    r.Disguise = new Disguise(name, r.Player.Data.ColorId, Color.grey, r.Player.Data.HatId, r.Player.Data.SkinId, r.Player.Data.PetId)
+                    {
+                        PetRenderColor = Color.clear,
+                        OtherRenderColor = Color.clear
+                    };
+                    r.ApplyDisguise();
                 }
             }
             
@@ -172,34 +167,21 @@ namespace AmongUsRevamped.Mod
             {
                 Anonymized = false;
                 StopNameScrambler();
-                foreach (Player p in Player.AllPlayers)
+
+                foreach (Role r in Role.AllRoles)
                 {
-                    var control = p?.Control;
-                    if (control == null) continue;
+                    if (r.RoleType == RoleType.Swooper && (r as Swooper).Swooping) continue;
 
-                    var color = Color.white;
-
-                    control.nameText.text = control.Data.PlayerName;
-                    control.SetColor(control.Data.ColorId);
-
-                    if (control.HatRenderer != null)
-                    {
-                        control.HatRenderer.FrontLayer.color = color;
-                        control.HatRenderer.BackLayer.color = color;
-                    }
-                    if (control.MyPhysics.Skin != null) control.MyPhysics.Skin.layer.color = color;
-                    if (control.CurrentPet != null)
-                    {
-                        control.CurrentPet.rend.color = color;
-                        control.CurrentPet.shadowRend.color = color;
-                    }
+                    r.Disguise = null;
+                    r.ApplyDisguise();
                 }
+
+                Role.GetRoles<Morphling>(RoleType.Morphling).ForEach(r => r.MorphUpdate());
             }
         }
 
         private static void OnDistributeRoles()
         {
-            AmongUsRevamped.Log("OnDistributeRoles");
             if (!AmongUsClient.Instance.AmHost || DestroyableSingleton<TutorialManager>.InstanceExists) return;
 
             List<Player> crewmates = new(), impostors = new(), players = Player.AllPlayers.ToList();
@@ -249,6 +231,7 @@ namespace AmongUsRevamped.Mod
             generator = new DistributedRandomNumberGenerator<byte>();
             if (Options.Values.CamouflagerSpawnRate > 0) generator.AddNumber((byte)RoleType.Camouflager, Options.Values.CamouflagerSpawnRate);
             if (Options.Values.CleanerSpawnRate > 0) generator.AddNumber((byte)RoleType.Cleaner, Options.Values.CleanerSpawnRate);
+            if (Options.Values.MorphlingSpawnRate > 0) generator.AddNumber((byte)RoleType.Morphling, Options.Values.MorphlingSpawnRate);
             if (Options.Values.SwooperSpawnRate > 0) generator.AddNumber((byte)RoleType.Swooper, Options.Values.SwooperSpawnRate);
 
             for (int i = 0; i < maxImpostorRoles; i++)
@@ -338,6 +321,9 @@ namespace AmongUsRevamped.Mod
                     break;
                 case RoleType.Impostor:
                     new Impostor(player).AddToReverseIndex();
+                    break;
+                case RoleType.Morphling:
+                    new Morphling(player).AddToReverseIndex();
                     break;
                 case RoleType.Swooper:
                     new Swooper(player).AddToReverseIndex();

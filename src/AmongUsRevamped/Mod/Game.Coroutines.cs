@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using AmongUsRevamped.Extensions;
 using UnityEngine;
 
@@ -7,6 +8,7 @@ namespace AmongUsRevamped.Mod
     public partial class Game
     {
         private static IEnumerator NameScrambler = null;
+        private static readonly Dictionary<int, string> ScrambledNames = new();
 
         private static IEnumerator StartNameScrambler(float update = 0.1f)
         {
@@ -30,7 +32,7 @@ namespace AmongUsRevamped.Mod
                 {
                     if (p.IsCurrentPlayer || Player.CurrentPlayer?.Dead == true)
                     {
-                        p?.Control?.nameText?.SetText(p?.Control.Data.PlayerName);
+                        ScrambledNames[p.Id] = p?.Control.Data.PlayerName;
                     }
                     else
                     {
@@ -39,7 +41,7 @@ namespace AmongUsRevamped.Mod
                         {
                             bits += AmongUsRevamped.Rand.Next(0, 2);
                         }
-                        p?.Control?.nameText?.SetText(bits);
+                        ScrambledNames[p.Id] = bits;
                     }
                 }
             }

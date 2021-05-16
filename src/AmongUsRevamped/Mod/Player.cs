@@ -42,8 +42,8 @@ namespace AmongUsRevamped.Mod
         public bool Visible { get => Control.Visible; set => Control.Visible = value; }
         public bool CanMove => Control.CanMove;
 
-        public float MoveSpeed => Dead ? 1f : (Role?.MoveSpeed ?? 1f) * (Modifier?.MoveSpeedModifier ?? 1f);
-        public float Size => Dead ? 1f : (Role?.Size ?? 1f) * (Modifier?.SizeModifier ?? 1f);
+        public float MoveSpeed => GetMoveSpeed();
+        public float Size => GetSize();
         public float VisionRange => (Role?.VisionRange ?? PlayerControl.GameOptions.CrewLightMod) * (Modifier?.VisionRangeModifier ?? 1f);
         public bool HasNightVision => Role?.HasNightVision == true || Modifier?.HasNightVision == true;
         public bool FakesTasks => Role?.FakesTasks == true;
@@ -52,6 +52,20 @@ namespace AmongUsRevamped.Mod
         public Modifier Modifier => Modifier.GetPlayerModifier(Id);
 
         public IEnumerable<GameData.TaskInfo> Tasks => Data.Tasks.ToArray();
+
+        public float GetMoveSpeed()
+        {
+            if (Dead) return 1f;
+            if (Role?.Disguise != null) return Role.Disguise.MoveSpeed;
+            return (Role?.MoveSpeed ?? 1f) * (Modifier?.MoveSpeedModifier ?? 1f);
+        }
+
+        public float GetSize()
+        {
+            if (Dead) return 1f;
+            if (Role?.Disguise != null) return Role.Disguise.Size;
+            return (Role?.Size ?? 1f) * (Modifier?.SizeModifier ?? 1f);
+        }
 
         public bool CanSeeRole(Player other)
         {
@@ -65,10 +79,10 @@ namespace AmongUsRevamped.Mod
 
         public virtual void OnFixedUpdate()
         {
-            UpdatePlayerName(this, IsCurrentPlayer || (CurrentPlayer?.Dead == true && Options.Values.GhostsSeeRoles));
-
             // Not playing
             if (AmongUsClient.Instance.GameState != InnerNetClient.GameStates.Started) return;
+
+            UpdatePlayerName(this, IsCurrentPlayer || (CurrentPlayer?.Dead == true && Options.Values.GhostsSeeRoles));
 
             if (IsCurrentPlayer)
             {
@@ -298,14 +312,14 @@ namespace AmongUsRevamped.Mod
         {
             // Reset outline
             SetOutline(null);
-            Modifier?.HudUpdate(hudManager);
             Role?.HudUpdate(hudManager);
+            Modifier?.HudUpdate(hudManager);
         }
 
         public void OnIntroEnd(IntroCutscene introCutScene)
         {
-            Modifier?.OnIntroEnd(introCutScene);
             Role?.OnIntroEnd(introCutScene);
+            Modifier?.OnIntroEnd(introCutScene);
         }
 
         public virtual void MurderPlayer(Player victim)
@@ -369,24 +383,24 @@ namespace AmongUsRevamped.Mod
         {
             Player player = CurrentPlayer;
             if (player == null) return;
-            player.Modifier?.OnIntroStart(introCutScene);
             player.Role?.OnIntroStart(introCutScene, ref team);
+            player.Modifier?.OnIntroStart(introCutScene);
         }
 
         public static void OnIntroUpdate(IntroCutscene introCutScene)
         {
             Player player = CurrentPlayer;
             if (player == null) return;
-            player.Modifier?.OnIntroUpdate(introCutScene);
             player.Role?.OnIntroUpdate(introCutScene);
+            player.Modifier?.OnIntroUpdate(introCutScene);
         }
 
         public static void CurrentPlayerHudUpdate(HudManager hudManager)
         {
             Player player = CurrentPlayer;
             if (player == null) return;
-            player.Modifier?.CurrentPlayerHudUpdate(hudManager);
             player.Role?.CurrentPlayerHudUpdate(hudManager);
+            player.Modifier?.CurrentPlayerHudUpdate(hudManager);
         }
 
         public static void UpdatePlayerNames()
