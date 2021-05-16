@@ -1,7 +1,8 @@
-using System;
+﻿using System;
 using System.Linq;
 using AmongUsRevamped.Extensions;
 using AmongUsRevamped.Mod.Roles;
+using AmongUsRevamped.Mod.Modifiers;
 using HarmonyLib;
 using InnerNet;
 using UnhollowerBaseLib;
@@ -104,11 +105,41 @@ namespace AmongUsRevamped.Mod
 
         public TestModeComponent(IntPtr ptr) : base(ptr)
         {
-            TestWindow = new DragWindow(new Rect(0, Screen.height * 0.5f, 100, 100), "Test Mode", () =>
+            Vector2 scrollPosition = Vector2.zero;
+
+            TestWindow = new DragWindow(new Rect(0, Screen.height * 0.5f, 150, 150), "Test Mode", () =>
             {
                 GUILayout.Label($"Name: {PlayerControl.LocalPlayer?.Data?.PlayerName ?? SaveManager.PlayerName}", new Il2CppReferenceArray<GUILayoutOption>(0));
 
                 DisableGameEnd = GUILayout.Toggle(DisableGameEnd, "Disable game end", new Il2CppReferenceArray<GUILayoutOption>(0));
+
+                if (AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started)
+                {
+                    
+                    scrollPosition = GUILayout.BeginScrollView(scrollPosition, new GUILayoutOption[] { GUILayout.Width(150), GUILayout.Height(200) });
+
+                    GUILayout.Label($"Roles", new Il2CppReferenceArray<GUILayoutOption>(0));
+                    if (GUILayout.Button("Crewmate", new Il2CppReferenceArray<GUILayoutOption>(0))) ChangeRole(RoleType.Crewmate);
+                    if (GUILayout.Button("Engineer", new Il2CppReferenceArray<GUILayoutOption>(0))) ChangeRole(RoleType.Engineer);
+                    if (GUILayout.Button("Sheriff", new Il2CppReferenceArray<GUILayoutOption>(0))) ChangeRole(RoleType.Sheriff);
+                    if (GUILayout.Button("Snitch", new Il2CppReferenceArray<GUILayoutOption>(0))) ChangeRole(RoleType.Snitch);
+                    if (GUILayout.Button("Spy", new Il2CppReferenceArray<GUILayoutOption>(0))) ChangeRole(RoleType.Spy);
+                    if (GUILayout.Button("TimeLord", new Il2CppReferenceArray<GUILayoutOption>(0))) ChangeRole(RoleType.TimeLord);
+                    if (GUILayout.Button("Camouflager", new Il2CppReferenceArray<GUILayoutOption>(0))) ChangeRole(RoleType.Camouflager);
+                    if (GUILayout.Button("Cleaner", new Il2CppReferenceArray<GUILayoutOption>(0))) ChangeRole(RoleType.Cleaner);
+                    if (GUILayout.Button("Impostor", new Il2CppReferenceArray<GUILayoutOption>(0))) ChangeRole(RoleType.Impostor);
+                    if (GUILayout.Button("Morphling", new Il2CppReferenceArray<GUILayoutOption>(0))) ChangeRole(RoleType.Morphling);
+                    if (GUILayout.Button("Swooper", new Il2CppReferenceArray<GUILayoutOption>(0))) ChangeRole(RoleType.Swooper);
+                    if (GUILayout.Button("Jester", new Il2CppReferenceArray<GUILayoutOption>(0))) ChangeRole(RoleType.Jester);
+
+                    GUILayout.Label($"Modifiers", new Il2CppReferenceArray<GUILayoutOption>(0));
+                    if (GUILayout.Button("Drunk", new Il2CppReferenceArray<GUILayoutOption>(0))) ChangeModifier(ModifierType.Drunk);
+                    if (GUILayout.Button("Flash", new Il2CppReferenceArray<GUILayoutOption>(0))) ChangeModifier(ModifierType.Flash);
+                    if (GUILayout.Button("Giant", new Il2CppReferenceArray<GUILayoutOption>(0))) ChangeModifier(ModifierType.Giant);
+                    if (GUILayout.Button("Torch", new Il2CppReferenceArray<GUILayoutOption>(0))) ChangeModifier(ModifierType.Torch);
+
+                    GUILayout.EndScrollView();
+                }
 
                 if (AmongUsClient.Instance.AmHost && ShipStatus.Instance && GUILayout.Button("Call a meeting", new Il2CppReferenceArray<GUILayoutOption>(0)))
                 {
@@ -135,6 +166,16 @@ namespace AmongUsRevamped.Mod
             {
                 Enabled = Options.Values.TestMode
             };
+        }
+
+        private void ChangeRole(RoleType role)
+        {
+            Game.AssignPlayerRole(PlayerControl.LocalPlayer, role);
+        }
+
+        private void ChangeModifier(ModifierType modifier)
+        {
+            Game.AssignPlayerModifier(PlayerControl.LocalPlayer, modifier);
         }
 
         private void CallForMeeting()
