@@ -12,6 +12,7 @@ namespace AmongUsRevamped.Mod.Modifiers
             Color = ColorPalette.Color.ModifierGiant;
             MoveSpeedModifier = 0.75f;
             SizeModifier = 1.3f;
+            VisionRangeModifier = 1.3f;
             IntroDescription = () => Color.ToColorTag($"{Name}: Mind the ceiling!");
             TaskDescription = () => Color.ToColorTag($"{Name}: Mind the ceiling!");
         }
