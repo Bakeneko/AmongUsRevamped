@@ -94,6 +94,7 @@ namespace AmongUsRevamped.Mod
         public static CustomNumberOption DrunkSpawnRate;
         public static CustomNumberOption FlashSpawnRate;
         public static CustomNumberOption GiantSpawnRate;
+        public static CustomNumberOption TinySpawnRate;
         public static CustomNumberOption TorchSpawnRate;
 
         #endregion Modifiers
@@ -193,7 +194,8 @@ namespace AmongUsRevamped.Mod
             MaxModifiers = new CustomNumberOption("maxModifiers", "Max modifiers", true, 0f, 0f, 10f, 1f, true);
             DrunkSpawnRate = new CustomNumberOption("drunkSpawnRate", $"{Color.ModifierDrunk.ToColorTag("Drunk")} spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
             FlashSpawnRate = new CustomNumberOption("flashSpawnRate", $"{Color.ModifierFlash.ToColorTag("Flash")} spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
-            GiantSpawnRate = new CustomNumberOption("flashSpawnRate", $"{Color.ModifierGiant.ToColorTag("Giant")} spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
+            GiantSpawnRate = new CustomNumberOption("giantSpawnRate", $"{Color.ModifierGiant.ToColorTag("Giant")} spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
+            TinySpawnRate = new CustomNumberOption("tinySpawnRate", $"{Color.ModifierTiny.ToColorTag("Tiny")} spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
             TorchSpawnRate = new CustomNumberOption("torchSpawnRate", $"{Color.ModifierTorch.ToColorTag("Torch")} spawn rate", true, 0f, 0f, 100f, 10f, true, CustomNumberOption.PercentStringFormat);
 
             #endregion Modifiers
@@ -276,6 +278,7 @@ namespace AmongUsRevamped.Mod
             public static float DrunkSpawnRate => Options.DrunkSpawnRate.GetValue();
             public static float FlashSpawnRate => Options.FlashSpawnRate.GetValue();
             public static float GiantSpawnRate => Options.GiantSpawnRate.GetValue();
+            public static float TinySpawnRate => Options.TinySpawnRate.GetValue();
             public static float TorchSpawnRate => Options.TorchSpawnRate.GetValue();
 
             #endregion Modifiers

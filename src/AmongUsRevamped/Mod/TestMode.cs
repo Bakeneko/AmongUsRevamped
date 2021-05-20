@@ -136,6 +136,7 @@ namespace AmongUsRevamped.Mod
                     if (GUILayout.Button("Drunk", new Il2CppReferenceArray<GUILayoutOption>(0))) ChangeModifier(ModifierType.Drunk);
                     if (GUILayout.Button("Flash", new Il2CppReferenceArray<GUILayoutOption>(0))) ChangeModifier(ModifierType.Flash);
                     if (GUILayout.Button("Giant", new Il2CppReferenceArray<GUILayoutOption>(0))) ChangeModifier(ModifierType.Giant);
+                    if (GUILayout.Button("Tiny", new Il2CppReferenceArray<GUILayoutOption>(0))) ChangeModifier(ModifierType.Tiny);
                     if (GUILayout.Button("Torch", new Il2CppReferenceArray<GUILayoutOption>(0))) ChangeModifier(ModifierType.Torch);
 
                     GUILayout.EndScrollView();

@@ -167,6 +167,7 @@ namespace AmongUsRevamped.Mod.Modifiers
         Drunk,
         Flash,
         Giant,
+        Tiny,
         Torch,
     }
 }

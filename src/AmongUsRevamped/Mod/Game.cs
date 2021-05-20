@@ -251,6 +251,7 @@ namespace AmongUsRevamped.Mod
             if (Options.Values.DrunkSpawnRate > 0) generator.AddNumber((byte)ModifierType.Drunk, Options.Values.DrunkSpawnRate);
             if (Options.Values.FlashSpawnRate > 0) generator.AddNumber((byte)ModifierType.Flash, Options.Values.FlashSpawnRate);
             if (Options.Values.GiantSpawnRate > 0) generator.AddNumber((byte)ModifierType.Giant, Options.Values.GiantSpawnRate);
+            if (Options.Values.TinySpawnRate > 0) generator.AddNumber((byte)ModifierType.Tiny, Options.Values.TinySpawnRate);
             if (Options.Values.TorchSpawnRate > 0) generator.AddNumber((byte)ModifierType.Torch, Options.Values.TorchSpawnRate);
 
             for (int i = 0; i < maxModifiers; i++)
@@ -350,6 +351,9 @@ namespace AmongUsRevamped.Mod
                     break;
                 case ModifierType.Giant:
                     new Giant(player);
+                    break;
+                case ModifierType.Tiny:
+                    new Tiny(player);
                     break;
                 case ModifierType.Torch:
                     new Torch(player);
